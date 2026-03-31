@@ -1,0 +1,1335 @@
+/* ============================================================
+   IMPORTS
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap');
+
+/* ============================================================
+   RESET GLOBAL
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Barlow', sans-serif;
+  color: #1a1a1a;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar-wrapper {
+  background: #ffffff;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  padding: 0.75rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand-logo {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  background: #F5A623;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar-link {
+  font-family: 'Barlow', sans-serif;
+  color: #1a1a1a;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navbar-link:hover {
+  color: #F5A623;
+}
+
+.navbar-link--active {
+  color: #F5A623;
+  font-weight: 600;
+}
+
+.navbar-btn-register {
+  background: #F5A623;
+  border: none;
+  color: #ffffff;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.5rem 1.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.navbar-btn-register:hover {
+  background: #E8941A;
+  transform: translateY(-1px);
+}
+
+.navbar-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.navbar-hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #1a1a1a;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero-section {
+  background: #F5A623;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-bg-circle--top {
+  top: -60px;
+  right: -60px;
+  width: 340px;
+  height: 340px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.hero-bg-circle--bottom {
+  bottom: -80px;
+  left: -40px;
+  width: 260px;
+  height: 260px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  color: #ffffff;
+  letter-spacing: 1px;
+  line-height: 1.05;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  color: rgba(255, 255, 255, 0.88);
+  font-family: 'Barlow', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 300;
+  max-width: 520px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-btn {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hero-btn--primary {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.hero-btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.hero-btn--secondary {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.6) !important;
+}
+
+.hero-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   STATS BAR
+   ============================================================ */
+.statsbar-wrapper {
+  background: #1a1a1a;
+  padding: 1.5rem 0;
+}
+
+.statsbar-item {
+  text-align: center;
+  padding: 0.75rem 1rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statsbar-item:last-child {
+  border-right: none;
+}
+
+.statsbar-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: #F5A623;
+  line-height: 1;
+}
+
+.statsbar-label {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   FEATURES
+   ============================================================ */
+.features-section {
+  background: #f8f8f8;
+  padding: 5rem 0;
+}
+
+.features-eyebrow {
+  color: #F5A623;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.features-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: #1a1a1a;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+
+.features-desc {
+  font-family: 'Barlow', sans-serif;
+  color: #666666;
+  max-width: 480px;
+  margin: 0 auto;
+  font-size: 0.95rem;
+}
+
+.feature-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  height: 100%;
+  border: 1px solid transparent;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.1);
+  border-color: #F5A623;
+}
+
+.feature-card__icon {
+  width: 56px;
+  height: 56px;
+  background: #F5A623;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.feature-card__title {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #1a1a1a;
+  margin-bottom: 0.6rem;
+}
+
+.feature-card__desc {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  color: #666666;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ============================================================
+   PRODUCTS
+   ============================================================ */
+.products-section {
+  padding: 5rem 0;
+  background: #ffffff;
+}
+
+.products-eyebrow {
+  color: #F5A623;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.products-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: #1a1a1a;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.products-btn-all {
+  background: transparent;
+  border: 2px solid #F5A623;
+  color: #F5A623;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.55rem 1.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.products-btn-all:hover {
+  background: #F5A623;
+  color: #ffffff;
+}
+
+.product-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eeeeee;
+  height: 100%;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+}
+
+.product-card__img {
+  height: 180px;
+  background: #f8f8f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card__img::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #F5A623;
+}
+
+.product-card__emoji {
+  font-size: 3.5rem;
+}
+
+.product-card__badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #F5A623;
+  color: #ffffff;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.product-card__body {
+  padding: 1.25rem;
+}
+
+.product-card__name {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a1a;
+  margin-bottom: 0.4rem;
+}
+
+.product-card__desc {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  color: #777777;
+  margin-bottom: 1rem;
+  line-height: 1.55;
+}
+
+.product-card__btn {
+  background: #1a1a1a;
+  color: #ffffff;
+  border: none;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.product-card__btn:hover {
+  background: #F5A623;
+}
+
+/* ============================================================
+   CTA
+   ============================================================ */
+.cta-section {
+  background: #F5A623;
+  padding: 4.5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-circle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.cta-circle--top {
+  top: -40px;
+  right: -40px;
+  width: 220px;
+  height: 220px;
+  border: 40px solid rgba(255, 255, 255, 0.1);
+}
+
+.cta-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.cta-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: #ffffff;
+  margin-bottom: 0.75rem;
+}
+
+.cta-subtitle {
+  font-family: 'Barlow', sans-serif;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  font-weight: 300;
+  margin-bottom: 2rem;
+}
+
+.cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cta-btn {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.85rem 2.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cta-btn--primary {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.cta-btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
+}
+
+.cta-btn--secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff !important;
+}
+
+.cta-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: #1a1a1a;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 3.5rem 0 2rem;
+}
+
+.footer__brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: #F5A623;
+  margin-bottom: 0.5rem;
+}
+
+.footer__desc {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 1.25rem;
+}
+
+.footer__socials {
+  display: flex;
+  gap: 6px;
+}
+
+.footer__social-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.footer__social-btn:hover {
+  background: #F5A623;
+  color: #ffffff;
+  border-color: #F5A623;
+}
+
+.footer__heading {
+  font-family: 'Barlow', sans-serif;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.footer__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer__links li {
+  margin-bottom: 0.5rem;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer__links a {
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: color 0.2s;
+}
+
+.footer__links a:hover {
+  color: #F5A623;
+}
+
+.footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  text-align: center;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ============================================================
+   MODAL LOGIN / REGISTRO
+   ============================================================ */
+
+/* Overlay de fondo */
+.custom-modal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+}
+
+/* Tarjeta principal del modal */
+.login-card {
+  background: #f1f3f5;
+  width: 92%;
+  max-width: 390px;
+  border-radius: 24px;
+  padding: 18px;
+  font-family: 'Barlow', sans-serif;
+  position: relative;
+}
+
+/* Encabezado: título + botón cerrar */
+.login-header {
+  margin-bottom: 14px;
+}
+
+.main-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+  margin-bottom: 3px;
+}
+
+.main-subtitle {
+  font-size: 0.82rem;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.close-x {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #6c757d;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+/* Pestañas de Login / Registro */
+.tab-container {
+  display: flex;
+  background: #e9ecef;
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 14px;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+
+.tab.active {
+  background: #ffffff;
+  color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Caja blanca interna con el formulario */
+.inner-form-box {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.inner-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a1a;
+  margin-bottom: 3px;
+}
+
+.inner-subtitle {
+  font-size: 0.8rem;
+  color: #868e96;
+  margin-bottom: 14px;
+}
+
+/* Labels e inputs */
+.input-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.82rem;
+  margin-bottom: 5px;
+  color: #212529;
+}
+
+.login-input {
+  background: #f8f9fa !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 10px !important;
+  padding: 9px 12px !important;
+  font-size: 0.88rem !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-input:focus {
+  border-color: #F5A623 !important;
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.15) !important;
+  outline: none;
+}
+
+/* Botón principal naranja */
+.btn-login-orange {
+  width: 100%;
+  background: #F5A623;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn-login-orange:hover {
+  background: #E8941A;
+  transform: scale(1.01);
+}
+
+/* Bloque de credenciales de prueba */
+.credentials-help {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: #495057;
+  border: 1px solid #e9ecef;
+}
+
+.credentials-help p {
+  margin-bottom: 3px;
+}
+
+/* SweetAlert siempre al frente */
+.swal2-container {
+  z-index: 20000 !important;
+}
+
+/* ============================================================
+   ADMIN DASHBOARD — agregar al final de styles.css
+   ============================================================ */
+
+/* Layout principal: sidebar fijo + contenido */
+.adm-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f5f7;
+  font-family: 'Barlow', sans-serif;
+}
+
+/* ── SIDEBAR ── */
+.adm-sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: #ffffff;
+  border-right: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 0.75rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.adm-sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0.5rem 1.25rem;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 1.25rem;
+}
+
+.adm-sidebar__logo-icon {
+  width: 36px;
+  height: 36px;
+  background: #F5A623;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.adm-sidebar__logo-name {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+.adm-sidebar__logo-sub {
+  font-size: 0.75rem;
+  color: #868e96;
+}
+
+.adm-sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.adm-sidebar__avatar {
+  width: 38px;
+  height: 38px;
+  background: #e9ecef;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.adm-sidebar__username {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #1a1a1a;
+}
+
+.adm-sidebar__role {
+  background: #F5A623;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+/* Menú de navegación */
+.adm-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.adm-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #495057;
+  transition: background 0.18s, color 0.18s;
+}
+
+.adm-nav-item:hover {
+  background: #fff8ed;
+  color: #F5A623;
+}
+
+.adm-nav-item--active {
+  background: #F5A623;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.adm-nav-item--active:hover {
+  background: #E8941A;
+  color: #ffffff;
+}
+
+.adm-nav-item__icon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.adm-nav-item__label {
+  flex: 1;
+}
+
+.adm-nav-item__badge {
+  background: #dc3545;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 20px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.adm-nav-item--active .adm-nav-item__badge {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Botón cerrar sesión */
+.adm-sidebar__logout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #868e96;
+  margin-top: 0.5rem;
+  transition: background 0.18s, color 0.18s;
+}
+
+.adm-sidebar__logout:hover {
+  background: #fff0f0;
+  color: #dc3545;
+}
+
+/* ── ÁREA PRINCIPAL ── */
+.adm-main {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ============================================================
+   DASHBOARD HOME
+   ============================================================ */
+.dash-home {
+  padding: 2rem;
+  max-width: 1200px;
+}
+
+.dash-home__header {
+  margin-bottom: 1.75rem;
+}
+
+.dash-home__title {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.dash-home__subtitle {
+  font-size: 0.88rem;
+  color: #868e96;
+}
+
+/* Grid de tarjetas de estadísticas (4 columnas) */
+.dash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dash-stat-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 1.25rem;
+  border: 1px solid #f0f0f0;
+}
+
+.dash-stat-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.dash-stat-card__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.dash-stat-card__icon {
+  font-size: 1rem;
+  color: #adb5bd;
+}
+
+.dash-stat-card__valor {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #1a1a1a;
+  margin-bottom: 0.6rem;
+}
+
+.dash-stat-card__bottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dash-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.dash-badge--green {
+  background: #e6f9f0;
+  color: #198754;
+}
+
+.dash-badge--red {
+  background: #fdecea;
+  color: #dc3545;
+}
+
+.dash-stat-card__extra-label {
+  font-size: 0.78rem;
+  color: #adb5bd;
+}
+
+/* Grid inferior (2 paneles) */
+.dash-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.dash-panel {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+}
+
+.dash-panel__header {
+  padding: 1.1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid #f4f5f7;
+}
+
+.dash-panel__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+}
+
+.dash-panel__subtitle {
+  font-size: 0.78rem;
+  color: #adb5bd;
+}
+
+.dash-panel__body {
+  padding: 0.5rem 0;
+}
+
+/* Filas de stock bajo */
+.dash-stock-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.25rem;
+  border-bottom: 1px solid #f8f9fa;
+  gap: 1rem;
+}
+
+.dash-stock-row:last-child {
+  border-bottom: none;
+}
+
+.dash-stock-row__info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-stock-row__nombre {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-stock-row__cat {
+  font-size: 0.75rem;
+  color: #adb5bd;
+}
+
+.dash-stock-row__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Barra de progreso */
+.dash-progress {
+  width: 80px;
+  height: 6px;
+  background: #e9ecef;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.dash-progress__bar {
+  height: 100%;
+  background: #F5A623;
+  border-radius: 99px;
+}
+
+.dash-stock-badge {
+  background: #dc3545;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  min-width: 44px;
+  text-align: center;
+}
+
+/* Filas de movimientos */
+.dash-mov-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.25rem;
+  border-bottom: 1px solid #f8f9fa;
+  gap: 1rem;
+}
+
+.dash-mov-row:last-child {
+  border-bottom: none;
+}
+
+.dash-mov-row__info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-mov-row__nombre {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-mov-row__meta {
+  font-size: 0.75rem;
+  color: #adb5bd;
+}
+
+.dash-mov-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.dash-mov-badge--entrada {
+  background: #F5A623;
+  color: #ffffff;
+}
+
+.dash-mov-badge--salida {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.dash-mov-badge--ajuste {
+  background: #e9ecef;
+  color: #495057;
+}
+
+/* ============================================================
+   MI PERFIL
+   ============================================================ */
+.perfil-wrapper {
+  padding: 2rem;
+  max-width: 560px;
+}
+
+.perfil-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.perfil-avatar {
+  width: 72px;
+  height: 72px;
+  background: #fff8ed;
+  border: 3px solid #F5A623;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.perfil-nombre {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.perfil-datos {
+  width: 100%;
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid #f0f0f0;
+}
+
+.perfil-dato-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f8f9fa;
+  font-size: 0.88rem;
+}
+
+.perfil-dato-label {
+  color: #868e96;
+  font-weight: 500;
+}
+
+.perfil-dato-valor {
+  color: #1a1a1a;
+  font-weight: 600;
+}
