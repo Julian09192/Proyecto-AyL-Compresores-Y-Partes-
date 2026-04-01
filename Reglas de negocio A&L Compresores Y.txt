@@ -1,0 +1,206 @@
+Reglas de negocio A&L Compresores Y Partes
+1.1 ¿Qué problemas resuelve el sistema?
+El sistema soluciona la falta de actualización y funcionalidad de la página web actual, ofreciendo una plataforma dinámica que presenta información actualizada de la empresa y sus productos. Además, mejora la gestión de inventarios y el control de mercancía entre bodegas, permitiendo registrar, monitorear y actualizar de forma centralizada las existencias, entradas, salidas y traslados de productos. Esto reduce errores operativos, evita inconsistencias en el stock, mejora la trazabilidad de los productos y optimiza los procesos internos de la empresa.
+1.2 ¿Para quién es?
+El sistema está dirigido principalmente al propietario de la empresa y a los auxiliares administrativos, quienes se encargan de la gestión de usuarios, productos, inventarios, bodegas, compras y ventas. Asimismo, está orientado a distribuidores y clientes finales, quienes pueden consultar el catálogo de productos y realizar compras a través de la plataforma de manera controlada y segura.
+1.3 ¿Qué procesos existen?
+El sistema contempla los siguientes procesos de negocio:
+Registro e inicio de sesión de usuarios.
+Autenticación y asignación de roles (administrador, auxiliar y cliente).
+Gestión de usuarios (creación, modificación y desactivación).
+Registro, actualización y desactivación de productos.
+Gestión de inventarios por bodega.
+Registro de entradas, salidas y traslados de mercancía.
+Proceso de compra por parte de clientes.
+Validación de disponibilidad de inventario antes de confirmar una venta.
+Registro y validación de pagos.
+Generación de notificaciones (alertas de bajo stock, confirmaciones de compra y pago).
+Consulta de información de productos y pedidos por parte de clientes y distribuidores.
+1.4 ¿Qué decisiones toma el sistema?
+El sistema determina si un usuario puede acceder a la plataforma según sus credenciales y el rol asignado. Decide si un producto puede ser mostrado, vendido o desactivado de acuerdo con su estado y disponibilidad en inventario. Valida si una compra puede ser realizada con base en la cantidad disponible de los productos solicitados y verifica si un pago puede ser registrado correctamente. Asimismo, decide cuándo generar notificaciones automáticas, como alertas por bajo nivel de inventario o confirmaciones de pedidos y pagos.
+1.5 ¿Qué eventos ocurren?
+Entre los eventos principales del sistema se encuentran:
+Registro de usuarios.
+Inicio y cierre de sesión.
+Creación, actualización y desactivación de productos.
+Ingreso y salida de mercancía en inventario.
+Disminución automática del inventario tras una venta confirmada.
+Realización de una compra por parte del cliente.
+Registro y confirmación de pagos.
+Cambio de estado de los pedidos.
+Generación automática de notificaciones ante eventos como bajo stock o confirmación de transacciones.
+1.6 ACTORES DEL SISTEMA
+
+Admin
+Cliente
+Empleados
+Sistema de pago
+Distribuidor 
+
+1.7 PROCESOS
+1. ACTOR: ADMINISTRADOR
+¿Quién es?
+Es el propietario o responsable principal del sistema.
+¿Qué puede hacer?
+Gestionar usuarios
+Gestionar productos
+Gestionar bodegas
+Supervisar inventarios
+Revisar ventas y compras
+Consultar reportes
+Configurar métodos de pago
+PROCEDIMIENTOS DEL ADMINISTRADOR
+Registro de administrador
+El administrador es creado inicialmente por el sistema o por otro administrador.
+El sistema valida que el correo y número de identificación no estén registrados.
+El sistema guarda el usuario con rol Administrador.
+Inicio de sesión (Autenticación)
+El administrador ingresa correo y contraseña.
+El sistema valida las credenciales.
+El sistema verifica que el rol sea Administrador.
+Si es correcto, permite el acceso al panel administrativo.
+Gestión de productos
+El administrador registra un nuevo producto.
+El sistema valida datos obligatorios (nombre, referencia, precio).
+El producto queda activo y disponible para inventario.
+El administrador puede actualizar o desactivar productos.
+El sistema impide vender productos desactivados.
+Gestión de bodegas e inventario
+El administrador crea bodegas.
+Asigna productos a bodegas.
+Registra entradas y salidas.
+El sistema actualiza automáticamente el stock.
+El sistema genera alertas por bajo inventario.
+Reportes
+Consulta ventas por fecha.
+Consulta inventario por bodega.
+Consulta compras a proveedores.
+
+
+2. ACTOR: EMPLEADO (AUXILIAR)
+¿Quién es?
+Personal operativo que apoya la gestión diaria.
+¿Qué puede hacer?
+Registrar movimientos de inventario
+Gestionar pedidos
+Consultar productos
+Apoyar ventas
+PROCEDIMIENTOS DEL EMPLEADO
+Inicio de sesión
+El empleado ingresa credenciales.
+El sistema valida rol Empleado.
+Permite acceso solo a funciones asignadas.
+Registro de entradas de inventario
+El empleado registra ingreso de productos.
+El sistema valida el producto y la bodega.
+El stock se incrementa.
+Se registra el movimiento.
+Registro de salidas
+Se registra salida por venta o traslado.
+El sistema valida disponibilidad.
+Se descuenta inventario.
+
+
+Traslado entre bodegas
+Selecciona bodega origen y destino.
+El sistema valida el stock.
+Se actualiza inventario en ambas bodegas.
+3. ACTOR: CLIENTE
+¿Quién es?
+Persona que compra productos.
+¿Qué puede hacer?
+Registrarse
+Iniciar sesión
+Ver productos
+Comprar productos
+Consultar pedidos
+PROCEDIMIENTOS DEL CLIENTE
+Registro
+El cliente ingresa datos personales.
+El sistema valida formato y duplicados.
+Se crea el usuario con rol Cliente.
+Inicio de sesión
+Ingresa correo y contraseña.
+El sistema autentica.
+Accede a la tienda.
+Proceso de compra
+El cliente navega productos.
+Agrega productos al carrito.
+El sistema verifica el stock.
+Se crea una reserva temporal.
+El cliente confirma la compra.
+Se envía al sistema de pago.
+Si el pago es exitoso:
+Se confirma la orden
+Se descuenta inventario
+Si falla:
+Se libera la reserva
+Consulta de pedidos
+Puede ver historial y estado del pedido.
+4. ACTOR: SISTEMA DE PAGO (EXTERNO)
+¿Quién es?
+Servicio externo (PSE, Nequi, transferencia, etc.).
+¿Qué hace?
+Procesa pagos
+Retorna resultado
+PROCEDIMIENTO DEL SISTEMA DE PAGO
+El sistema envía la información del pago.
+El sistema de pago valida datos.
+Devuelve estado:
+
+
+Aprobado
+Rechazado
+El sistema registra el resultado.
+5. ACTOR: DISTRIBUIDOR / PROVEEDOR
+¿Quién es?
+Empresa o persona que suministra productos.
+¿Qué hace?
+Provee productos a la empresa
+PROCEDIMIENTO DEL DISTRIBUIDOR
+El administrador registra una compra.
+El sistema crea la orden de compra.
+Se reciben productos.
+Se registra entrada a inventario.
+Se actualiza el stock.
+
+1.8 RESTRICCIONES DEL SISTEMA
+1. Restricciones de acceso y usuarios
+El sistema no debe permitir el acceso a funcionalidades sin autenticación previa.
+El sistema no debe permitir que un usuario sin rol asignado acceda a funciones administrativas.
+El sistema no debe permitir que un cliente realice una compra sin tener una cuenta registrada e iniciar sesión.
+El sistema no debe permitir que un usuario acceda a funciones que no correspondan a su rol.
+2. Restricciones de compras y carrito
+El sistema no debe permitir agregar productos al carrito si no hay stock disponible en la bodega correspondiente.
+El sistema no debe permitir confirmar una compra si el carrito está vacío.
+El sistema no debe permitir finalizar una compra si el pago no ha sido aprobado por el sistema de pago.
+El sistema no debe permitir confirmar una orden si la reserva de inventario ha expirado.
+3. Restricciones de inventario
+El sistema no debe permitir que el inventario tenga cantidades negativas.
+El sistema no debe permitir registrar salidas de inventario sin validar previamente la disponibilidad del producto.
+El sistema no debe permitir eliminar productos que tengan movimientos de inventario asociados.
+El sistema no debe permitir modificar inventario sin registrar el movimiento correspondiente.
+4. Restricciones administrativas
+El sistema no debe permitir que un empleado cree o elimine usuarios administradores.
+El sistema no debe permitir desactivar productos que tengan órdenes activas o pendientes.
+El sistema no debe permitir eliminar bodegas que tengan inventario asociado.
+5. Restricciones de pagos
+El sistema no debe permitir registrar un pago manual sin validación del sistema de pago.
+El sistema no debe permitir marcar una orden como “Pagada” sin confirmación de pago.
+
+
+
+
+
+
+1.9 REGLAS DE NEGOCIO
+Si un usuario intenta realizar una compra, entonces el sistema permitirá el proceso de compra, bajo la condición de que el usuario esté autenticado y tenga rol de cliente.
+Si un cliente agrega un producto al carrito, entonces el sistema reservará temporalmente el producto, bajo la condición de que exista stock disponible en la bodega.
+Si el cliente confirma una compra, entonces el sistema enviará la información al sistema de pago, bajo la condición de que el carrito contenga al menos un producto.
+Si el sistema de pago devuelve un estado aprobado, entonces el sistema confirmará la orden y descontará el inventario, bajo la condición de que la reserva de inventario esté vigente.
+Si el pago es rechazado o expira, entonces el sistema cancelará la orden y liberará la reserva, bajo la condición de que no se haya confirmado la compra.
+Si un producto alcanza el nivel mínimo de inventario, entonces el sistema generará una alerta, bajo la condición de que el producto esté activo.
+Si un empleado registra una salida de inventario, entonces el sistema descontará la cantidad correspondiente, bajo la condición de que exista disponibilidad suficiente.
+Si un administrador desactiva un producto, entonces el sistema impedirá su visualización y venta, bajo la condición de que no existan órdenes activas asociadas.
+Si se registra una compra a un proveedor, entonces el sistema incrementará el inventario, bajo la condición de que la compra haya sido confirmada.
+Si un usuario intenta acceder a una funcionalidad restringida, entonces el sistema bloqueará el acceso, bajo la condición de que el rol no tenga permisos asignados.
