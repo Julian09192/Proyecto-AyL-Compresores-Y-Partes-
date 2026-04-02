@@ -82,7 +82,6 @@ function Hero({ setVista }) {
                   </p>
                   <h1
                     style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
                       fontSize: "clamp(2.8rem, 6vw, 5rem)",
                       color: "#ffffff",
                       lineHeight: 1.05,

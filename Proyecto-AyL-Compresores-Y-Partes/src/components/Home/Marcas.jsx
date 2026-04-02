@@ -4,6 +4,7 @@ const MARCAS = [
   "Atlas Copco", "Ingersoll Rand", "Shell", "Mobil", "Schulz", "Festo",
 ];
 
+
 function Marcas() {
   return (
     <section style={{ background: "#ffffff", padding: "3.5rem 0", borderTop: "1px solid #f0f0f0", borderBottom: "1px solid #f0f0f0" }}>

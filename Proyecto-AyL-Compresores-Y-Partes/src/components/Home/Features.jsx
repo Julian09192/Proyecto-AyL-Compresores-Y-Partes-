@@ -52,7 +52,7 @@ function Features() {
           <p className="fw-bold text-uppercase mb-2" style={{ color: "#F5A623", fontSize: "0.8rem", letterSpacing: 2 }}>
             ¿Por qué elegirnos?
           </p>
-          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)", color: "#1a1a1a", lineHeight: 1.1 }}>
+          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", color: "#1a1a1a", lineHeight: 1.1 }}>
             Comprometidos con la Calidad
           </h2>
           <p className="text-secondary mx-auto mt-2" style={{ maxWidth: 480, fontSize: "0.95rem" }}>

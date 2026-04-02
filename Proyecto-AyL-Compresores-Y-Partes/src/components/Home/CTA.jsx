@@ -31,7 +31,7 @@ function CTA({ setVista }) {
         <p className="fw-bold text-uppercase mb-2" style={{ color: "#F5A623", fontSize: "0.8rem", letterSpacing: 3 }}>
           ¿Listo para empezar?
         </p>
-        <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2rem, 4vw, 3.2rem)", color: "#ffffff", marginBottom: "0.75rem" }}>
+        <h2 style={{  color: "#ffffff", marginBottom: "0.75rem" }}>
           ¿Listo para potenciar tu producción?
         </h2>
         <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "1rem", fontWeight: 300, marginBottom: "2.5rem", maxWidth: 520, margin: "0 auto 2rem" }}>

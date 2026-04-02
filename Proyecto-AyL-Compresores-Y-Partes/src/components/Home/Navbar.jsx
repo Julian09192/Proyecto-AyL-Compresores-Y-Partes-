@@ -10,13 +10,16 @@ const LINKS = [
 function Navbar({ onOpenLogin, vistaActual, setVista, usuario, logout, totalItems, setCartOpen }) {
   const [open, setOpen] = useState(false);
 
-  const navegar = (v) => { setVista(v); setOpen(false); };
+  const navegar = (v) => { 
+    setVista(v); 
+    setOpen(false); 
+  };
 
   return (
     <nav className="navbar-wrapper">
       <div className="container d-flex align-items-center justify-content-between">
 
-        {/* Logo */}
+        {/* Logo - He quitado el fontFamily pero dejé el resto igual */}
         <a href="#" className="navbar-brand-logo text-decoration-none"
           onClick={(e) => { e.preventDefault(); navegar("inicio"); }}>
           <span className="brand-icon">⚙</span>
@@ -56,11 +59,11 @@ function Navbar({ onOpenLogin, vistaActual, setVista, usuario, logout, totalItem
         {/* Escritorio — carrito + usuario */}
         <div className="navbar-auth d-none d-md-flex align-items-center gap-2">
 
-          {/* Ícono carrito con badge */}
+          {/* Ícono carrito con badge - Mantenemos el fontSize que tenías */}
           <button
             className="btn btn-outline-light position-relative"
             onClick={() => setCartOpen(true)}
-            style={{ fontSize: "1.1rem" }}
+            style={{ fontSize: "1.1rem" }} 
           >
             🛒
             {totalItems > 0 && (
@@ -73,7 +76,7 @@ function Navbar({ onOpenLogin, vistaActual, setVista, usuario, logout, totalItem
             )}
           </button>
 
-          {/* Si hay usuario logueado: muestra su nombre + cerrar sesión */}
+          {/* Si hay usuario logueado: mantenemos el fontSize de 0.88rem */}
           {usuario ? (
             <div className="d-flex align-items-center gap-2">
               <span className="text-white fw-semibold" style={{ fontSize: "0.88rem" }}>

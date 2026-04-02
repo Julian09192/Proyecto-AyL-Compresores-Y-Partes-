@@ -109,7 +109,6 @@ function App() {
 
     const fontLink = document.createElement("link");
     fontLink.rel = "stylesheet";
-    fontLink.href = "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap";
     document.head.appendChild(fontLink);
 
     return () => {
@@ -121,25 +120,24 @@ function App() {
 
   // Props comunes que necesitan todas las páginas públicas
   const propsComunes = {
-    setVista,
-    usuario,
-    login,
-    logout,
-    carrito,
-    totalItems,
-    cartOpen,
-    setCartOpen,
-    agregarAlCarrito,
-    cambiarCantidad,
-    eliminarDelCarrito,
-  };
+  setVista,
+  usuario,
+  login,
+  logout,
+  carrito,
+  totalItems,
+  cartOpen,
+  setCartOpen,
+  agregarAlCarrito,
+  cambiarCantidad,
+  eliminarDelCarrito,
+};
 
   function renderPagina() {
     switch (vista) {
-      case "inicio":    return <Home     {...propsComunes} />;
-      case "nosotros":  return <Nosotros {...propsComunes} />;
+      case "inicio":    return <Home      {...propsComunes} />;
+      case "nosotros":  return <Nosotros  {...propsComunes} />; // Aquí se renderiza
       case "productos": return <Productos {...propsComunes} />;
-      // case "contactos": return <Contactos {...propsComunes} />;
       case "admin":     return <AdminDashboard setVista={setVista} logout={logout} />;
       default:          return <Home {...propsComunes} />;
     }

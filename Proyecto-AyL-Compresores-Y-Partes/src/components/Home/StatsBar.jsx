@@ -71,7 +71,7 @@ function StatItem({ stat }) {
       >
         {stat.svg}
       </div>
-      <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.2rem", color: "#F5A623", lineHeight: 1 }}>
+      <div style={{ fontSize: "2.2rem", color: "#F5A623", lineHeight: 1 }}>
         {count.toLocaleString()}{stat.sufijo}
       </div>
       <div className="text-uppercase mt-1" style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.55)", letterSpacing: 1, fontWeight: 500 }}>

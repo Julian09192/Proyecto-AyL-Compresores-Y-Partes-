@@ -1,12 +1,17 @@
 import { useState } from "react";
+
+// 1. IMPORTACIÓN DE COMPONENTES EXTERNOS
 import Navbar from "../components/Home/Navbar";
 import Footer from "../components/Home/Footer";
 import LoginModal from "../components/LoginModal";
 import CartPanel from "../components/CartPanel";
 import Swal from "sweetalert2";
 
+/* ============================================================
+   CONFIGURACIÓN DE DATOS (Catálogo)
+   ============================================================ */
 const PRODUCTOS = [
-  { id: 1,  nombre: "Compresor Atlas Copco GA30",     categoria: "Compresores",  precio: "$12.500.000", emoji: "🔧", badge: "Destacado" },
+  { id: 1,  nombre: "Compresor Atlas Copco GA30",    categoria: "Compresores",  precio: "$12.500.000", emoji: "🔧", badge: "Destacado" },
   { id: 2,  nombre: "Compresor Ingersoll Rand SSR",    categoria: "Compresores",  precio: "$9.800.000",  emoji: "🔧", badge: null },
   { id: 3,  nombre: "Compresor Schulz MSV 6/30",       categoria: "Compresores",  precio: "$3.200.000",  emoji: "🔧", badge: "Oferta" },
   { id: 4,  nombre: "Filtro de Aire FA-500",           categoria: "Filtros",      precio: "$180.000",    emoji: "🔵", badge: null },
@@ -28,7 +33,20 @@ const PRODUCTOS = [
 
 const CATEGORIAS = ["Todos", "Compresores", "Filtros", "Lubricantes", "Válvulas", "Herramientas", "Accesorios"];
 
-function Productos({ setVista, usuario, login, logout, carrito, totalItems, cartOpen, setCartOpen, agregarAlCarrito, cambiarCantidad, eliminarDelCarrito }) {
+function Productos({ 
+  setVista, 
+  usuario, 
+  login, 
+  logout, 
+  carrito, 
+  totalItems, 
+  cartOpen, 
+  setCartOpen, 
+  agregarAlCarrito, 
+  cambiarCantidad, 
+  eliminarDelCarrito 
+}) {
+  
   const [showModal, setShowModal] = useState(false);
   const [categoriaActiva, setCategoriaActiva] = useState("Todos");
 
@@ -38,7 +56,6 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
 
   const handleAgregar = (producto) => {
     if (!usuario) {
-      // Si no está logueado, abre el modal de login
       Swal.fire({
         icon: "info",
         title: "Inicia sesión primero",
@@ -51,7 +68,8 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
   };
 
   return (
-    <>
+    <div className="bg-white">
+      
       <Navbar
         onOpenLogin={() => setShowModal(true)}
         vistaActual="productos"
@@ -62,97 +80,69 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
         setCartOpen={setCartOpen}
       />
 
-      {/* Hero */}
-      <section style={{ background: "#F5A623", padding: "4rem 0 3.5rem" }}>
-        <div className="container text-center">
-          <p className="text-white fw-bold mb-2" style={{ fontSize: "0.8rem", letterSpacing: 2, textTransform: "uppercase", opacity: 0.85 }}>
-            CATÁLOGO
-          </p>
-          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", color: "#fff", lineHeight: 1.05 }}>
-            Nuestros Productos
-          </h1>
-          <p className="text-white mb-0" style={{ opacity: 0.88, maxWidth: 500, margin: "0 auto", fontWeight: 300 }}>
-            Compresores, herramientas y accesorios de las mejores marcas industriales.
-          </p>
-        </div>
-      </section>
+      <main>
+        {/* 1. HERO - Quitamos fontFamily pero dejamos el letterSpacing y tamaños */}
+        <section className="py-5 mt-5">
+          <div className="container text-center py-5">
+            <p className="fw-bold mb-2 text-warning" style={{ letterSpacing: "5px" }}>CATÁLOGO</p>
+            <h1 className="display-1 fw-bold text-dark" style={{ lineHeight: "0.9" }}>
+              NUESTROS PRODUCTOS
+            </h1>
+            <p className="lead text-secondary mx-auto mt-4" style={{ maxWidth: "800px" }}>
+              Equipos de alta calidad y repuestos originales para optimizar su planta industrial.
+            </p>
+          </div>
+        </section>
 
-      {/* Filtros + productos */}
-      <section className="py-5" style={{ background: "#f8f8f8" }}>
-        <div className="container">
-
-          {/* Botones de filtro — Bootstrap puro */}
-          <div className="d-flex flex-wrap gap-2 mb-3">
-            {CATEGORIAS.map((cat) => {
-              const activo = categoriaActiva === cat;
-              return (
+        {/* 2. FILTROS Y GRILLA */}
+        <section className="py-5 bg-light">
+          <div className="container">
+            
+            <div className="d-flex flex-wrap gap-2 mb-4 justify-content-center">
+              {CATEGORIAS.map((cat) => (
                 <button
                   key={cat}
-                  className="border rounded-pill fw-semibold"
-                  style={{
-                    background: activo ? "#F5A623" : "#fff",
-                    borderColor: activo ? "#F5A623" : "#dee2e6",
-                    color: activo ? "#fff" : "#495057",
-                    fontSize: "0.88rem",
-                    padding: "0.45rem 1.1rem",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                  }}
+                  className={`btn rounded-pill px-4 fw-bold ${categoriaActiva === cat ? 'btn-warning text-white' : 'btn-outline-secondary bg-white'}`}
                   onClick={() => setCategoriaActiva(cat)}
                 >
                   {cat}
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
 
-          {/* Contador */}
-          <p className="text-secondary mb-4" style={{ fontSize: "0.85rem" }}>
-            Mostrando <strong>{productosFiltrados.length}</strong> producto{productosFiltrados.length !== 1 ? "s" : ""}
-            {categoriaActiva !== "Todos" && ` en ${categoriaActiva}`}
-          </p>
-
-          {/* Grid de tarjetas */}
-          <div className="row g-4">
-            {productosFiltrados.map((producto) => (
-              <div key={producto.id} className="col-sm-6 col-lg-4">
-                <div className="product-card h-100">
-                  <div className="product-card__img">
-                    <span className="product-card__emoji">{producto.emoji}</span>
-                    {producto.badge && (
-                      <span className="product-card__badge">{producto.badge}</span>
-                    )}
-                  </div>
-                  <div className="product-card__body">
-                    <p style={{ fontSize: "0.75rem", fontWeight: 700, color: "#F5A623", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 4 }}>
-                      {producto.categoria}
-                    </p>
-                    <h3 className="product-card__name">{producto.nombre}</h3>
-                    <p style={{ fontSize: "1.1rem", fontWeight: 700, color: "#1a1a1a", marginBottom: 0 }}>
-                      {producto.precio}
-                    </p>
-                    {/* Botón agregar al carrito */}
-                    <button
-                      className="w-100 border-0 rounded-2 fw-bold py-2 mt-3 text-white"
-                      style={{ background: "#1a1a1a", fontSize: "0.85rem", cursor: "pointer", transition: "background 0.2s" }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "#F5A623"}
-                      onMouseLeave={(e) => e.currentTarget.style.background = "#1a1a1a"}
-                      onClick={() => handleAgregar(producto)}
-                    >
-                      🛒 Agregar al carrito
-                    </button>
+            <div className="row g-4">
+              {productosFiltrados.map((producto) => (
+                <div key={producto.id} className="col-sm-6 col-lg-4">
+                  <div className="card h-100 border-0 shadow-sm transition-hover">
+                    <div className="card-img-top bg-white d-flex align-items-center justify-content-center position-relative" style={{ height: "200px", fontSize: "4rem" }}>
+                      {producto.emoji}
+                      {producto.badge && (
+                        <span className="position-absolute top-0 start-0 m-3 badge bg-warning text-white">
+                          {producto.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="card-body p-4">
+                      <p className="text-warning fw-bold mb-1 small text-uppercase">{producto.categoria}</p>
+                      <h4 className="fw-bold mb-2">{producto.nombre}</h4>
+                      <h5 className="text-dark fw-bold mb-3">{producto.precio}</h5>
+                      <button
+                        className="btn btn-dark w-100 fw-bold py-2"
+                        onClick={() => handleAgregar(producto)}
+                      >
+                        🛒 Agregar al carrito
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-
-        </div>
-      </section>
+        </section>
+      </main>
 
       <Footer />
 
-      {/* Panel carrito */}
       <CartPanel
         carrito={carrito}
         cartOpen={cartOpen}
@@ -161,14 +151,14 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
         eliminarDelCarrito={eliminarDelCarrito}
       />
 
-      {/* Modal login */}
       {showModal && (
-        <LoginModal
-          login={login}
-          onClose={() => setShowModal(false)}
-        />
+        <LoginModal login={login} onClose={() => setShowModal(false)} />
       )}
-    </>
+
+      <style>{`
+        .transition-hover:hover { transform: translateY(-10px); transition: 0.3s; box-shadow: 0 1rem 3rem rgba(0,0,0,.1)!important; }
+      `}</style>
+    </div>
   );
 }
 
