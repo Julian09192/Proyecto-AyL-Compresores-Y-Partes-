@@ -1,8 +1,26 @@
+import Notificaciones from "./Notificaciones";
+
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-// URL corregida según tu captura de pantalla
+// 👇 IMPORTA IMÁGENES
+import compresor from "../../../assets/compresor.jpg";
+import motor from "../../../assets/motor.jpg";
+import herramienta from "../../../assets/herramienta.jpg";
+import industrial from "../../../assets/industrial.jpg";
+// URL MockAPI
 const API_URL = "https://69cdf09333a09f831b7caeb6.mockapi.io/productos/productos";
+
+// 👇 FUNCIÓN PARA MAPEAR IMÁGENES
+const obtenerImagen = (tipo) => {
+  switch (tipo) {
+    case "compresor": return compresor;
+    case "motor": return motor;
+    case "herramienta": return herramienta;
+    case "industrial": return industrial;
+    default: return herramienta;
+  }
+};
 
 function Productos() {
   const [productos, setProductos] = useState([]);
@@ -21,7 +39,6 @@ function Productos() {
         return res.json();
       })
       .then((data) => {
-        // Validamos que la data sea un array
         setProductos(Array.isArray(data) ? data : []);
         setCargando(false);
       })
@@ -63,6 +80,13 @@ function Productos() {
         <input id="cat" class="swal2-input" placeholder="Categoría" value="${p ? p.Categoria : ""}">
         <input id="can" type="number" class="swal2-input" placeholder="Stock" value="${p ? p.Cantidad : ""}">
         <textarea id="des" class="swal2-textarea" placeholder="Descripción">${p ? p.Descripcion : ""}</textarea>
+
+        <select id="img" class="swal2-input">
+          <option value="compresor" ${p?.imagen === "compresor" ? "selected" : ""}>Compresor</option>
+          <option value="motor" ${p?.imagen === "motor" ? "selected" : ""}>Motor</option>
+          <option value="herramienta" ${p?.imagen === "herramienta" ? "selected" : ""}>Herramienta</option>
+          <option value="industrial" ${p?.imagen === "industrial" ? "selected" : ""}>Industrial</option>
+        </select>
       `,
       confirmButtonColor: "#121212",
       preConfirm: () => ({
@@ -72,6 +96,7 @@ function Productos() {
         Categoria: document.getElementById("cat").value,
         Cantidad: Number(document.getElementById("can").value),
         Descripcion: document.getElementById("des").value,
+        imagen: document.getElementById("img").value
       }),
     });
 
@@ -93,7 +118,6 @@ function Productos() {
     }
   };
 
-  // Filtrado ultra-seguro para evitar el error .filter
   const filtrados = (Array.isArray(productos) ? productos : []).filter((p) =>
     p.Nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
     p.Marca?.toLowerCase().includes(busqueda.toLowerCase())
@@ -120,52 +144,53 @@ function Productos() {
         </div>
       </div>
 
+      <Notificaciones productos={productos} obtenerImagen={obtenerImagen} />
+
       <hr className="opacity-10" />
 
       {cargando ? (
         <div className="text-center py-5">
-          <div className="spinner-border text-warning" role="status"></div>
-          <p className="mt-2 text-muted">Obteniendo datos de la nube...</p>
+          <div className="spinner-border text-warning"></div>
+          <p className="mt-2 text-muted">Obteniendo datos...</p>
         </div>
       ) : filtrados.length === 0 ? (
         <div className="text-center py-5">
           <h1 className="display-1 opacity-25">📂</h1>
-          <p className="text-muted">No hay productos que coincidan con la búsqueda.</p>
+          <p className="text-muted">No hay productos.</p>
         </div>
       ) : (
         <div className="row g-3">
           {filtrados.map((p) => (
             <div className="col-md-4 col-xl-3" key={p.id}>
               <div className="card h-100 border-0 bg-light rounded-4 shadow-hover">
+                
+                {/* 👇 IMAGEN */}
+                <img 
+                  src={obtenerImagen(p.imagen)} 
+                  className="card-img-top rounded-top-4"
+                  style={{ height: "180px", objectFit: "cover" }}
+                />
+
                 <div className="card-body p-3">
-                  <div className="d-flex justify-content-between align-items-start">
-                    <span className="badge bg-white text-dark border mb-2 shadow-sm">{p.Marca}</span>
-                    <small className="text-muted">#{p.id}</small>
-                  </div>
-                  <h6 className="fw-bold mb-1 text-truncate">{p.Nombre}</h6>
-                  <p className="text-muted small mb-3 text-truncate" style={{ height: '20px' }}>
-                    {p.Descripcion || "Sin descripción"}
-                  </p>
-                  
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <small className="d-block text-muted" style={{ fontSize: '0.7rem' }}>PRECIO</small>
-                      <span className="fw-bold text-dark">${p.Precio}</span>
-                    </div>
-                    <div className="text-end">
-                      <small className="d-block text-muted" style={{ fontSize: '0.7rem' }}>STOCK</small>
-                      <span className={`badge ${p.Cantidad > 5 ? 'bg-dark' : 'bg-danger'}`}>
-                        {p.Cantidad} und.
-                      </span>
-                    </div>
+                  <div className="d-flex justify-content-between">
+                    <span className="badge bg-white text-dark border">{p.Marca}</span>
+                    <small>#{p.id}</small>
                   </div>
 
-                  <div className="mt-3 d-flex gap-2 border-top pt-3">
-                    <button className="btn btn-white btn-sm flex-grow-1 shadow-sm border" onClick={() => abrirModal(p)}>
+                  <h6 className="fw-bold">{p.Nombre}</h6>
+                  <p className="text-muted small">{p.Descripcion}</p>
+
+                  <div className="d-flex justify-content-between">
+                    <span>${p.Precio}</span>
+                    <span>{p.Cantidad} und.</span>
+                  </div>
+
+                  <div className="mt-2 d-flex gap-2">
+                    <button onClick={() => abrirModal(p)} className="btn btn-sm btn-dark w-100">
                       Editar
                     </button>
-                    <button className="btn btn-outline-danger btn-sm border-0" onClick={() => eliminarProducto(p.id)}>
-                      🗑️
+                    <button onClick={() => eliminarProducto(p.id)} className="btn btn-sm btn-danger">
+                      🗑
                     </button>
                   </div>
                 </div>
@@ -176,9 +201,10 @@ function Productos() {
       )}
 
       <style>{`
-        .shadow-hover { transition: all 0.3s ease; }
-        .shadow-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important; background: #fff !important; }
-        .btn-white { background: #fff; color: #333; }
+        .shadow-hover:hover {
+          transform: translateY(-5px);
+          transition: 0.3s;
+        }
       `}</style>
     </div>
   );

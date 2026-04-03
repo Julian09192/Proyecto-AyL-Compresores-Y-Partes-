@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardHome from "./AdminDashboard/DashboardHome";
 import MiPerfil from "./AdminDashboard/MiPerfil";
-// Importamos el componente con el nombre exacto: Productos
 import Productos from "./AdminDashboard/Productos"; 
+import Notificaciones from "./AdminDashboard/Notificaciones"; // 👈 NUEVO
 
 function SeccionVacia({ nombre }) {
   return (
@@ -14,19 +14,49 @@ function SeccionVacia({ nombre }) {
   );
 }
 
-const MENU_ITEMS = [
-  { id: "dashboard",      label: "Dashboard",        emoji: "⊞",  badge: null },
-  { id: "productos",      label: "Productos",        emoji: "📦", badge: null },
-  { id: "stock",          label: "Control de Stock", emoji: "📈", badge: 3    },
-  { id: "proveedores",    label: "Proveedores",      emoji: "🚚", badge: null },
-  { id: "usuarios",       label: "Usuarios",         emoji: "👤", badge: null },
-  { id: "reportes",       label: "Reportes",         emoji: "📋", badge: null },
-  { id: "notificaciones", label: "Notificaciones",   emoji: "🔔", badge: 5    },
-  { id: "perfil",         label: "Mi Perfil",        emoji: "⚙️", badge: null },
-];
+const API_URL = "https://69cdf09333a09f831b7caeb6.mockapi.io/productos/productos";
 
 function AdminDashboard({ setVista }) {
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
+
+  // 🔥 PRODUCTOS GLOBALES
+  const [productos, setProductos] = useState([]);
+
+  // 🔥 TRAER PRODUCTOS
+  const obtenerProductos = () => {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => setProductos(Array.isArray(data) ? data : []))
+      .catch(() => setProductos([]));
+  };
+
+  useEffect(() => {
+    obtenerProductos();
+  }, []);
+
+  // 🔔 CONTADOR DINÁMICO
+  const notificaciones = productos.filter(p => p.Cantidad < 10).length;
+
+  // 🖼️ FUNCIÓN DE IMÁGENES
+  const obtenerImagen = (img) => {
+    if (!img) return "/src/assets/compresor.jpg";
+    return img.startsWith("http") ? img : `/src/assets/${img}`;
+  };
+
+  // 👇 MISMO MENU, SOLO CAMBIA EL BADGE DE NOTIFICACIONES
+  const MENU_ITEMS = [
+    { id: "dashboard",      label: "Dashboard",        emoji: "⊞",  badge: null },
+    { id: "productos",      label: "Productos",        emoji: "📦", badge: null },
+    { id: "stock",          label: "Control de Stock", emoji: "📈", badge: 3    },
+    { id: "proveedores",    label: "Proveedores",      emoji: "🚚", badge: null },
+    { id: "usuarios",       label: "Usuarios",         emoji: "👤", badge: null },
+    { id: "reportes",       label: "Reportes",         emoji: "📋", badge: null },
+
+    // 🔥 SOLO ESTO CAMBIA (dinámico)
+    { id: "notificaciones", label: "Notificaciones",   emoji: "🔔", badge: notificaciones },
+
+    { id: "perfil",         label: "Mi Perfil",        emoji: "⚙️", badge: null },
+  ];
 
   // --- RENDERIZADO DINÁMICO ---
   function renderContenido() {
@@ -38,17 +68,24 @@ function AdminDashboard({ setVista }) {
         return <MiPerfil />;
       
       case "productos":      
-        // Usamos el componente Productos
         return <Productos />;
       
       case "stock":          
-        // Reutilizamos Productos para el control de inventario
         return <Productos />;
       
+      case "notificaciones": 
+        return (
+          <div className="p-4">
+            <Notificaciones 
+              productos={productos} 
+              obtenerImagen={obtenerImagen} 
+            />
+          </div>
+        );
+
       case "proveedores":    return <SeccionVacia nombre="Proveedores" />;
       case "usuarios":       return <SeccionVacia nombre="Usuarios" />;
       case "reportes":       return <SeccionVacia nombre="Reportes" />;
-      case "notificaciones": return <SeccionVacia nombre="Notificaciones" />;
       default:               return <DashboardHome />;
     }
   }
@@ -129,7 +166,9 @@ function AdminDashboard({ setVista }) {
               >
                 <span style={{ fontSize: "1.1rem" }}>{item.emoji}</span>
                 <span className="flex-grow-1">{item.label}</span>
-                {item.badge && (
+
+                {/* 🔔 BADGE DINÁMICO */}
+                {item.badge > 0 && (
                   <span
                     className="badge rounded-pill"
                     style={{
@@ -161,7 +200,7 @@ function AdminDashboard({ setVista }) {
 
       </aside>
 
-      {/* ── ÁREA DE CONTENIDO ── */}
+      {/* ── CONTENIDO ── */}
       <main className="flex-grow-1 overflow-auto bg-white">
         <div className="animate-fade-in">
           {renderContenido()}
