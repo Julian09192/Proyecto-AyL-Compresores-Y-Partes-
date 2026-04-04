@@ -139,7 +139,7 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
                       onMouseLeave={(e) => e.currentTarget.style.background = "#1a1a1a"}
                       onClick={() => handleAgregar(producto)}
                     >
-                      🛒 Agregar al carrito
+                      <i className="bi bi-cart-plus"></i> Agregar al carrito
                     </button>
                   </div>
                 </div>
@@ -154,6 +154,7 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
 
       {/* Panel carrito */}
       <CartPanel
+        setVista={setVista}
         carrito={carrito}
         cartOpen={cartOpen}
         setCartOpen={setCartOpen}

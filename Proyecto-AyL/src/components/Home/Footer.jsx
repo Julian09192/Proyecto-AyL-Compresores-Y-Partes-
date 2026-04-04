@@ -1,10 +1,11 @@
+import logoMarca from "../../assets/Home/Navbar/logo-ayl.png";
 const navLinks = ["Inicio", "Nosotros", "Productos", "Contactos"];
 const productLinks = ["Compresores de Tornillo", "Compresores de Pistón", "Herramientas Neumáticas", "Repuestos", "Aceites y Lubricantes"];
 const contactInfo = [
-  { icon: "📍", text: "Bogotá, Colombia" },
-  { icon: "📞", text: "+57 (1) 234-5678" },
-  { icon: "✉", text: "info@alcompresores.com" },
-  { icon: "🕐", text: "Lun–Vie: 8am – 6pm" },
+  { icon: "bi-geo-alt", text: "Bogotá, Colombia" },
+  { icon: "bi-telephone", text: "+57 311 440 5432" },
+  { icon: "bi-envelope", text: "comercial@aylcompresoresypartes.com  alfredvesga@hotmail.com" },
+  { icon: "bi-clock", text: "Lun–Vie: 8am – 6pm" },
 ];
 
 function Footer() {
@@ -13,12 +14,21 @@ function Footer() {
       <div className="container">
         <div className="row g-4">
           <div className="col-12 col-md-4">
-            <div className="footer__brand">A&L Compresores</div>
+            <img src={logoMarca} alt="Logo A&L Compresores" className="footer__logo" style={{ maxWidth: "200px" }} />
             <p className="footer__desc">Especialistas en compresores industriales y herramientas neumáticas. Calidad, respaldo y experiencia al servicio de la industria colombiana.</p>
             <div className="footer__socials">
-              <a href="#" className="footer__social-btn">in</a>
-              <a href="#" className="footer__social-btn">f</a>
-              <a href="#" className="footer__social-btn">✉</a>
+              <a href="https://www.facebook.com/share/1Bb32KbLgQ/" className="footer__social-btn" target="_blank">
+                <i className="bi-facebook"></i>
+              </a>
+              <a href="https://www.tiktok.com/@alcompresores" className="footer__social-btn" target="_blank">
+                <i className="bi-tiktok"></i>
+              </a>
+              <a href="https://api.whatsapp.com/send?phone=573114405432&text=" className="footer__social-btn" target="_blank">
+                <i className="bi-whatsapp"></i>
+              </a>
+              <a href="https://www.instagram.com/distri.ayl?igsh=MWQ5b3N5d2Y5dnNpaw==" className="footer__social-btn" target="_blank">
+                <i className="bi-instagram"></i>
+              </a>
             </div>
           </div>
           <div className="col-6 col-md-2">
@@ -32,7 +42,12 @@ function Footer() {
           <div className="col-12 col-md-3">
             <h6 className="footer__heading">Contacto</h6>
             <ul className="footer__links footer__links--contact">
-              {contactInfo.map((c) => <li key={c.text}><span>{c.icon}</span>{c.text}</li>)}
+              {contactInfo.map((c, index) => (
+                <li key={index} className="d-flex align-items-center mb-2">
+                  <i className={`${c.icon} me-2 text-light`}></i>
+                  <span>{c.text}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

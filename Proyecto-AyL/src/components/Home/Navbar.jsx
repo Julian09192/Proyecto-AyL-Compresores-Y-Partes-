@@ -49,7 +49,7 @@ function Navbar({ onOpenLogin, vistaActual, setVista, usuario, logout, totalItem
           ))}
         </div>
 
-        {/* Escritorio — carrito + usuario */}
+        {/* Escritorio — carrito + usuario */}  
         <div className="navbar-auth d-none d-md-flex align-items-center gap-3">
           <button
             className="btn btn-outline-dark border-0 position-relative p-2"
