@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    font-family: "Barlow", system-ui, sans-serif;
+    background-color: #f8fafc;
+    color: #172033;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .page-card {
+    @apply rounded-3xl border border-slate-200 bg-white shadow-sm;
+  }
+
+  .display-title {
+    font-family: "Barlow Condensed", "Barlow", system-ui, sans-serif;
+    @apply uppercase leading-none tracking-tight;
+  }
+
+  .section-title {
+    @apply text-4xl font-bold tracking-tight text-slate-900 md:text-6xl;
+  }
+
+  .section-copy {
+    @apply mx-auto max-w-2xl text-sm leading-6 text-slate-500 md:text-base;
+  }
+
+  .section-kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.28em] text-amber-500;
+  }
+
+  .info-pill {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  }
+}
