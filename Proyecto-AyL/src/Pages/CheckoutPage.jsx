@@ -6,12 +6,29 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
 
   const formatearPrecio = (str) => parseInt(str.replace(/\D/g, ""), 10);
   const subtotal = carrito.reduce((acc, item) => acc + (formatearPrecio(item.precio) * item.cantidad), 0);
-  const envio = 15000; // Costo de envío simulado
+  const envio = 15000; 
   const total = subtotal + envio;
+
+  // Función para cancelar y regresar
+  const manejarCancelar = () => {
+    Swal.fire({
+      title: '¿Deseas cancelar la compra?',
+      text: "Se perderá el progreso de tus datos de envío.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'Continuar con la compra'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setVista("productos");
+      }
+    });
+  };
 
   // --- COMPONENTES DE PASOS ---
 
-  // PASO 1: DATOS DE ENVÍO
   const PasoDatos = () => (
     <div className="card border-0 shadow-sm p-4 rounded-4">
       <h5 className="fw-bold mb-4">¿A dónde enviamos tu pedido?</h5>
@@ -37,10 +54,15 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
     </div>
   );
 
-  // PASO 2: CONFIRMAR (ESTILO MERCADO LIBRE)
   const PasoConfirmar = () => (
     <div className="card border-0 shadow-sm p-4 rounded-4">
-      <h5 className="fw-bold mb-4">Revisa y confirma tu compra</h5>
+      <div className="d-flex align-items-center mb-4">
+        <button className="btn btn-sm btn-light rounded-circle me-3" onClick={() => setPaso(1)}>
+            <i className="bi bi-arrow-left"></i>
+        </button>
+        <h5 className="fw-bold mb-0">Revisa y confirma tu compra</h5>
+      </div>
+      
       <div className="bg-light p-3 rounded-3 mb-4 text-start">
         <div className="d-flex justify-content-between align-items-center mb-2">
           <span className="fw-bold"><i className="bi bi-geo-alt me-2"></i>Envío a domicilio</span>
@@ -66,10 +88,14 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
     </div>
   );
 
-  // PASO 3: PASARELA DE PAGO
   const PasoPago = () => (
     <div className="card border-0 shadow-sm p-4 rounded-4">
-      <h5 className="fw-bold mb-4">Método de pago</h5>
+      <div className="d-flex align-items-center mb-4">
+        <button className="btn btn-sm btn-light rounded-circle me-3" onClick={() => setPaso(2)}>
+            <i className="bi bi-arrow-left"></i>
+        </button>
+        <h5 className="fw-bold mb-0">Método de pago</h5>
+      </div>
       <div className="alert alert-warning small py-2">
         <i className="bi bi-shield-check me-2"></i> Transacción segura encriptada
       </div>
@@ -85,7 +111,6 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
     </div>
   );
 
-  // PASO 4: ÉXITO
   if (paso === 4) {
     return (
       <div className="container py-5 text-center mt-5">
@@ -116,7 +141,6 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
             {paso === 3 && <PasoPago />}
           </div>
 
-          {/* Resumen lateral fijo (estilo ML) */}
           <div className="col-lg-4">
             <div className="card border-0 shadow-sm p-4 rounded-4 bg-light">
               <h6 className="fw-bold mb-4">Resumen de compra</h6>
@@ -129,10 +153,27 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
                  <span className="text-success fw-bold">${envio.toLocaleString("es-CO")}</span>
               </div>
               <hr />
-              <div className="d-flex justify-content-between fs-5 fw-bold mb-0">
+              <div className="d-flex justify-content-between fs-5 fw-bold mb-4">
                  <span>Total</span>
                  <span>${total.toLocaleString("es-CO")}</span>
               </div>
+
+              {/* BOTONES DE ACCIÓN ADICIONALES */}
+              <button 
+                onClick={() => setVista("productos")} 
+                className="btn btn-outline-secondary w-100 border-0 small mb-2"
+                style={{ fontSize: '0.85rem' }}
+              >
+                <i className="bi bi-chevron-left me-2"></i>Seguir comprando
+              </button>
+              
+              <button 
+                onClick={manejarCancelar} 
+                className="btn btn-link text-danger w-100 text-decoration-none small"
+                style={{ fontSize: '0.85rem' }}
+              >
+                Cancelar orden
+              </button>
             </div>
           </div>
         </div>

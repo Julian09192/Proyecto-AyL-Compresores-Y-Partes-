@@ -1,77 +1,107 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 
-// Usuarios pre-cargados para pruebas
-// Cuando tengas backend esto vendrá de una API
-const USUARIOS_INICIALES = [
-  { nombre: "Administrador", email: "admin",           password: "admin123",  rol: "admin"    },
-  { nombre: "Empleado", email: "empleado@al.com", password: "emp123",    rol: "empleado" },
-];
-
-// Lee usuarios del localStorage, o usa los iniciales si no hay ninguno
-function getUsuarios() {
-  try {
-    const guardados = localStorage.getItem("al_usuarios_registrados");
-    return guardados ? JSON.parse(guardados) : USUARIOS_INICIALES;
-  } catch { return USUARIOS_INICIALES; }
-}
-
 function LoginModal({ onClose, login }) {
   const [isLogin, setIsLogin] = useState(true);
-  const [nombre, setNombre]   = useState("");
-  const [email, setEmail]     = useState("");
-  const [password, setPassword]       = useState("");
-  const [confirmar, setConfirmar]     = useState("");
+  const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmar, setConfirmar] = useState("");
 
-  const manejarEnvio = (e) => {
+  const API_URL = "http://localhost:3001/usuarios";
+
+  const manejarEnvio = async (e) => {
     e.preventDefault();
-    const usuarios = getUsuarios();
 
-    if (isLogin) {
-      // ── LOGIN ──
-      const encontrado = usuarios.find(
-        (u) => u.email === email && u.password === password
-      );
-      if (encontrado) {
-        onClose();
-        Swal.fire({
-          icon: "success",
-          title: `¡Bienvenido, ${encontrado.nombre}!`,
-          timer: 1500,
-          showConfirmButton: false,
-        }).then(() => login(encontrado)); // sube el usuario a App.jsx
+    try {
+      // 1. Traemos todos los usuarios para validar
+      const response = await fetch(API_URL);
+      const usuarios = await response.json();
+
+      if (isLogin) {
+        // ── LÓGICA DE LOGIN (Como tu ejemplo) ──
+        const usuarioEncontrado = usuarios.find(
+          (u) => 
+            u.email.trim().toLowerCase() === email.trim().toLowerCase() && 
+            u.password.trim() === password.trim()
+        );
+
+        if (usuarioEncontrado) {
+          // GUARDAR EN LOCALSTORAGE (Igual que tu referencia)
+          localStorage.setItem("usuario", JSON.stringify(usuarioEncontrado));
+          
+          // GENERAR Y GUARDAR TOKEN
+          const token = `jwt-${usuarioEncontrado.rol}--${Date.now()}`;
+          localStorage.setItem("token", token);
+
+          onClose();
+
+          Swal.fire({
+            icon: "success",
+            title: "Inicio exitoso",
+            confirmButtonColor: "#F5A623",
+            timer: 1500,
+            showConfirmButton: false,
+          }).then(() => login(usuarioEncontrado));
+
+        } else {
+          Swal.fire({ 
+            icon: "error", 
+            title: "Error", 
+            text: "Correo o contraseña incorrectos",
+            confirmButtonColor: "#F5A623"
+          });
+        }
+
       } else {
-        Swal.fire({ icon: "error", title: "Credenciales incorrectas" });
+        // ── LÓGICA DE REGISTRO ──
+        if (password !== confirmar) {
+          Swal.fire({ icon: "error", title: "Las contraseñas no coinciden" });
+          return;
+        }
+
+        const yaExiste = usuarios.find((u) => u.email === email);
+        if (yaExiste) {
+          Swal.fire({ icon: "error", title: "El correo ya está registrado" });
+          return;
+        }
+
+        const nuevoUsuario = {
+          nombre,
+          email: email.trim(),
+          password: password.trim(),
+          rol: "cliente",
+          telefono: "",
+          empresa: "A&L Compresores y Partes"
+        };
+
+        const postRes = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(nuevoUsuario)
+        });
+
+        if (postRes.ok) {
+          Swal.fire({
+            icon: "success",
+            title: "¡Cuenta creada!",
+            text: "Ya puedes iniciar sesión.",
+            confirmButtonColor: "#F5A623",
+          }).then(() => setIsLogin(true));
+        }
       }
-
-    } else {
-      // ── REGISTRO ──
-      if (password !== confirmar) {
-        Swal.fire({ icon: "error", title: "Las contraseñas no coinciden" });
-        return;
-      }
-      const yaExiste = usuarios.find((u) => u.email === email);
-      if (yaExiste) {
-        Swal.fire({ icon: "error", title: "Ese email ya está registrado" });
-        return;
-      }
-
-      // Crear nuevo usuario con rol "cliente"
-      const nuevoUsuario = { nombre, email, password, rol: "cliente" };
-      const actualizados = [...usuarios, nuevoUsuario];
-
-      // Guardar en localStorage
-      localStorage.setItem("al_usuarios_registrados", JSON.stringify(actualizados));
-
-      Swal.fire({
-        icon: "success",
-        title: "¡Cuenta creada!",
-        text: "Ya puedes iniciar sesión",
-        confirmButtonColor: "#F5A623",
-      }).then(() => setIsLogin(true));
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({ 
+        icon: "error", 
+        title: "Error de conexión", 
+        text: "No es posible conectarse al servidor",
+        confirmButtonColor: "#F5A623"
+      });
     }
   };
 
+  
   return (
     <div
       style={{
@@ -169,13 +199,17 @@ function LoginModal({ onClose, login }) {
           {isLogin && (
             <div className="bg-light border rounded-3 p-2 mt-3" style={{ fontSize: "0.75rem" }}>
               <p className="mb-1 fw-semibold">
-                <i className="bi bi-info-circle"></i> Credenciales de prueba:</p>
-              <p className="mb-0"> 
-                <i className="bi bi-person-circle"></i><strong> Admin:</strong> admin / admin123</p>
-              <p className="mb-0"> 
-                <i className="bi bi-person-badge"> </i><strong> Empleado:</strong>  empleado@al.com / emp123</p>
+                <i className="bi bi-info-circle"></i> Credenciales de acceso:
+              </p>
               <p className="mb-0">
-                <i className="bi bi-cart"> </i><strong> Cliente:</strong>  regístrate arriba</p>
+                <i className="bi bi-person-circle"></i> <strong>Admin:</strong> admin / admin123
+              </p>
+              <p className="mb-0">
+                <i className="bi bi-person-badge"></i> <strong>Empleado:</strong> juan.perez@alcompresores.com / emp123
+              </p>
+              <p className="mb-0">
+                <i className="bi bi-cart"></i> <strong>Cliente:</strong> regístrate arriba
+              </p>
             </div>
           )}
         </div>

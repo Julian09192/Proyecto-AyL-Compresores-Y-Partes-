@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import DashboardHome from "./AdminDashboard/DashboardHome";
 import MiPerfil from "./ClienteDashboard/MiPerfil";
 import Productos from "./ClienteDashboard/Productos";
-import Notificaciones from "./ClienteDashboard/Notificaciones"; 
+import Notificaciones from "./ClienteDashboard/Notificaciones";
+import ControlStock from "./ClienteDashboard/ControlStock";
+import Reportes from "./ClienteDashboard/Reportes";
 import logoMarca from "../../assets/Home/Navbar/logo-ayl.png";
 
 function SeccionVacia({ nombre }) {
@@ -21,10 +23,8 @@ const API_URL = "https://69cdf09333a09f831b7caeb6.mockapi.io/productos/productos
 function ClienteDashboard({ setVista, logout }) {
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
 
-  // 🔥 PRODUCTOS GLOBALES
   const [productos, setProductos] = useState([]);
 
-  // 🔥 TRAER PRODUCTOS
   const obtenerProductos = () => {
     fetch(API_URL)
       .then(res => res.json())
@@ -51,7 +51,6 @@ function ClienteDashboard({ setVista, logout }) {
     { id: "productos", label: "Productos", icon: "bi-archive", badge: null },
     { id: "stock", label: "Control de Stock", icon: "bi-graph-up-arrow", badge: 3 },
     { id: "proveedores", label: "Proveedores", icon: "bi-truck", badge: null },
-    { id: "usuarios", label: "Usuarios", icon: "bi-people", badge: null },
     { id: "reportes", label: "Reportes", icon: "bi-file-earmark-bar-graph", badge: null },
     { id: "notificaciones", label: "Notificaciones", icon: "bi-bell", badge: notificaciones },
     { id: "perfil", label: "Mi Perfil", icon: "bi-gear", badge: null },
@@ -70,7 +69,7 @@ function ClienteDashboard({ setVista, logout }) {
         return <Productos />;
 
       case "stock":
-        return <Productos />;
+        return <ControlStock />;
 
       case "notificaciones":
         return (
@@ -83,8 +82,10 @@ function ClienteDashboard({ setVista, logout }) {
         );
 
       case "proveedores": return <SeccionVacia nombre="Proveedores" />;
-      case "usuarios": return <SeccionVacia nombre="Usuarios" />;
-      case "reportes": return <SeccionVacia nombre="Reportes" />;
+
+      case "reportes":
+        return <Reportes />;
+        
       default: return <DashboardHome />;
     }
   }

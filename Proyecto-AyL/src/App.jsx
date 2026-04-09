@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import Home from "./Pages/Home";
 import Nosotros from "./Pages/Nosotros";
 import Productos from "./Pages/Productos";
-import CheckoutPage from "./Pages/CheckoutPage"; // <--- NUEVO: Importamos la página de pago
+import CheckoutPage from "./Pages/CheckoutPage";
+import ContactoPage from "./Pages/ContactoPage";
 import AdminDashboard from "./components/dashboard/AdminDashboard";
 import ClienteDashboard from "./components/dashboard/ClienteDashboard";
 import "./styles.css";
@@ -153,6 +154,9 @@ const login = (datosUsuario) => {
             vaciarCarrito={vaciarCarrito} 
           />
         );
+
+      case "contactos":
+        return <ContactoPage {...propsComunes} />;
 
       case "admin":
         return <AdminDashboard setVista={setVista} logout={logout} />;

@@ -2,8 +2,12 @@ import { useState, useEffect } from "react";
 import DashboardHome from "./AdminDashboard/DashboardHome";
 import MiPerfil from "./AdminDashboard/MiPerfil";
 import Productos from "./AdminDashboard/Productos";
-import Notificaciones from "./AdminDashboard/Notificaciones"; 
+import Notificaciones from "./AdminDashboard/Notificaciones";
+import Reportes from "./AdminDashboard/Reportes"
+import Usuarios from "./AdminDashboard/Usuarios";
+import ControlStock from "./AdminDashboard/ControlStock";
 import logoMarca from "../../assets/Home/Navbar/logo-ayl.png";
+
 
 function SeccionVacia({ nombre }) {
   return (
@@ -21,10 +25,10 @@ const API_URL = "https://69cdf09333a09f831b7caeb6.mockapi.io/productos/productos
 function AdminDashboard({ setVista, logout }) {
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
 
-  // 🔥 PRODUCTOS GLOBALES
+
   const [productos, setProductos] = useState([]);
 
-  // 🔥 TRAER PRODUCTOS
+
   const obtenerProductos = () => {
     fetch(API_URL)
       .then(res => res.json())
@@ -36,16 +40,16 @@ function AdminDashboard({ setVista, logout }) {
     obtenerProductos();
   }, []);
 
-  // 🔔 CONTADOR DINÁMICO
+
   const notificaciones = productos.filter(p => p.Cantidad < 10).length;
 
-  // 🖼️ FUNCIÓN DE IMÁGENES
+
   const obtenerImagen = (img) => {
     if (!img) return "/src/assets/compresor.jpg";
     return img.startsWith("http") ? img : `/src/assets/${img}`;
   };
 
-  // 👇 MISMO MENU, SOLO CAMBIA EL BADGE DE NOTIFICACIONES
+
   const MENU_ITEMS = [
     { id: "dashboard", label: "Dashboard", icon: "bi-speedometer2", badge: null },
     { id: "productos", label: "Productos", icon: "bi-archive", badge: null },
@@ -70,7 +74,7 @@ function AdminDashboard({ setVista, logout }) {
         return <Productos />;
 
       case "stock":
-        return <Productos />;
+        return <ControlStock />;
 
       case "notificaciones":
         return (
@@ -82,9 +86,16 @@ function AdminDashboard({ setVista, logout }) {
           </div>
         );
 
-      case "proveedores": return <SeccionVacia nombre="Proveedores" />;
-      case "usuarios": return <SeccionVacia nombre="Usuarios" />;
-      case "reportes": return <SeccionVacia nombre="Reportes" />;
+      case "proveedores":
+        return <SeccionVacia nombre="Proveedores" />;
+
+      case "usuarios": return <Usuarios/>;
+
+
+
+      case "reportes":
+        return <Reportes />;
+
       default: return <DashboardHome />;
     }
   }
@@ -173,7 +184,6 @@ function AdminDashboard({ setVista, logout }) {
                 <i className={`bi ${item.icon}`} style={{ fontSize: "1.1rem" }}></i>
                 <span className="flex-grow-1">{item.label}</span>
 
-                {/* 🔔 BADGE DINÁMICO */}
                 {item.badge > 0 && (
                   <span
                     className="badge rounded-pill"

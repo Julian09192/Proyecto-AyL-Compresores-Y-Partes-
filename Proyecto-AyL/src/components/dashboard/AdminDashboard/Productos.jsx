@@ -437,7 +437,7 @@ function Productos() {
                   onChange={handleFile}
                   accept=".pdf,image/*"
                 />
-                <i className={`bi ${archivo ? "bi-file-earmark-check text-success" : "bi-cloud-arrow-up text-muted"} display-4 mb-2`}></i>
+                <i className={`bi ${archivo ? "bi-file-earmark-check text-success" : "bi--arrow-up text-muted"} display-4 mb-2`}></i>
                 <h6 className="fw-bold mb-1">
                   {archivo ? "¡Archivo listo!" : "Arrastra tu factura aquí"}
                 </h6>
