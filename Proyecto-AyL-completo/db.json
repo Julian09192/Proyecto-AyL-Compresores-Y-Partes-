@@ -1,0 +1,70 @@
+{
+  "movimientos": [
+    {
+      "id": "1",
+      "fecha": "2024-12-20",
+      "producto": "Compresor Ingersoll Rand SSR",
+      "sku": "IR-SSR-004",
+      "tipo": "Entrada",
+      "cantidad": "+2",
+      "motivo": "Compra",
+      "detalleMotivo": "Proveedor: Ingersoll Rand",
+      "stockAnterior": 13,
+      "stockNuevo": 15,
+      "usuario": "Liliana Vesga"
+    },
+    {
+      "id": "2",
+      "fecha": "2024-12-20",
+      "producto": "Kit de Mantenimiento KM-500",
+      "sku": "KM-500-002",
+      "tipo": "Salida",
+      "cantidad": "-5",
+      "motivo": "Venta a cliente",
+      "detalleMotivo": "Cliente: Industrias XYZ",
+      "stockAnterior": 13,
+      "stockNuevo": 8,
+      "usuario": "Carlos Rodriguez"
+    },
+    {
+      "id": "3",
+      "fecha": "2024-12-19",
+      "producto": "Filtro Separador FS-200",
+      "sku": "FS-200-003",
+      "tipo": "Entrada",
+      "cantidad": "+20",
+      "motivo": "Compra",
+      "detalleMotivo": "Proveedor: Atlas Copco",
+      "stockAnterior": 5,
+      "stockNuevo": 25,
+      "usuario": "Liliana Vesga"
+    },
+    {
+      "id": "4",
+      "fecha": "2024-12-19",
+      "producto": "Aceite Mobil Rarus SHC 1025",
+      "sku": "MR-1025-004",
+      "tipo": "Salida",
+      "cantidad": "-3",
+      "motivo": "Venta a cliente",
+      "detalleMotivo": "Cliente: Cliente ABC",
+      "stockAnterior": 8,
+      "stockNuevo": 5,
+      "usuario": "Luis Morales"
+    },
+    {
+      "id": "5",
+      "fecha": "2024-12-19",
+      "producto": "Válvula Check VC-25",
+      "sku": "VC-25-005",
+      "tipo": "Ajuste",
+      "cantidad": "+- 2",
+      "motivo": "Ajuste por daño",
+      "detalleMotivo": "Producto dañado durante manejo",
+      "stockAnterior": 3,
+      "stockNuevo": 1,
+      "usuario": "Liliana Vesga"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
