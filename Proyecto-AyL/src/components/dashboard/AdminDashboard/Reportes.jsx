@@ -1,8 +1,27 @@
 import React from "react";
+import Swal from "sweetalert2";
 
 const Reportes = () => {
   const categorias = ["Todas las categorías", "Compresores", "Filtros", "Lubricantes", "Válvulas", "Accesorios", "Herramientas", "Repuestos"];
   const proveedores = ["Todos los proveedores", "Atlas Copco", "Ingersoll Rand", "Sullair", "Kaeser"];
+
+  const imprimirReporte = () => {
+    window.print();
+  };
+
+  const exportarArchivo = (formato) => {
+    Swal.fire({
+      title: `Exportando a ${formato}...`,
+      text: "Generando el reporte detallado, por favor espere.",
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false,
+      timerProgressBar: true,
+      willOpen: () => {
+        Swal.showLoading();
+      }
+    });
+  };
 
   return (
     <div className="p-4 bg-white min-vh-100">
@@ -39,7 +58,6 @@ const Reportes = () => {
 
         .form-select-custom:focus { border-color: #121212; }
 
-        /* Contenedor del gráfico de barras */
         .bar-container {
           height: 300px;
           display: flex;
@@ -62,7 +80,7 @@ const Reportes = () => {
         .bar-item {
           width: 100%;
           max-width: 80px;
-          background: #008cff; /* Azul profesional del reporte */
+          background: #008cff;
           border-radius: 4px 4px 0 0;
           transition: transform 0.3s ease, background 0.2s;
           cursor: pointer;
@@ -80,14 +98,21 @@ const Reportes = () => {
           text-align: center;
           font-weight: 500;
         }
+
+        /* Ocultar elementos específicos al imprimir */
+        @media print {
+          .no-print { display: none !important; }
+          .reporte-card { border: none; box-shadow: none; }
+          .bar-item { -webkit-print-color-adjust: exact; }
+        }
       `}</style>
 
-      <div className="mb-4">
+      <div className="mb-4 no-print">
         <h3 className="fw-bold mb-1">Reportes e Informes</h3>
         <p className="text-muted small">Genera reportes detallados del inventario y movimientos</p>
       </div>
 
-      <div className="reporte-card mb-4">
+      <div className="reporte-card mb-4 no-print">
         <div className="d-flex align-items-center gap-2 mb-4">
           <h6 className="fw-bold mb-0">Configuración del Reporte</h6>
         </div>
@@ -128,19 +153,18 @@ const Reportes = () => {
             <i className="bi bi-funnel me-1"></i> Filtros aplicados: 0 categoría, 0 proveedor
           </span>
           <div className="d-flex gap-2">
-            <button className="btn btn-light border fw-bold px-3 d-flex align-items-center gap-2 small">
+            <button className="btn btn-light border fw-bold px-3 d-flex align-items-center gap-2 small" onClick={() => exportarArchivo('PDF')}>
               <i className="bi bi-file-earmark-pdf"></i> Exportar PDF
             </button>
-            <button className="btn btn-light border fw-bold px-3 d-flex align-items-center gap-2 small">
+            <button className="btn btn-light border fw-bold px-3 d-flex align-items-center gap-2 small" onClick={() => exportarArchivo('Excel')}>
               <i className="bi bi-file-earmark-excel"></i> Exportar Excel
             </button>
-            <button className="btn btn-warning fw-bold px-4 d-flex align-items-center gap-2">
+            <button className="btn btn-warning fw-bold px-4 d-flex align-items-center gap-2" onClick={imprimirReporte}>
               <i className="bi bi-printer"></i> Imprimir
             </button>
           </div>
         </div>
       </div>
-
 
       <div className="reporte-card">
         <div className="d-flex justify-content-between align-items-start mb-5">
@@ -162,7 +186,6 @@ const Reportes = () => {
           <p className="text-muted small mb-4">Distribución actual del inventario</p>
           
           <div className="bar-container">
-            {/* Alturas simuladas basadas en la imagen enviada */}
             {categorias.slice(1).map((cat, idx) => (
               <div key={idx} className="bar-wrapper">
                 <div className="bar-item" style={{ height: `${Math.random() * 100 + 50}px` }}></div>

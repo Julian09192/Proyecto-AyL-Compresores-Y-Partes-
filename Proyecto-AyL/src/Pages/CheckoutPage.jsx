@@ -4,6 +4,11 @@ import Swal from "sweetalert2";
 function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
   const [paso, setPaso] = useState(1); // 1: Datos, 2: Confirmar, 3: Pago, 4: Éxito
 
+  const [nombre, setNombre] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [ciudad, setCiudad] = useState("");
+  const [telefono, setTelefono] = useState("");
+
   const formatearPrecio = (str) => parseInt(str.replace(/\D/g, ""), 10);
   const subtotal = carrito.reduce((acc, item) => acc + (formatearPrecio(item.precio) * item.cantidad), 0);
   const envio = 15000; 
@@ -32,25 +37,31 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
   const PasoDatos = () => (
     <div className="card border-0 shadow-sm p-4 rounded-4">
       <h5 className="fw-bold mb-4">¿A dónde enviamos tu pedido?</h5>
-      <div className="row g-3">
-        <div className="col-12 text-start">
-          <label className="small fw-bold text-muted text-uppercase">Nombre completo</label>
-          <input type="text" className="form-control" placeholder="Juan Pérez" />
+      <form onSubmit={(e) => { e.preventDefault(); setPaso(2); }}>
+        <div className="row g-3">
+          <div className="col-12 text-start">
+            <label className="small fw-bold text-muted text-uppercase">Nombre completo</label>
+            <input type="text" className="form-control" placeholder="Juan Pérez" 
+            value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+          </div>
+          <div className="col-md-8 text-start">
+            <label className="small fw-bold text-muted text-uppercase">Dirección</label>
+            <input type="text" className="form-control" placeholder="Calle 123 #45-67" 
+            value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
+          </div>
+          <div className="col-md-4 text-start">
+            <label className="small fw-bold text-muted text-uppercase">Ciudad</label>
+            <input type="text" className="form-control" placeholder="Bogotá" 
+            value={ciudad} onChange={(e) => setCiudad(e.target.value)} required />
+          </div>
+          <div className="col-12 text-start">
+            <label className="small fw-bold text-muted text-uppercase">Teléfono de contacto</label>
+            <input type="tel" className="form-control" placeholder="300 123 4567" 
+            value={telefono} onChange={(e) => setTelefono(e.target.value)} required />
+          </div>
         </div>
-        <div className="col-md-8 text-start">
-          <label className="small fw-bold text-muted text-uppercase">Dirección</label>
-          <input type="text" className="form-control" placeholder="Calle 123 #45-67" />
-        </div>
-        <div className="col-md-4 text-start">
-          <label className="small fw-bold text-muted text-uppercase">Ciudad</label>
-          <input type="text" className="form-control" placeholder="Bogotá" />
-        </div>
-        <div className="col-12 text-start">
-          <label className="small fw-bold text-muted text-uppercase">Teléfono de contacto</label>
-          <input type="tel" className="form-control" placeholder="300 123 4567" />
-        </div>
-      </div>
-      <button onClick={() => setPaso(2)} className="btn btn-dark w-100 mt-4 py-3 fw-bold">Continuar</button>
+        <button type="submit" className="btn btn-dark w-100 mt-4 py-3 fw-bold">Continuar</button>
+      </form>
     </div>
   );
 
@@ -68,7 +79,7 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
           <span className="fw-bold"><i className="bi bi-geo-alt me-2"></i>Envío a domicilio</span>
           <button className="btn btn-sm btn-link text-primary p-0" onClick={() => setPaso(1)}>Editar</button>
         </div>
-        <p className="small text-muted mb-0">Calle 123 #45-67, Bogotá - Julian</p>
+        <p className="small text-muted mb-0">{direccion}, {ciudad} - {nombre}</p>
       </div>
 
       <div className="text-start mb-4">
@@ -99,15 +110,18 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
       <div className="alert alert-warning small py-2">
         <i className="bi bi-shield-check me-2"></i> Transacción segura encriptada
       </div>
-      <input type="text" className="form-control mb-3" placeholder="0000 0000 0000 0000" />
-      <div className="row g-2 mb-3">
-        <div className="col-8"><input type="text" className="form-control" placeholder="MM/AA" /></div>
-        <div className="col-4"><input type="text" className="form-control" placeholder="CVC" /></div>
-      </div>
-      <button onClick={() => {
+      <form onSubmit={(e) => {
+         e.preventDefault();
          Swal.fire({ title: 'Validando pago...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
          setTimeout(() => { Swal.close(); setPaso(4); }, 2000);
-      }} className="btn btn-dark w-100 py-3 fw-bold">Finalizar Pago</button>
+      }}>
+        <input type="text" className="form-control mb-3" placeholder="0000 0000 0000 0000" required />
+        <div className="row g-2 mb-3">
+          <div className="col-8"><input type="text" className="form-control" placeholder="MM/AA" required /></div>
+          <div className="col-4"><input type="text" className="form-control" placeholder="CVC" required /></div>
+        </div>
+        <button type="submit" className="btn btn-dark w-100 py-3 fw-bold">Finalizar Pago</button>
+      </form>
     </div>
   );
 

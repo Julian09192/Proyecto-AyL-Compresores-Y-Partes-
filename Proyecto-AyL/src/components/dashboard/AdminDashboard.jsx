@@ -89,7 +89,7 @@ function AdminDashboard({ setVista, logout }) {
       case "proveedores":
         return <SeccionVacia nombre="Proveedores" />;
 
-      case "usuarios": return <Usuarios/>;
+      case "usuarios": return <Usuarios />;
 
 
 

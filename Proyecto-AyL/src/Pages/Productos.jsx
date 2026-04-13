@@ -4,10 +4,49 @@ import Footer from "../components/Home/Footer";
 import LoginModal from "../components/LoginModal";
 import CartPanel from "../components/CartPanel";
 import Swal from "sweetalert2";
-import ImgProductos from "../assets/Pages/Productos/ImgProductos.jpg";
-import imagen from "../assets/Pages/Productos//herramienta.jpg";
+
+// --- IMPORTACIÓN DE IMÁGENES SEGÚN TU CARPETA ---
+import ImgProductos from "../assets/imgProductos/imgProductos.jpg";
+import imgHerramienta from "../assets/imgProductos/herramienta.jpg";
+import imgCompresor from "../assets/imgProductos/compresor.jpg";
+import imgAceiteSin from "../assets/imgProductos/Aceite sintetico 5W-40.jpg";
+import imgFiltroAceite from "../assets/imgProductos/Filtro de Aceite W962.jpg";
+import imgFiltroAire from "../assets/imgProductos/Filtro de Aire GA-30.jpg";
+import imgFiltroSep from "../assets/imgProductos/Filtro Separador.jpg";
+import imgLlaveTorque from "../assets/imgProductos/Llave de Torque Neumática.jpg";
+import imgManguera from "../assets/imgProductos/Manguera de Alta Presión 10m.jpg";
+import imgManometro from "../assets/imgProductos/Manómetro de Glicerina.jpg";
+import imgPanel from "../assets/imgProductos/panel.jpg";
+import imgSepAceite from "../assets/imgProductos/separador-de-aceite.jpg";
+import imgSeparador from "../assets/imgProductos/Separador.jpg";
+import imgValvulaAdm from "../assets/imgProductos/Válvula de Admisión IV-20.jpg";
+import imgValvulaRet from "../assets/imgProductos/Válvula de Retención Térmica.jpg";
 
 const CATEGORIAS = ["Todos", "Compresores", "Filtros", "Lubricantes", "Válvulas", "Herramientas", "Accesorios"];
+
+// --- LÓGICA DE DETECCIÓN MEJORADA ---
+const obtenerImagen = (nombre) => {
+  if (!nombre) return imgHerramienta;
+  const n = nombre.toLowerCase();
+  if (n.includes("Aceite") && n.includes("Sintético")) return imgAceiteSin;
+  if (n.includes("filtro") && n.includes("aceite")) return imgFiltroAceite;
+  if (n.includes("filtro") && n.includes("aire")) return imgFiltroAire;
+  if (n.includes("filtro") && n.includes("separador")) return imgFiltroSep;
+  if (n.includes("separador") && n.includes("aceite")) return imgSepAceite;
+  if (n.includes("separador")) return imgSeparador;
+  if (n.includes("válvula") && n.includes("admisión")) return imgValvulaAdm;
+  if (n.includes("válvula") && n.includes("retención")) return imgValvulaRet;
+  if (n.includes("llave") && n.includes("torque")) return imgLlaveTorque;
+  if (n.includes("manguera")) return imgManguera;
+  if (n.includes("manómetro")) return imgManometro;
+  if (n.includes("panel")) return imgPanel;
+  if (n.includes("compresor")) return imgCompresor;
+  if (n.includes("válvula") || n.includes("valvula")) return imgValvulaAdm;
+  if (n.includes("filtro")) return imgFiltroSep;
+  if (n.includes("herramienta") || n.includes("llave") || n.includes("taladro")) return imgHerramienta;
+
+  return imgHerramienta;
+};
 
 function Productos({ setVista, usuario, login, logout, carrito, totalItems, cartOpen, setCartOpen, agregarAlCarrito, cambiarCantidad, eliminarDelCarrito }) {
   const [showModal, setShowModal] = useState(false);
@@ -32,7 +71,6 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
     ? productosApi
     : productosApi.filter((p) => p.Categoria === categoriaActiva);
 
-
   const handleAgregar = (producto) => {
     if (!usuario) {
       Swal.fire({
@@ -43,6 +81,7 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
       }).then(() => setShowModal(true));
       return;
     }
+    
     const precioFormateado = "$" + Number(producto.Precio).toLocaleString('es-CO');
 
     const productoNormalizado = {
@@ -53,7 +92,6 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
       categoria: producto.Categoria 
     };
 
-    console.log("Enviando al carrito:", productoNormalizado);
     agregarAlCarrito(productoNormalizado);
   };
 
@@ -75,6 +113,7 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
         setCartOpen={setCartOpen}
       />
 
+      {/* Hero Section */}
       <section style={{
         backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${ImgProductos})`,
         backgroundSize: "cover",
@@ -128,7 +167,7 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
                     
                     <div className="position-relative overflow-hidden bg-light" style={{ height: "220px" }}>
                       <img 
-                        src={imagen} 
+                        src={obtenerImagen(producto.Nombre)} 
                         alt={producto.Nombre} 
                         style={{ width: "100%", height: "100%", objectFit: "contain", padding: "30px" }}
                       />
@@ -149,10 +188,10 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
                         className="btn btn-outline-dark w-100 mt-3 fw-bold py-2"
                         style={{ borderRadius: "12px", position: "relative", zIndex: 10 }}
                         onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleAgregar(producto);
-                      }}
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAgregar(producto);
+                        }}
                       >
                         Añadir al carrito
                       </button>

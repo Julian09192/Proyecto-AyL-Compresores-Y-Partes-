@@ -4,8 +4,9 @@ import Nosotros from "./Pages/Nosotros";
 import Productos from "./Pages/Productos";
 import CheckoutPage from "./Pages/CheckoutPage";
 import ContactoPage from "./Pages/ContactoPage";
+import ProfilePage from "./Pages/ProfilePage";
 import AdminDashboard from "./components/dashboard/AdminDashboard";
-import ClienteDashboard from "./components/dashboard/ClienteDashboard";
+import EmpleadoDashboard from "./components/dashboard/EmpleadoDashboard";
 import "./styles.css";
 
 function App() {
@@ -14,12 +15,12 @@ function App() {
   const [carrito, setCarrito] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
 
-useEffect(() => {
+  useEffect(() => {
     const usuarioGuardado = localStorage.getItem("al_usuario");
     const carritoGuardado = localStorage.getItem("al_carrito");
 
     if (usuarioGuardado) {
-      try { 
+      try {
         const user = JSON.parse(usuarioGuardado);
         setUsuario(user);
         // Si el usuario ya está logueado y la vista es inicio, lo redirigimos a su panel
@@ -27,8 +28,8 @@ useEffect(() => {
           if (user.rol === "admin") setVista("admin");
           if (user.rol === "empleado") setVista("cliente");
         }
-      } catch { 
-        localStorage.removeItem("al_usuario"); 
+      } catch {
+        localStorage.removeItem("al_usuario");
       }
     }
     if (carritoGuardado) {
@@ -45,15 +46,15 @@ useEffect(() => {
     localStorage.setItem("al_vista", vista);
   }, [vista]);
 
-const login = (datosUsuario) => {
+  const login = (datosUsuario) => {
     setUsuario(datosUsuario);
     localStorage.setItem("al_usuario", JSON.stringify(datosUsuario));
-    
+
     // Redirección inteligente según el rol
     if (datosUsuario.rol === "admin") {
       setVista("admin");
     } else if (datosUsuario.rol === "empleado") {
-      setVista("cliente"); // <--- Esto enviará al usuario al ClienteDashboard
+      setVista("cliente");
     }
   };
 
@@ -69,7 +70,7 @@ const login = (datosUsuario) => {
   // --- FUNCIONES DEL CARRITO ---
 
   const agregarAlCarrito = (producto) => {
-    if (!usuario) return; 
+    if (!usuario) return;
     setCarrito((prev) => {
       const existe = prev.find((item) => item.id === producto.id);
       if (existe) {
@@ -140,29 +141,45 @@ const login = (datosUsuario) => {
     switch (vista) {
       case "inicio":
         return <Home {...propsComunes} />;
+
       case "nosotros":
         return <Nosotros {...propsComunes} />;
+
       case "productos":
         return <Productos {...propsComunes} />;
-      
-      // NUEVO: Caso para mostrar la pantalla de pago
+
       case "checkout":
         return (
-          <CheckoutPage 
-            carrito={carrito} 
-            setVista={setVista} 
-            vaciarCarrito={vaciarCarrito} 
+          <CheckoutPage
+            carrito={carrito}
+            setVista={setVista}
+            vaciarCarrito={vaciarCarrito}
           />
         );
 
+      case "perfil":
+        return (
+          <ProfilePage
+            usuario={usuario}
+            setVista={setVista}
+            volverA={usuario?.rol === "empleado" ? "cliente" : "inicio"}
+          />
+        );
+
+
+
       case "contactos":
         return <ContactoPage {...propsComunes} />;
+
+      case "perfil":
+        return <ProfilePage usuario={usuario} setVista={setVista} />;
 
       case "admin":
         return <AdminDashboard setVista={setVista} logout={logout} />;
 
       case "cliente":
-        return <ClienteDashboard setVista={setVista} logout={logout} />;
+        return <EmpleadoDashboard setVista={setVista} logout={logout} />;
+
       default:
         return <Home {...propsComunes} />;
     }
