@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* Colores */
+  --color-background: #ffffff;
+  --color-foreground: oklch(0.145 0 0);
+  
+  --color-card: #ffffff;
+  --color-card-foreground: oklch(0.145 0 0);
+  
+  --color-popover: oklch(1 0 0);
+  --color-popover-foreground: oklch(0.145 0 0);
+  
+  /* CAMBIO AQUÍ: Ahora tu color primario es el ámbar */
+  --color-primary: #faa307; 
+  --color-primary-foreground: #ffffff;
+  
+  /* CAMBIO AQUÍ: He añadido esta variable para que la uses en el fondo del header */
+  --color-header-bg: #faa307;
+  
+  --color-secondary: oklch(0.95 0.0058 264.53);
+  --color-secondary-foreground: #030213;
+  
+  --color-muted: #ececf0;
+  --color-muted-foreground: #717182;
+  
+  --color-accent: #e9ebef;
+  --color-accent-foreground: #030213;
+  
+  --color-destructive: #d4183d;
+  --color-destructive-foreground: #ffffff;
+  
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-input: transparent;
+  --color-input-background: #f3f3f5;
+  --color-switch-background: #cbced4;
+  --color-ring: #faa307; /* Ajustado para que el borde de enfoque combine */
+
+  /* Radios */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+.dark {
+  --color-background: oklch(0.145 0 0);
+  --color-foreground: oklch(0.985 0 0);
+  --color-border: oklch(0.269 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
