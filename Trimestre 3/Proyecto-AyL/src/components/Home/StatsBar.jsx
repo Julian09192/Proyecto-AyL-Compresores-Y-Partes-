@@ -38,7 +38,6 @@ const STATS = [
   },
 ];
 
-// Hook de contador animado
 function useCounter(target, duration = 1500, active) {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -59,7 +58,6 @@ function StatItem({ stat }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
-  // Activamos el contador cuando el elemento entra en pantalla
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true); },

@@ -5,9 +5,6 @@ import LoginModal from "../components/LoginModal";
 import CartPanel from "../components/CartPanel";
 import CTA from "../components/Home/CTA";
 
-/* ============================================================
-   CONFIGURACIÓN DE DATOS
-   ============================================================ */
 
 const IMAGEN_QUIENES_SOMOS = "/images/Nosotros/mantenimiento.jpg";
 const TOTAL_IMAGENES = 14;
@@ -25,9 +22,7 @@ const BENEFICIOS = [
   { title: "Asesoría Técnica", desc: "No solo vendemos, acompañamos su proceso con personal altamente calificado." }
 ];
 
-/* ============================================================
-   COMPONENTES INTERNOS
-   ============================================================ */
+
 
 const URL_FONDO = "/images/Nosotros/somos.png";
 
@@ -74,7 +69,6 @@ const ContactSection = () => (
     <div className="container">
       <div className="row g-5">
 
-        {/* FORMULARIO */}
         <div className="col-lg-6">
           <h2 className="fw-bold mb-4">Envíanos un mensaje</h2>
 
@@ -99,7 +93,6 @@ const ContactSection = () => (
           </form>
         </div>
 
-        {/* INFO */}
         <div className="col-lg-6">
           <h2 className="fw-bold mb-4">Información de contacto</h2>
 
@@ -130,9 +123,6 @@ const ContactSection = () => (
   </section>
 );
 
-/* ============================================================
-   COMPONENTE PRINCIPAL
-   ============================================================ */
 
 export default function ContactoPage({
   setVista,

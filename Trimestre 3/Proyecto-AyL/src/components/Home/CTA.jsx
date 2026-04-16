@@ -2,7 +2,6 @@ function CTA({ setVista }) {
   return (
     <section style={{ background: "#1a1a1a", padding: "5rem 0", position: "relative", overflow: "hidden" }}>
 
-      {/* Círculos decorativos */}
       <div style={{
         position: "absolute", top: -60, right: -60,
         width: 300, height: 300, borderRadius: "50%",
@@ -18,7 +17,6 @@ function CTA({ setVista }) {
 
       <div className="container text-center" style={{ position: "relative", zIndex: 1 }}>
 
-        {/* Ícono SVG decorativo */}
         <div
           className="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-4"
           style={{ width: 64, height: 64, background: "rgba(245,166,35,0.12)", color: "#F5A623" }}

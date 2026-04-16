@@ -6,7 +6,6 @@ function MiPerfilAdmin({ onLogout }) {
   const [editando, setEditando] = useState(false);
   const [datosEditados, setDatosEditados] = useState({});
 
-  // Cargar datos al montar el componente
   useEffect(() => {
     const usuarioGuardado = localStorage.getItem("usuario");
     if (usuarioGuardado) {
@@ -16,7 +15,6 @@ function MiPerfilAdmin({ onLogout }) {
     }
   }, []);
 
-  // Guardar cambios en el servidor (db.json)
   const guardarCambios = async () => {
     try {
       const response = await fetch(`http://localhost:3001/usuarios/${usuario.id}`, {
@@ -57,7 +55,6 @@ function MiPerfilAdmin({ onLogout }) {
 
   return (
     <div className="p-4">
-      {/* Encabezado */}
       <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
           <h1 className="fw-bold mb-1" style={{ fontSize: "1.3rem" }}>Perfil de Administrador</h1>
@@ -71,7 +68,6 @@ function MiPerfilAdmin({ onLogout }) {
       </div>
 
       <div className="row g-4">
-        {/* Columna izquierda: Datos */}
         <div className="col-lg-8 d-flex flex-column gap-4">
           <div className="bg-white rounded-3 border p-4 shadow-sm">
             <div className="d-flex justify-content-between align-items-start mb-3">
@@ -95,7 +91,6 @@ function MiPerfilAdmin({ onLogout }) {
               )}
             </div>
 
-            {/* Avatar Dinámico con el naranja de Admin */}
             <div className="d-flex align-items-center gap-3 mb-4">
               <div
                 className="d-flex align-items-center justify-content-center rounded-circle text-white fw-bold shadow-sm"
@@ -110,7 +105,6 @@ function MiPerfilAdmin({ onLogout }) {
               </div>
             </div>
 
-            {/* Formulario */}
             <div className="row g-3">
               {[
                 { key: "nombre", label: "Nombre Completo" },
@@ -132,7 +126,6 @@ function MiPerfilAdmin({ onLogout }) {
             </div>
           </div>
 
-          {/* Tarjeta de Seguridad */}
           <div className="bg-white rounded-3 border p-4 shadow-sm">
             <h2 className="fw-bold mb-3" style={{ fontSize: "1rem" }}>
               <i className="bi bi-lock me-2"></i>Seguridad
@@ -147,7 +140,7 @@ function MiPerfilAdmin({ onLogout }) {
           </div>
         </div>
 
-        {/* Columna derecha: Actividad en tiempo real (Simulada) */}
+
         <div className="col-lg-4">
           <div className="bg-white rounded-3 border p-4 h-100 shadow-sm">
             <h2 className="fw-bold mb-3" style={{ fontSize: "1rem" }}>

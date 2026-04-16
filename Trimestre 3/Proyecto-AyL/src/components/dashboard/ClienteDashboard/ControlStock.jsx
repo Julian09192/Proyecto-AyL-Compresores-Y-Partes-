@@ -19,7 +19,6 @@ function ControlStock() {
       .catch((error) => console.error("Error:", error));
   };
 
-  // --- ACTUALIZAR REGISTRO ---
   const editarMovimiento = async (movimiento) => {
     const { value: formValues } = await Swal.fire({
       title: "Actualizar Registro",
@@ -79,7 +78,6 @@ function ControlStock() {
     }
   };
 
-  // --- BORRAR REGISTRO ---
   const eliminarMovimiento = (id) => {
     Swal.fire({
       title: "¿Eliminar?",
@@ -100,7 +98,6 @@ function ControlStock() {
     });
   };
 
-  // --- CREAR REGISTRO ---
   const abrirModalMovimiento = async () => {
     const { value: formValues } = await Swal.fire({
       title: "Nuevo Registro",
@@ -189,7 +186,6 @@ function ControlStock() {
         </div>
       </div>
 
-      {/* FILTROS ORIGINALES */}
       <div className="d-flex gap-2 mb-4">
         {["Todos", "Entrada", "Salida", "Ajuste"].map(t => (
           <button key={t} className={`filtro-btn ${filtroTipo === t ? "active" : ""}`} onClick={() => setFiltroTipo(t)}>{t}</button>

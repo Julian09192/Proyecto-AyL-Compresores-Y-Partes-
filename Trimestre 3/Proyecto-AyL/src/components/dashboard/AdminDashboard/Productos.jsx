@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
 import Notificaciones from "./Notificaciones";
 
-// --- IMPORTACIÓN DE IMÁGENES (Rutas corregidas: ../../../ para llegar a assets) ---
 import imgHerramienta from "../../../assets/imgProductos/herramienta.jpg";
 import imgCompresor from "../../../assets/imgProductos/compresor.jpg";
 import imgAceiteSin from "../../../assets/imgProductos/Aceite sintetico 5W-40.jpg";
@@ -18,7 +17,6 @@ import imgSeparador from "../../../assets/imgProductos/Separador.jpg";
 import imgValvulaAdm from "../../../assets/imgProductos/Válvula de Admisión IV-20.jpg";
 import imgValvulaRet from "../../../assets/imgProductos/Válvula de Retención Térmica.jpg";
 
-// --- CONFIGURACIÓN ---
 const API_URL = "https://69cdf09333a09f831b7caeb6.mockapi.io/productos/productos";
 
 const obtenerImagen = (nombre) => {
@@ -96,7 +94,7 @@ function Productos() {
 
   const abrirModal = async (p = null) => {
     const { value: v } = await Swal.fire({
-      title: p ? "✏️ Editar Producto" : "📦 Nuevo Ingreso",
+      title: p ? "Editar Producto" : "Nuevo Ingreso",
       width: 520,
       background: "#f9f9f9",
       showCancelButton: true,
@@ -124,7 +122,7 @@ function Productos() {
       `,
       preConfirm: () => {
         const nombre = document.getElementById("n").value;
-        if (!nombre) return Swal.showValidationMessage("⚠️ El nombre es obligatorio");
+        if (!nombre) return Swal.showValidationMessage("El nombre es obligatorio");
         return {
           Nombre: nombre,
           Marca: document.getElementById("m").value,
@@ -199,7 +197,6 @@ function Productos() {
         }
       `}</style>
 
-      {/* HEADER */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 className="fw-bold mb-0"><i className="fas fa-box-open me-2"></i> Gestión de Productos</h3>
@@ -223,7 +220,6 @@ function Productos() {
       <Notificaciones productos={productos} />
       <hr className="opacity-10" />
 
-      {/* BARRA DE FILTROS */}
       <div className="d-flex align-items-center gap-2 mb-3 flex-wrap">
         <span className="text-muted small fw-semibold me-1"><i className="bi bi-funnel me-1"></i>Ordenar:</span>
         {filtrosUI.map((f) => (
@@ -237,7 +233,6 @@ function Productos() {
         ))}
       </div>
 
-      {/* LISTADO */}
       {cargando ? (
         <div className="text-center py-5"><div className="spinner-border text-warning"></div></div>
       ) : (
@@ -273,7 +268,6 @@ function Productos() {
         </div>
       )}
 
-      {/* MODAL CARGA INTELIGENTE */}
       {mostrarIA && (
         <>
           <div onClick={() => setMostrarIA(false)} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1050, backgroundColor: "rgba(0, 0, 0, 0.5)" }}></div>

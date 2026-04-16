@@ -73,7 +73,6 @@ function DashboardHome() {
         }
       `}</style>
 
-      {/* HEADER */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h4 className="fw-semibold mb-0">Dashboard</h4>
@@ -93,7 +92,7 @@ function DashboardHome() {
       ) : (
         <div className="row g-3">
 
-          {/* PRODUCTOS */}
+
           <div className="col-md-3">
             <div className="card-minimal">
               <div className="d-flex justify-content-between">
@@ -104,7 +103,6 @@ function DashboardHome() {
             </div>
           </div>
 
-          {/* STOCK */}
           <div className="col-md-3">
             <div className="card-minimal">
               <div className="d-flex justify-content-between">
@@ -115,7 +113,6 @@ function DashboardHome() {
             </div>
           </div>
 
-          {/* VALOR */}
           <div className="col-md-3">
             <div className="card-minimal">
               <div className="d-flex justify-content-between">
@@ -128,7 +125,6 @@ function DashboardHome() {
             </div>
           </div>
 
-          {/* BAJO STOCK */}
           <div className="col-md-3">
             <div className="card-minimal">
               <div className="d-flex justify-content-between">

@@ -59,7 +59,6 @@ function Products() {
     <section className="py-5 bg-light" id="productos" style={{ fontFamily: "'Barlow', sans-serif" }}>
       <div className="container">
         
-        {/* Encabezado */}
         <div className="d-flex justify-content-between align-items-end mb-5 flex-wrap gap-3">
           <div>
             <p className="text-warning fw-bold mb-1 text-uppercase small" style={{ letterSpacing: '2px' }}>Catálogo</p>
@@ -70,13 +69,11 @@ function Products() {
           </button>
         </div>
 
-        {/* Grid de Productos */}
         <div className="row g-4">
           {products.map((p) => (
             <div key={p.name} className="col-12 col-sm-6 col-lg-4">
               <div className="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative">
                 
-                {/* Badge (Destacado, Nuevo, etc.) */}
                 {p.badge && (
                   <span className="badge position-absolute top-0 end-0 m-3 px-3 py-2 rounded-pill shadow-sm" 
                         style={{ backgroundColor: '#F5A623', zIndex: 1, fontSize: '0.7rem' }}>
@@ -84,7 +81,6 @@ function Products() {
                   </span>
                 )}
 
-                {/* Contenedor de Imagen */}
                 <div className="bg-white d-flex align-items-center justify-content-center p-3" 
                      style={{ height: '240px', overflow: 'hidden' }}>
                   <img 
@@ -97,7 +93,6 @@ function Products() {
                   />
                 </div>
 
-                {/* Cuerpo de la Card */}
                 <div className="card-body p-4 d-flex flex-column">
                   <h5 className="fw-bold text-dark mb-1">{p.name}</h5>
                   {p.reference && (

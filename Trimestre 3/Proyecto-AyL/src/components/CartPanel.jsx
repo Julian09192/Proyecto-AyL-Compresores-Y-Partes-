@@ -1,4 +1,4 @@
-// Agregamos setVista a las props
+
 function CartPanel({ carrito, cartOpen, setCartOpen, cambiarCantidad, eliminarDelCarrito, setVista }) {
   if (!cartOpen) return null;
 
@@ -7,10 +7,9 @@ function CartPanel({ carrito, cartOpen, setCartOpen, cambiarCantidad, eliminarDe
     return acc + num * item.cantidad;
   }, 0);
 
-  // Función para manejar el salto al checkout
   const handleIrAlCheckout = () => {
-    setCartOpen(false); // Cerramos el panel lateral
-    setVista("checkout"); // Cambiamos la página principal al checkout
+    setCartOpen(false); 
+    setVista("checkout");
   };
 
   return (
@@ -103,7 +102,7 @@ function CartPanel({ carrito, cartOpen, setCartOpen, cambiarCantidad, eliminarDe
               style={{ background: "#F5A623", fontSize: "0.95rem", cursor: "pointer" }}
               onMouseEnter={(e) => e.currentTarget.style.background = "#E8941A"}
               onMouseLeave={(e) => e.currentTarget.style.background = "#F5A623"}
-              onClick={handleIrAlCheckout} // <--- Accion agregada
+              onClick={handleIrAlCheckout} 
             >
               Proceder al Pago →
             </button>

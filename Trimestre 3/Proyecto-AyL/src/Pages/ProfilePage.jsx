@@ -30,7 +30,7 @@ function ProfilePage({ usuario, setVista, volverA }) {
                 <div className="d-flex align-items-center mb-4">
                     <button
                         className="btn btn-outline-dark border-0 me-3"
-                        onClick={() => setVista(volverA || "inicio")} // Si no le decimos a dónde, vuelve a "inicio"
+                        onClick={() => setVista(volverA || "inicio")} 
                     >
                         <i className="bi bi-arrow-left fs-4"></i>
                     </button>
@@ -40,7 +40,6 @@ function ProfilePage({ usuario, setVista, volverA }) {
                     </div>
                 </div>
 
-                {/* Tarjeta de datos */}
                 <div className="card border-0 shadow-sm p-4 rounded-4">
                     <div className="row g-3">
                         <div className="col-12">

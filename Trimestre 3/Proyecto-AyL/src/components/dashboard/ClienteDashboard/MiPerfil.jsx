@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
 function MiPerfil({ onLogout }) {
-  // 1. Estado para los datos del usuario (inicializados desde localStorage)
   const [usuario, setUsuario] = useState(null);
   const [editando, setEditando] = useState(false);
   const [datosEditados, setDatosEditados] = useState({});
 
   useEffect(() => {
-    // Leer el usuario guardado al iniciar sesión
     const usuarioGuardado = localStorage.getItem("usuario");
     if (usuarioGuardado) {
       const datos = JSON.parse(usuarioGuardado);
@@ -17,11 +15,10 @@ function MiPerfil({ onLogout }) {
     }
   }, []);
 
-  // 2. Función para Guardar Cambios en el db.json
   const guardarCambios = async () => {
     try {
       const response = await fetch(`http://localhost:3001/usuarios/${usuario.id}`, {
-        method: 'PUT', // PUT actualiza todo el objeto
+        method: 'PUT', 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datosEditados)
       });
@@ -38,7 +35,6 @@ function MiPerfil({ onLogout }) {
     }
   };
 
-  // 3. Función Cerrar Sesión
   const manejarCerrarSesion = () => {
     Swal.fire({
       title: '¿Cerrar sesión?',
@@ -50,7 +46,7 @@ function MiPerfil({ onLogout }) {
       if (result.isConfirmed) {
         localStorage.removeItem("usuario");
         localStorage.removeItem("token");
-        if (onLogout) onLogout(); // Llama a la función de logout en App.jsx
+        if (onLogout) onLogout(); 
       }
     });
   };
@@ -59,7 +55,6 @@ function MiPerfil({ onLogout }) {
 
   return (
     <div className="p-4">
-      {/* Encabezado */}
       <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
           <h1 className="fw-bold mb-1" style={{ fontSize: "1.3rem" }}>Mi Perfil</h1>
@@ -99,7 +94,6 @@ function MiPerfil({ onLogout }) {
               )}
             </div>
 
-            {/* Avatar Dinámico */}
             <div className="d-flex align-items-center gap-3 mb-4">
               <div
                 className="d-flex align-items-center justify-content-center rounded-circle text-white fw-bold shadow-sm"
@@ -116,7 +110,6 @@ function MiPerfil({ onLogout }) {
               </div>
             </div>
 
-            {/* Formulario Dinámico */}
             <div className="row g-3">
               {[
                 { key: "nombre", label: "Nombre Completo" },
@@ -139,7 +132,6 @@ function MiPerfil({ onLogout }) {
           </div>
         </div>
 
-        {/* Actividad (Estatica por ahora o consumida de db.json) */}
         <div className="col-lg-4">
           <div className="bg-white rounded-3 border p-4 h-100 shadow-sm">
             <h2 className="fw-bold mb-3" style={{ fontSize: "1rem" }}>

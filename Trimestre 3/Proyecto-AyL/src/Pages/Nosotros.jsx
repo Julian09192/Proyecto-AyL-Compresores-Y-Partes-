@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-// 2. IMPORTACIÓN DE COMPONENTES EXTERNOS
 import Navbar from "../components/Home/Navbar";
 import Footer from "../components/Home/Footer";
 import LoginModal from "../components/LoginModal";
@@ -7,16 +6,13 @@ import CartPanel from "../components/CartPanel";
 import CTA from "../components/Home/CTA";
 
 
-/* ============================================================
-   CONFIGURACIÓN DE DATOS (Rutas de imágenes)
-   ============================================================ */
+
 const IMAGEN_QUIENES_SOMOS = "/images/Nosotros/mantenimiento.jpg";
 
 const TOTAL_IMAGENES = 14;
 
 const IMAGENES_CARRUSEL = Array.from({ length: TOTAL_IMAGENES }, (_, i) => ({
   id: i + 1,
-  // 2. AQUÍ TAMBIÉN: Cambia "nosotros" a "Nosotros"
   src: `/images/Nosotros/trabajo-${i + 1}.png`,
   alt: `Trabajo A&L ${i + 1}`
 }));
@@ -30,32 +26,28 @@ const BENEFICIOS = [
   { title: "Asesoría Técnica", desc: "No solo vendemos, acompañamos su proceso con personal altamente calificado." }
 ];
 
-/* ============================================================
-   COMPONENTES INTERNOS DE LA PÁGINA
-   ============================================================ */
 
 const URL_FONDO = "/images/Nosotros/somos.png";
 const Hero = () => (
   <section
-    className="position-relative overflow-hidden" // Evita que nada salga de aquí
+    className="position-relative overflow-hidden" 
     style={{
       backgroundImage: `url(${URL_FONDO})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-      height: '500px', // O use '80vh' para algo más dinámico
+      height: '500px', 
       marginTop: '0',
     }}
   >
 
-    {/* Agrega una capa de superposición oscura (overlay) para que el texto sea legible */}
     <div className="overlay" style={{
       position: 'absolute',
       top: 0, left: 0, width: '100%', height: '100%',
-      backgroundColor: 'rgba(0,0,0,0.5)', // 50% de opacidad negra
+      backgroundColor: 'rgba(0,0,0,0.5)', 
       zIndex: 1
     }}></div>
 
-    <div className="container text-center py-5 position-relative" style={{ zIndex: 2 }}> {/* 'position-relative' y 'zIndex: 2' para que el texto esté sobre la overlay */}
+    <div className="container text-center py-5 position-relative" style={{ zIndex: 2 }}> 
       <p className=" mb-2 text-light" style={{ letterSpacing: "5px" }}>
         QUIÉNES SOMOS
       </p>
@@ -77,7 +69,6 @@ const InfoSeccion = () => (
     <div className="container">
       <div className="row align-items-center g-5">
         <div className="col-lg-6">
-          {/* Espacio para la imagen a la izquierda */}
           <div
             className="rounded shadow-lg"
             style={{
@@ -189,13 +180,12 @@ const Carousel = () => {
             <div
               className="rounded-4 shadow-lg border border-secondary bg-white"
               style={{
-                height: "180px", // Altura más pequeña para que no se vean "grandes"
+                height: "180px", 
                 backgroundImage: `url(${img.src})`,
-                /* CAMBIO CLAVE: contain para ver la imagen completa */
                 backgroundSize: 'contain',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
-                padding: '15px', // Espacio interno para que no toque los bordes
+                padding: '15px', 
                 transition: 'transform 0.3s ease'
               }}
               onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
@@ -208,18 +198,12 @@ const Carousel = () => {
   );
 };
 
-/* ============================================================
-   PÁGINA PRINCIPAL (Export)
-   ============================================================ */
-export default // ASEGÚRATE DE QUE TENGA LAS LLAVES { } Y EL NOMBRE setVista ADENTRO
+export default 
   function Nosotros({ setVista, usuario, login, logout, carrito, totalItems, cartOpen, setCartOpen, agregarAlCarrito, cambiarCantidad, eliminarDelCarrito }) {
   const [showModal, setShowModal] = useState(false);
-  // ... resto de tu código
   return (
     <div className="nosotros-page">
-      {/* Fuentes externas */}
 
-      {/* 1. Navegación */}
       <Navbar
         onOpenLogin={() => setShowModal(true)}
         vistaActual="nosotros"
@@ -231,7 +215,6 @@ export default // ASEGÚRATE DE QUE TENGA LAS LLAVES { } Y EL NOMBRE setVista AD
 
       />
 
-      {/* 2. Contenido de la página */}
       <main>
         <Hero />
         <InfoSeccion />

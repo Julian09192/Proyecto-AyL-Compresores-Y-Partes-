@@ -1,4 +1,3 @@
-// Iconos SVG inline — profesionales, sin emojis, sin instalar nada
 const FEATURES = [
   {
     titulo: "Repuestos Originales",
@@ -47,7 +46,7 @@ function Features() {
     <section style={{ background: "#f8f8f8", padding: "5rem 0" }}>
       <div className="container">
 
-        {/* Encabezado */}
+
         <div className="text-center mb-5">
           <p className="fw-bold text-uppercase mb-2" style={{ color: "#F5A623", fontSize: "0.8rem", letterSpacing: 2 }}>
             ¿Por qué elegirnos?
@@ -60,7 +59,6 @@ function Features() {
           </p>
         </div>
 
-        {/* Tarjetas */}
         <div className="row g-4">
           {FEATURES.map((f) => (
             <div key={f.titulo} className="col-12 col-sm-6 col-lg-3">
@@ -82,7 +80,6 @@ function Features() {
                   e.currentTarget.style.borderColor = "transparent";
                 }}
               >
-                {/* Ícono */}
                 <div
                   className="d-flex align-items-center justify-content-center rounded-3 mb-4"
                   style={{ width: 56, height: 56, background: "#F5A623", color: "#fff" }}

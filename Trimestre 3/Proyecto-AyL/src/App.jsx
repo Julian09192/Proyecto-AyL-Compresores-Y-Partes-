@@ -23,7 +23,6 @@ function App() {
       try {
         const user = JSON.parse(usuarioGuardado);
         setUsuario(user);
-        // Si el usuario ya está logueado y la vista es inicio, lo redirigimos a su panel
         if (vista === "inicio") {
           if (user.rol === "admin") setVista("admin");
           if (user.rol === "empleado") setVista("cliente");
@@ -50,7 +49,6 @@ function App() {
     setUsuario(datosUsuario);
     localStorage.setItem("al_usuario", JSON.stringify(datosUsuario));
 
-    // Redirección inteligente según el rol
     if (datosUsuario.rol === "admin") {
       setVista("admin");
     } else if (datosUsuario.rol === "empleado") {
@@ -67,7 +65,6 @@ function App() {
     window.location.href = "/";
   };
 
-  // --- FUNCIONES DEL CARRITO ---
 
   const agregarAlCarrito = (producto) => {
     if (!usuario) return;
@@ -96,7 +93,6 @@ function App() {
     setCarrito((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // NUEVO: Función para limpiar el carrito tras la compra
   const vaciarCarrito = () => {
     setCarrito([]);
     localStorage.removeItem("al_carrito");
@@ -104,7 +100,7 @@ function App() {
 
   const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
-  // --- EFECTO BOOTSTRAP (Se mantiene igual) ---
+
   useEffect(() => {
     const links = [
       { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" },

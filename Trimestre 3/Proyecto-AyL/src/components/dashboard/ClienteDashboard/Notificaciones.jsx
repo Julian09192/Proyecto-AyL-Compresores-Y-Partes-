@@ -1,6 +1,5 @@
 import React from "react";
 
-// --- IMPORTACIÓN DE IMÁGENES CORREGIDA (../../../ para salir a src) ---
 import imgHerramienta from "../../../assets/imgProductos/herramienta.jpg";
 import imgCompresor from "../../../assets/imgProductos/compresor.jpg";
 import imgAceiteSin from "../../../assets/imgProductos/Aceite sintetico 5W-40.jpg";

@@ -5,7 +5,6 @@ function Usuarios() {
   const [listaUsuarios, setListaUsuarios] = useState([]);
   const API_URL = "http://localhost:3001/usuarios";
 
-  // Cargar los datos desde db.json al iniciar
   const obtenerUsuarios = async () => {
     try {
       const res = await fetch(API_URL);
@@ -21,7 +20,6 @@ function Usuarios() {
     obtenerUsuarios();
   }, []);
 
-  // Función para cambiar el rol (Uso de PATCH)
   const actualizarRol = async (id, nuevoRol) => {
     try {
       const res = await fetch(`${API_URL}/${id}`, {
@@ -46,7 +44,6 @@ function Usuarios() {
     }
   };
 
-  // Función para eliminar usuario (Uso de DELETE)
   const eliminarUsuario = (id, nombre) => {
     Swal.fire({
       title: `¿Estás seguro?`,

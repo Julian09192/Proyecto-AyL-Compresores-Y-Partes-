@@ -14,12 +14,10 @@ function LoginModal({ onClose, login }) {
     e.preventDefault();
 
     try {
-      // 1. Traemos todos los usuarios para validar
       const response = await fetch(API_URL);
       const usuarios = await response.json();
 
       if (isLogin) {
-        // ── LÓGICA DE LOGIN (Como tu ejemplo) ──
         const usuarioEncontrado = usuarios.find(
           (u) => 
             u.email.trim().toLowerCase() === email.trim().toLowerCase() && 
@@ -27,10 +25,7 @@ function LoginModal({ onClose, login }) {
         );
 
         if (usuarioEncontrado) {
-          // GUARDAR EN LOCALSTORAGE (Igual que tu referencia)
           localStorage.setItem("usuario", JSON.stringify(usuarioEncontrado));
-          
-          // GENERAR Y GUARDAR TOKEN
           const token = `jwt-${usuarioEncontrado.rol}--${Date.now()}`;
           localStorage.setItem("token", token);
 
@@ -54,7 +49,6 @@ function LoginModal({ onClose, login }) {
         }
 
       } else {
-        // ── LÓGICA DE REGISTRO ──
         if (password !== confirmar) {
           Swal.fire({ icon: "error", title: "Las contraseñas no coinciden" });
           return;
@@ -114,7 +108,6 @@ function LoginModal({ onClose, login }) {
     >
       <div className="bg-light shadow-lg p-3" style={{ width: "92%", maxWidth: 390, borderRadius: 24 }}>
 
-        {/* Encabezado */}
         <div className="d-flex justify-content-between align-items-start mb-3">
           <div>
             <h2 className="fw-bold fs-5 mb-1">Acceder a tu cuenta</h2>
@@ -125,7 +118,6 @@ function LoginModal({ onClose, login }) {
           <button className="btn-close" onClick={onClose} />
         </div>
 
-        {/* Pestañas */}
         <div className="bg-secondary bg-opacity-10 rounded-3 p-1 d-flex mb-3">
           {["Iniciar Sesión", "Registrarse"].map((tab, i) => {
             const activo = i === 0 ? isLogin : !isLogin;
@@ -142,7 +134,6 @@ function LoginModal({ onClose, login }) {
           })}
         </div>
 
-        {/* Formulario */}
         <div className="bg-white rounded-4 p-3 border">
           <h3 className="fw-bold mb-1" style={{ fontSize: "1rem" }}>
             {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
@@ -195,23 +186,6 @@ function LoginModal({ onClose, login }) {
             </button>
           </form>
 
-          {/* Credenciales de prueba */}
-          {isLogin && (
-            <div className="bg-light border rounded-3 p-2 mt-3" style={{ fontSize: "0.75rem" }}>
-              <p className="mb-1 fw-semibold">
-                <i className="bi bi-info-circle"></i> Credenciales de acceso:
-              </p>
-              <p className="mb-0">
-                <i className="bi bi-person-circle"></i> <strong>Admin:</strong> admin / admin123
-              </p>
-              <p className="mb-0">
-                <i className="bi bi-person-badge"></i> <strong>Empleado:</strong> juan.perez@alcompresores.com / emp123
-              </p>
-              <p className="mb-0">
-                <i className="bi bi-cart"></i> <strong>Cliente:</strong> regístrate arriba
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>

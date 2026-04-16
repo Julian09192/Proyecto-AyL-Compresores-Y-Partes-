@@ -24,7 +24,6 @@
       "id": "rQTnY8gm4ig"
     }
   ],
-  
   "movimientos": [
     {
       "id": "1",
@@ -91,8 +90,27 @@
       "stockNuevo": 1,
       "usuario": "Liliana Vesga"
     }
+    
   ],
+  "proveedores": [
+    {
+      "id": "1",
+      "nombre": "Ingersoll Rand",
+      "contacto": "Pedro Picapiedra",
+      "email": "pedro@ir.com",
+      "telefono": "3001112233",
+      "categoria": "Compresores"
+    },
+    {
+      "id": "2",
+      "nombre": "Atlas Copco",
+      "contacto": "Wilma Traca",
+      "email": "wilma@atlas.com",
+      "telefono": "3104445566",
+      "categoria": "Filtros"
+    }
+  ], 
 
   "actividad": [],
-  "$schema": "./node_modules/json-server/schema.json"
-}
+    "$schema": "./node_modules/json-server/schema.json"
+  }

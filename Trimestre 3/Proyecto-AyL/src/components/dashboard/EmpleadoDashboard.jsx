@@ -4,6 +4,7 @@ import MiPerfil from "./ClienteDashboard/MiPerfil";
 import Productos from "./ClienteDashboard/Productos";
 import Notificaciones from "./ClienteDashboard/Notificaciones";
 import ControlStock from "./ClienteDashboard/ControlStock";
+import Proveedores from "./ClienteDashboard/Proveedores";
 import Reportes from "./ClienteDashboard/Reportes";
 import logoMarca from "../../assets/Home/Navbar/logo-ayl.png";
 
@@ -56,7 +57,6 @@ function ClienteDashboard({ setVista, logout }) {
     { id: "perfil", label: "Mi Perfil", icon: "bi-gear", badge: null },
   ];
 
-  // --- RENDERIZADO DINÁMICO ---
   function renderContenido() {
     switch (seccionActiva) {
       case "dashboard":
@@ -81,7 +81,7 @@ function ClienteDashboard({ setVista, logout }) {
           </div>
         );
 
-      case "proveedores": return <SeccionVacia nombre="Proveedores" />;
+      case "proveedores": return <Proveedores/>;
 
       case "reportes":
         return <Reportes />;
@@ -93,15 +93,12 @@ function ClienteDashboard({ setVista, logout }) {
   return (
     <div className="d-flex min-vh-100 bg-light">
 
-      {/* ── SIDEBAR ── */}
       <aside
         className="bg-white border-end d-flex flex-column p-3 shadow-sm"
         style={{ width: 260, minWidth: 260, position: "sticky", top: 0, height: "100vh", zIndex: 1000 }}
       >
 
-        {/* Logo Corporativo */}
         <div className="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom">
-          {/* Contenedor del Logo */}
           <div
             className="d-flex align-items-center justify-content-center rounded-3"
             style={{ width: "auto", height: 45, flexShrink: 0 }}
@@ -120,7 +117,6 @@ function ClienteDashboard({ setVista, logout }) {
           </div>
         </div>
 
-        {/* Info del Administrador */}
         <div className="d-flex align-items-center gap-2 bg-light rounded-4 p-3 mb-4">
           <div
             className="d-flex align-items-center justify-content-center bg-white shadow-sm rounded-circle text-dark"
@@ -139,7 +135,6 @@ function ClienteDashboard({ setVista, logout }) {
           </div>
         </div>
 
-        {/* Menú de Navegación */}
         <nav className="d-flex flex-column gap-1 flex-grow-1">
           {MENU_ITEMS.map((item) => {
             const isActive = seccionActiva === item.id;
@@ -174,7 +169,6 @@ function ClienteDashboard({ setVista, logout }) {
                 <i className={`bi ${item.icon}`} style={{ fontSize: "1.1rem" }}></i>
                 <span className="flex-grow-1">{item.label}</span>
 
-                {/* 🔔 BADGE DINÁMICO */}
                 {item.badge > 0 && (
                   <span
                     className="badge rounded-pill"
@@ -192,7 +186,6 @@ function ClienteDashboard({ setVista, logout }) {
           })}
         </nav>
 
-        {/* Botón de Salida */}
         <div className="border-top pt-3">
           <button
             onClick={() => logout()}
@@ -207,7 +200,6 @@ function ClienteDashboard({ setVista, logout }) {
 
       </aside>
 
-      {/* ── CONTENIDO ── */}
       <main className="flex-grow-1 overflow-auto bg-white">
         <div className="animate-fade-in">
           {renderContenido()}

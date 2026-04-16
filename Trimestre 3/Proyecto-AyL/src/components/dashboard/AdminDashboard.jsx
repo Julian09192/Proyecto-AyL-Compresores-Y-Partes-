@@ -7,6 +7,7 @@ import Reportes from "./AdminDashboard/Reportes"
 import Usuarios from "./AdminDashboard/Usuarios";
 import ControlStock from "./AdminDashboard/ControlStock";
 import logoMarca from "../../assets/Home/Navbar/logo-ayl.png";
+import Proveedores from "./AdminDashboard/Proveedores";
 
 
 function SeccionVacia({ nombre }) {
@@ -61,7 +62,6 @@ function AdminDashboard({ setVista, logout }) {
     { id: "perfil", label: "Mi Perfil", icon: "bi-gear", badge: null },
   ];
 
-  // --- RENDERIZADO DINÁMICO ---
   function renderContenido() {
     switch (seccionActiva) {
       case "dashboard":
@@ -87,7 +87,7 @@ function AdminDashboard({ setVista, logout }) {
         );
 
       case "proveedores":
-        return <SeccionVacia nombre="Proveedores" />;
+        return <Proveedores />;
 
       case "usuarios": return <Usuarios />;
 
@@ -103,15 +103,12 @@ function AdminDashboard({ setVista, logout }) {
   return (
     <div className="d-flex min-vh-100 bg-light">
 
-      {/* ── SIDEBAR ── */}
       <aside
         className="bg-white border-end d-flex flex-column p-3 shadow-sm"
         style={{ width: 260, minWidth: 260, position: "sticky", top: 0, height: "100vh", zIndex: 1000 }}
       >
 
-        {/* Logo Corporativo */}
         <div className="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom">
-          {/* Contenedor del Logo */}
           <div
             className="d-flex align-items-center justify-content-center rounded-3"
             style={{ width: "auto", height: 45, flexShrink: 0 }}
@@ -130,13 +127,12 @@ function AdminDashboard({ setVista, logout }) {
           </div>
         </div>
 
-        {/* Info del Administrador */}
         <div className="d-flex align-items-center gap-2 bg-light rounded-4 p-3 mb-4">
           <div
             className="d-flex align-items-center justify-content-center bg-white shadow-sm rounded-circle text-dark"
             style={{ width: 42, height: 42, fontSize: "1.2rem", flexShrink: 0 }}
           >
-            <i className="bi bi-person-badge"></i> {/* <--- Cambia el emoji por este icono */}
+            <i className="bi bi-person-badge"></i> 
           </div>
           <div className="overflow-hidden">
             <div className="fw-bold text-truncate" style={{ fontSize: "0.85rem" }}>Admin A&L</div>
@@ -149,7 +145,6 @@ function AdminDashboard({ setVista, logout }) {
           </div>
         </div>
 
-        {/* Menú de Navegación */}
         <nav className="d-flex flex-column gap-1 flex-grow-1">
           {MENU_ITEMS.map((item) => {
             const isActive = seccionActiva === item.id;
@@ -201,7 +196,7 @@ function AdminDashboard({ setVista, logout }) {
           })}
         </nav>
 
-        {/* Botón de Salida */}
+
         <div className="border-top pt-3">
           <button
             onClick={() => logout()}
@@ -216,7 +211,6 @@ function AdminDashboard({ setVista, logout }) {
 
       </aside>
 
-      {/* ── CONTENIDO ── */}
       <main className="flex-grow-1 overflow-auto bg-white">
         <div className="animate-fade-in">
           {renderContenido()}

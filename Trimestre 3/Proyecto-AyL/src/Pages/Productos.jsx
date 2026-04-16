@@ -5,7 +5,6 @@ import LoginModal from "../components/LoginModal";
 import CartPanel from "../components/CartPanel";
 import Swal from "sweetalert2";
 
-// --- IMPORTACIÓN DE IMÁGENES SEGÚN TU CARPETA ---
 import ImgProductos from "../assets/imgProductos/imgProductos.jpg";
 import imgHerramienta from "../assets/imgProductos/herramienta.jpg";
 import imgCompresor from "../assets/imgProductos/compresor.jpg";
@@ -24,7 +23,6 @@ import imgValvulaRet from "../assets/imgProductos/Válvula de Retención Térmic
 
 const CATEGORIAS = ["Todos", "Compresores", "Filtros", "Lubricantes", "Válvulas", "Herramientas", "Accesorios"];
 
-// --- LÓGICA DE DETECCIÓN MEJORADA ---
 const obtenerImagen = (nombre) => {
   if (!nombre) return imgHerramienta;
   const n = nombre.toLowerCase();
@@ -113,7 +111,6 @@ function Productos({ setVista, usuario, login, logout, carrito, totalItems, cart
         setCartOpen={setCartOpen}
       />
 
-      {/* Hero Section */}
       <section style={{
         backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${ImgProductos})`,
         backgroundSize: "cover",

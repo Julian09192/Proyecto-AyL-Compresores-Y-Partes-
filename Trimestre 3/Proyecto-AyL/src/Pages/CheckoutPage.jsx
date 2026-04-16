@@ -2,7 +2,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 
 function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
-  const [paso, setPaso] = useState(1); // 1: Datos, 2: Confirmar, 3: Pago, 4: Éxito
+  const [paso, setPaso] = useState(1); 
 
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
@@ -14,7 +14,6 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
   const envio = 15000; 
   const total = subtotal + envio;
 
-  // Función para cancelar y regresar
   const manejarCancelar = () => {
     Swal.fire({
       title: '¿Deseas cancelar la compra?',
@@ -32,7 +31,6 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
     });
   };
 
-  // --- COMPONENTES DE PASOS ---
 
   const PasoDatos = () => (
     <div className="card border-0 shadow-sm p-4 rounded-4">
@@ -139,7 +137,6 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
   return (
     <div className="bg-white min-vh-100 py-5">
       <div className="container">
-        {/* Barra de progreso */}
         <div className="d-flex justify-content-center gap-4 mb-5">
           <span className={`small fw-bold ${paso >= 1 ? 'text-dark' : 'text-muted'}`}>1. Datos</span>
           <span className="text-muted">→</span>
@@ -172,7 +169,6 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
                  <span>${total.toLocaleString("es-CO")}</span>
               </div>
 
-              {/* BOTONES DE ACCIÓN ADICIONALES */}
               <button 
                 onClick={() => setVista("productos")} 
                 className="btn btn-outline-secondary w-100 border-0 small mb-2"
