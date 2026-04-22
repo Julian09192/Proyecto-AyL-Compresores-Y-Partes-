@@ -7,16 +7,15 @@ import CartPanel from "../components/CartPanel";
 import CTA from "../components/Home/CTA";
 
 
-/* ============================================================
+/*
    CONFIGURACIÓN DE DATOS (Rutas de imágenes)
-   ============================================================ */
+   */
 const IMAGEN_QUIENES_SOMOS = "/images/Nosotros/mantenimiento.jpg";
 
 const TOTAL_IMAGENES = 14;
 
 const IMAGENES_CARRUSEL = Array.from({ length: TOTAL_IMAGENES }, (_, i) => ({
   id: i + 1,
-  // 2. AQUÍ TAMBIÉN: Cambia "nosotros" a "Nosotros"
   src: `/images/Nosotros/trabajo-${i + 1}.png`,
   alt: `Trabajo A&L ${i + 1}`
 }));
@@ -30,9 +29,9 @@ const BENEFICIOS = [
   { title: "Asesoría Técnica", desc: "No solo vendemos, acompañamos su proceso con personal altamente calificado." }
 ];
 
-/* ============================================================
+/* 
    COMPONENTES INTERNOS DE LA PÁGINA
-   ============================================================ */
+   */
 
 const URL_FONDO = "/images/Nosotros/somos.png";
 const Hero = () => (
@@ -208,18 +207,16 @@ const Carousel = () => {
   );
 };
 
-/* ============================================================
+/*
    PÁGINA PRINCIPAL (Export)
-   ============================================================ */
+ */
 export default // ASEGÚRATE DE QUE TENGA LAS LLAVES { } Y EL NOMBRE setVista ADENTRO
   function Nosotros({ setVista, usuario, login, logout, carrito, totalItems, cartOpen, setCartOpen, agregarAlCarrito, cambiarCantidad, eliminarDelCarrito }) {
   const [showModal, setShowModal] = useState(false);
-  // ... resto de tu código
+  //
   return (
     <div className="nosotros-page">
-      {/* Fuentes externas */}
-
-      {/* 1. Navegación */}
+     
       <Navbar
         onOpenLogin={() => setShowModal(true)}
         vistaActual="nosotros"
@@ -231,7 +228,6 @@ export default // ASEGÚRATE DE QUE TENGA LAS LLAVES { } Y EL NOMBRE setVista AD
 
       />
 
-      {/* 2. Contenido de la página */}
       <main>
         <Hero />
         <InfoSeccion />
