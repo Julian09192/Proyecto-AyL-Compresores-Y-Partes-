@@ -21,13 +21,21 @@ function Navbar({
 
   const navegar = (v) => {
     setVista(v);
-    setIsOpen(false); // cierra el menú al navegar
+    setIsOpen(false);
   };
 
-  return (
-    <nav className="navbar navbar-expand-md bg-white shadow-sm py-2">
-      <div className="container">
+  // Estilos comunes para los links
+  const linkStyle = (v) => ({
+    color: vistaActual === v ? "#ffc107" : "#ffffff",
+    fontWeight: "normal",
+    transition: "color 0.3s ease",
+    textDecoration: "none",
+  });
 
+  return (
+    <nav className="navbar navbar-expand-md bg-black shadow-sm py-2">
+      <div className="container">
+        
         {/* LOGO */}
         <a
           href="#"
@@ -40,33 +48,33 @@ function Navbar({
           <img src={logoMarca} alt="A&L" style={{ height: "45px" }} />
         </a>
 
-        {/* BOTÓN HAMBURGUESA */}
+        {/* BOTÓN HAMBURGUESA (Blanco para fondo negro) */}
         <button
-          className="navbar-toggler"
+          className="navbar-toggler border-0"
           type="button"
-          aria-controls="navbarContent"
-          aria-expanded={isOpen}
-          aria-label="Toggle navigation"
+          style={{ filter: "invert(1)" }} // Esto hace que el icono hamburguesa sea blanco
           onClick={() => setIsOpen(!isOpen)}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
 
         {/* CONTENIDO COLAPSABLE */}
-        <div
-          className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}
-          id="navbarContent"
-        >
-
+        <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}>
+          
           {/* LINKS */}
           <div className="navbar-nav mx-auto text-center gap-2">
             {LINKS.map((link) => (
               <a
                 key={link.vista}
                 href="#"
-                className={`nav-link ${
-                  vistaActual === link.vista ? "active fw-bold" : ""
-                }`}
+                className="nav-link"
+                style={linkStyle(link.vista)}
+                // Simulación de Hover con JS
+                onMouseEnter={(e) => (e.target.style.color = "#ffc107")}
+                onMouseLeave={(e) =>
+                  (e.target.style.color =
+                    vistaActual === link.vista ? "#ffc107" : "#ffffff")
+                }
                 onClick={(e) => {
                   e.preventDefault();
                   navegar(link.vista);
@@ -80,10 +88,10 @@ function Navbar({
 
           {/* DERECHA */}
           <div className="d-flex flex-column flex-md-row align-items-center gap-2 mt-2 mt-md-0">
-
+            
             {/* CARRITO */}
             <button
-              className="btn btn-outline-dark position-relative"
+              className="btn btn-outline-light position-relative"
               onClick={() => setCartOpen(true)}
             >
               <i className="bi bi-cart3"></i>
@@ -104,23 +112,19 @@ function Navbar({
                   {usuario.nombre}
                 </button>
 
-                <button
-                  className="btn btn-dark"
-                  onClick={logout}
-                >
+                <button className="btn btn-outline-danger" onClick={logout}>
                   Cerrar sesión
                 </button>
               </>
             ) : (
               <button
-                className="btn btn-outline-dark"
+                className="btn btn-outline-light"
                 onClick={onOpenLogin}
               >
                 Iniciar sesión
               </button>
             )}
           </div>
-
         </div>
       </div>
     </nav>
