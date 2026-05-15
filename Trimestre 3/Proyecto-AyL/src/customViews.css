@@ -1,0 +1,384 @@
+.contact-view {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.contact-view .display-title {
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 0.5px;
+  line-height: 0.95;
+}
+
+.contact-hero {
+  position: relative;
+  overflow: hidden;
+  background: #f5a623;
+}
+
+.contact-hero__circle,
+.contact-cta__circle {
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.contact-hero__circle--left {
+  left: -7rem;
+  top: 50%;
+  width: 14rem;
+  height: 14rem;
+  transform: translateY(-50%);
+}
+
+.contact-hero__circle--right {
+  right: -4rem;
+  top: -1rem;
+  width: 18rem;
+  height: 18rem;
+}
+
+.contact-kicker {
+  color: #f5a623;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.contact-hero__text {
+  max-width: 48rem;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.contact-hero__title {
+  color: #ffffff;
+  font-size: clamp(3.1rem, 10vw, 5.8rem);
+}
+
+.contact-hero__copy {
+  max-width: 40rem;
+  margin: 1.8rem auto 0;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.contact-btn-brand {
+  background: #f5a623;
+  border: 1px solid #f5a623;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.contact-btn-brand:hover,
+.contact-btn-brand:focus {
+  background: #e8941a;
+  border-color: #e8941a;
+  color: #ffffff;
+}
+
+.contact-btn-outline {
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.contact-btn-outline:hover,
+.contact-btn-outline:focus {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.contact-metrics {
+  background: #1a1a1a;
+}
+
+.contact-metric {
+  padding: 1.6rem 1rem;
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.contact-metric:last-child {
+  border-right: 0;
+}
+
+.contact-metric__value {
+  color: #f5a623;
+  font-size: 2.45rem;
+}
+
+.contact-metric__label {
+  margin-top: 0.55rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.88rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.contact-section {
+  background: #f6f5f2;
+}
+
+.contact-card-box,
+.contact-info-box,
+.contact-office-box,
+.contact-map-box,
+.module-card,
+.module-modal-card {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 1.7rem;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.contact-card-box,
+.contact-info-box,
+.contact-office-box,
+.module-card {
+  padding: 1.5rem;
+}
+
+.contact-map-box {
+  padding: 2rem;
+  background: #f6f5f2;
+}
+
+.contact-soft-input {
+  background: #f1f3f5;
+  border: 0;
+  border-radius: 0.9rem;
+  min-height: 3rem;
+}
+
+.contact-soft-input:focus {
+  background: #f1f3f5;
+  box-shadow: 0 0 0 0.15rem rgba(245, 166, 35, 0.25);
+}
+
+.contact-icon-box {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: #fff4df;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.contact-office-title {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.contact-cta {
+  position: relative;
+  overflow: hidden;
+  background: #f5a623;
+  color: #ffffff;
+}
+
+.contact-cta__circle {
+  right: 1.5rem;
+  top: 1.5rem;
+  width: 8rem;
+  height: 8rem;
+}
+
+.admin-module {
+  color: #1a1a1a;
+}
+
+.admin-module__status {
+  display: inline-flex;
+  border: 1px solid #e9ecef;
+  border-radius: 999px;
+  padding: 0.28rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.admin-module__status.is-success {
+  background: #ecfdf3;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.admin-module__status.is-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.admin-module__status.is-info {
+  background: #f8fafc;
+  color: #475569;
+}
+
+.admin-summary-number {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.admin-soft-input {
+  background: #f1f3f5;
+  border: 0;
+  border-radius: 0.9rem;
+  min-height: 3rem;
+}
+
+.admin-soft-input:focus {
+  background: #f1f3f5;
+  box-shadow: 0 0 0 0.15rem rgba(245, 166, 35, 0.25);
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table-wrap .table {
+  min-width: 1050px;
+  margin-bottom: 0;
+}
+
+.admin-badge-soft,
+.admin-role-chip,
+.admin-status-chip,
+.admin-action {
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.admin-badge-soft {
+  border: 1px solid #dee2e6;
+  padding: 0.28rem 0.8rem;
+}
+
+.admin-role-chip {
+  display: inline-flex;
+  padding: 0.28rem 0.8rem;
+  border: 1px solid #dee2e6;
+  background: #f8f9fa;
+  color: #495057;
+}
+
+.admin-role-chip.is-admin {
+  background: #f5a623;
+  border-color: #f5a623;
+  color: #ffffff;
+}
+
+.admin-status-chip {
+  display: inline-flex;
+  padding: 0.28rem 0.8rem;
+  color: #ffffff;
+}
+
+.admin-status-chip.is-active {
+  background: #f5a623;
+}
+
+.admin-status-chip.is-inactive {
+  background: #dc3545;
+}
+
+.admin-switch {
+  position: relative;
+  width: 2.75rem;
+  height: 1.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: #ced4da;
+}
+
+.admin-switch.is-active {
+  background: #f5a623;
+}
+
+.admin-switch__thumb {
+  position: absolute;
+  top: 0.12rem;
+  left: 0.15rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.admin-switch.is-active .admin-switch__thumb {
+  transform: translateX(1.22rem);
+}
+
+.admin-action {
+  border: 1px solid #dee2e6;
+  padding: 0.35rem 0.85rem;
+  background: #ffffff;
+  color: #495057;
+}
+
+.admin-action:hover {
+  background: #f8f9fa;
+}
+
+.admin-action.is-delete {
+  border-color: #fecdd3;
+  color: #be123c;
+}
+
+.admin-action.is-delete:hover {
+  background: #fff1f2;
+}
+
+.module-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(15, 23, 42, 0.35);
+  overflow-y: auto;
+}
+
+.module-modal-dialog {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.module-modal-card {
+  width: 100%;
+  max-width: 42rem;
+  padding: 1.5rem;
+}
+
+.module-modal-card.is-small {
+  max-width: 36rem;
+}
+
+.module-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: #f1f3f5;
+  color: #495057;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+@media (max-width: 991.98px) {
+  .contact-metric {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .contact-metric:last-child {
+    border-bottom: 0;
+  }
+}
