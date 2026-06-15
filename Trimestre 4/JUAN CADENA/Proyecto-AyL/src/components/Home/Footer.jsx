@@ -1,4 +1,4 @@
-import logoMarca from "../../assets/Home/Navbar/logo-ayl.png";
+const logoMarca = "/iconoPage.png";
 const navLinks = ["Inicio", "Nosotros", "Productos", "Contactos"];
 const productLinks = ["Compresores de Tornillo", "Compresores de Pistón", "Herramientas Neumáticas", "Repuestos", "Aceites y Lubricantes"];
 const contactInfo = [

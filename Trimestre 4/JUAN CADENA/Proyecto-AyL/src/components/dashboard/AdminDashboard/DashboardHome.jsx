@@ -1,29 +1,30 @@
 import { useEffect, useState } from "react";
-// 1. Importar el cliente de Supabase
-
-
 
 function DashboardHome() {
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
 
+  // Modificado: Ahora usa GET hacia tu endpoint local
   const obtenerProductos = async () => {
-    setCargando(true);
-    try {
-      // 2. Cambiar fetch por consulta a Supabase
-      const { data, error } = await supabase
-        .from('productos')
-        .select('*');
-      
-      if (error) throw error;
-      setProductos(data || []);
-    } catch (error) {
-      console.error("Error al obtener productos:", error);
-      setProductos([]);
-    } finally {
-      setCargando(false);
+  setCargando(true);
+  try {
+    // Usamos la URL que confirmaste que sí funciona
+    const respuesta = await fetch("http://localhost:3001/productos"); 
+    
+    if (!respuesta.ok) {
+      throw new Error(`Error en la petición: ${respuesta.status}`);
     }
-  };
+    const data = await respuesta.json();
+    
+    // Guardamos los datos en el estado
+    setProductos(Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.error("Error al obtener productos:", error);
+    setProductos([]);
+  } finally {
+    setCargando(false);
+  }
+};
 
   useEffect(() => {
     obtenerProductos();
@@ -33,24 +34,24 @@ function DashboardHome() {
   const totalProductos = productos.length;
 
   // 2. Stock total (solo de productos activos)
-  // Ajustado a: p.stock_total (minúsculas)
+  // CORRECCIÓN: Se cambió p.stock_total por p.stock
   const totalStock = productos.reduce(
-    (acc, p) => acc + (!p.suspendido ? Number(p.stock_total || 0) : 0),
+    (acc, p) => acc + (!p.suspendido ? Number(p.stock || 0) : 0),
     0
   );
 
   // 3. Valor monetario del inventario (solo de productos activos)
-  // Ajustado a: p.precio y p.stock_total (minúsculas)
+  // CORRECCIÓN: Se cambió p.stock_total por p.stock
   const valorInventario = productos.reduce(
     (acc, p) =>
-      acc + (!p.suspendido ? Number(p.precio || 0) * Number(p.stock_total || 0) : 0),
+      acc + (!p.suspendido ? Number(p.precio || 0) * Number(p.stock || 0) : 0),
     0
   );
 
   // 4. Productos con stock crítico (menos de 10 unidades, no suspendidos)
-  // Ajustado a: p.stock_total
+  // CORRECCIÓN: Se cambió p.stock_total por p.stock
   const bajoStock = productos.filter(
-    (p) => !p.suspendido && Number(p.stock_total) < 10
+    (p) => !p.suspendido && Number(p.stock) < 10
   ).length;
 
   return (
@@ -89,7 +90,7 @@ function DashboardHome() {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h4 className="fw-semibold mb-0">Dashboard</h4>
-          <span className="text-muted small">Resumen de operaciones en tiempo real (Supabase)</span>
+          <span className="text-muted small">Resumen de operaciones en tiempo real</span>
         </div>
 
         <button className="btn btn-light border" onClick={obtenerProductos}>
@@ -164,4 +165,4 @@ function DashboardHome() {
   );
 }
 
-export default DashboardHome;
+export default DashboardHome; 

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import DashboardHome from "./AdminDashboard/DashboardHome";
-import MiPerfil from "./ClienteDashboard/MiPerfil";
-import Productos from "./ClienteDashboard/Productos";
-import Notificaciones from "./ClienteDashboard/Notificaciones";
-import ControlStock from "./ClienteDashboard/ControlStock";
-import Reportes from "./ClienteDashboard/Reportes";
-import logoMarca from "../../assets/Home/Navbar/logo-ayl.png";
+import DashboardHome from "./Empleado/DashboardHome";
+import MiPerfil from "./Empleado/MiPerfil";
+import Productos from "./Empleado/Productos";
+import Notificaciones from "./Empleado/Notificaciones";
+import ControlStock from "./Empleado/ControlStock";
+import Reportes from "./Empleado/Reportes";
+const logoMarca = "/iconoPage.png";
 
 function SeccionVacia({ nombre }) {
   return (

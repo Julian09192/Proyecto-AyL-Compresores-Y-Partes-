@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
 import db from "./config/db.js";
+import jwt from "jsonwebtoken"; // <--- AGREGADO
 
 const app = express();
+const JWT_SECRET = "A&L_SECRET_KEY_2024"; // <--- AGREGADO
 
 /*
   =========================
@@ -59,6 +61,31 @@ app.get("/usuarios", (req, res) => {
 
 });
 
+app.post("/usuarios", (req, res) => {
+  const { usuario, correo, password_hash, rol } = req.body;
+  const sql = "INSERT INTO usuario (usuario, correo, password_hash, rol) VALUES (?, ?, ?, ?)";
+  
+  db.query(sql, [usuario, correo, password_hash, rol || 'cliente'], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: "Usuario creado con éxito", id: result.insertId });
+  });
+});
+
+
+
+app.get('/movimientos-stock', (req, res) => {
+  const query = "SELECT * FROM stock_movimiento ORDER BY creado_en DESC";
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error en MySQL:", err);
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(result);
+  });
+});
+
+
 /*
   =========================
   OBTENER PRODUCTOS
@@ -94,80 +121,32 @@ app.get("/productos", (req, res) => {
   CREAR PRODUCTO
   =========================
 */
-app.post("/productos", (req, res) => {
+app.post('/productos', (req, res) => {
+  const p = req.body;
+  
+  const queryProducto = `
+    INSERT INTO productos (tipo, nombre, caracteristicas, precio, marca, categoria_vehiculo, codigo_interno, stock, imagen_url, imagen_public_id, id_bodega) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  const {
-    tipo,
-    nombre,
-    caracteristicas,
-    precio,
-    marca,
-    categoria_vehiculo,
-    codigo_interno,
-    stock,
-    id_bodega,
-    ultimo_usuario_id,
-    imagen_url,
-    imagen_public_id
-  } = req.body;
+  const valuesProducto = [p.tipo, p.nombre, p.caracteristicas, p.precio, p.marca, p.categoria_vehiculo, p.codigo_interno, p.stock, p.imagen_url, p.imagen_public_id, p.id_bodega];
 
-  const sql = `
-    INSERT INTO productos (
-      tipo,
-      nombre,
-      marca,
-      caracteristicas,
-      stock,
-      precio,
-      codigo_interno,
-      categoria_vehiculo,
-      imagen_url,
-      imagen_public_id,
-      suspendido,
-      id_bodega,
-      ultimo_usuario_id
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+  db.query(queryProducto, valuesProducto, (err, result) => {
+    if (err) return res.status(500).json(err);
 
-  db.query(
-    sql,
-    [
-      tipo || null,
-      nombre || null,
-      marca || null,
-      caracteristicas || null,
-      Number(stock) || 0,
-      Number(precio) || 0,
-      codigo_interno || null,
-      categoria_vehiculo || null,
-      imagen_url || null,
-      imagen_public_id || null,
-      0,
-      Number(id_bodega) || 1,
-      Number(ultimo_usuario_id) || 1
-    ],
-    (err, result) => {
+    const nuevoIdProducto = result.insertId;
 
-      if (err) {
+    const queryMovimiento = `
+      INSERT INTO stock_movimiento (id_producto, tipo_movimiento, cantidad, nota, referencia) 
+      VALUES (?, 'entrada', ?, 'Carga inicial desde inventario', 'SISTEMA')`;
 
-        console.log(err);
-
-        return res.status(500).json({
-          error: err.message
-        });
-
+    db.query(queryMovimiento, [nuevoIdProducto, p.stock], (errMov) => {
+      if (errMov) {
+        console.error("Error al crear movimiento:", errMov);
       }
-
-      res.json({
-        message: "Producto creado correctamente"
-      });
-
-    }
-  );
-
+      res.json({ message: "Producto y movimiento creados", id: nuevoIdProducto });
+    });
+  });
 });
-
 /*
   =========================
   ACTUALIZAR PRODUCTO
@@ -190,6 +169,34 @@ app.put("/productos/:id", (req, res) => {
     imagen_public_id,
     suspendido
   } = req.body;
+
+  
+  app.put("/usuarios/:id", (req, res) => {
+  const { id } = req.params;
+  const { rol, suspendido } = req.body;
+
+  // Si se envía la propiedad suspendido
+  if (suspendido !== undefined) {
+    const sql = "UPDATE usuario SET suspendido = ? WHERE id_usuario = ?";
+    db.query(sql, [suspendido, id], (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      return res.json({ message: "Estado del usuario actualizado" });
+    });
+    return;
+  }
+
+  // Si se envía la propiedad rol (por si cambias el select en el futuro)
+  if (rol !== undefined) {
+    const sql = "UPDATE usuario SET rol = ? WHERE id_usuario = ?";
+    db.query(sql, [rol, id], (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      return res.json({ message: "Rol actualizado" });
+    });
+    return;
+  }
+
+  res.status(400).json({ error: "No se proporcionaron datos para actualizar" });
+});
 
   /*
     ACTUALIZAR SOLO ESTADO
@@ -378,17 +385,30 @@ app.get("/queries/pedidos-cliente/:id_usuario", (req, res) => {
   });
 });
 
+app.post("/movimientos-stock", (req, res) => {
+  const { id_producto, cantidad, tipo_movimiento, id_usuario, nota } = req.body;
 
+  const sql = `
+    INSERT INTO stock_movimiento (id_producto, cantidad, tipo_movimiento, id_usuario, nota, creado_en)
+    VALUES (?, ?, ?, ?, ?, NOW())
+  `;
 
-/* 
-  ===========================================================
+  db.query(sql, [id_producto, cantidad, tipo_movimiento, id_usuario, nota], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: "Movimiento registrado en el historial" });
+  });
+});
+
+/* ===========================================================
   CONSULTAS TRANSFORMADAS A GET (Path & Query Params)
   ===========================================================
 */
 
 /**
  * 1. OBTENER STOCK ESPECÍFICO (Path: ID)
- * Se usa Path porque solo necesitamos el identificador del producto.
  */
 app.get("/productos/:id/stock", (req, res) => {
   const { id } = req.params;
@@ -403,7 +423,6 @@ app.get("/productos/:id/stock", (req, res) => {
 
 /**
  * 2. CONSULTAR ROL DE USUARIO (Path: ID)
- * Consulta simple por ID.
  */
 app.get("/usuarios/:id/rol", (req, res) => {
   const { id } = req.params;
@@ -416,14 +435,11 @@ app.get("/usuarios/:id/rol", (req, res) => {
 });
 
 /**
- * 3. BUSCAR CLIENTES POR CRITERIOS (Query: Datos extensos)
- * Se usa Query Params porque la consulta puede ser más compleja 
- * (ej: /clientes/buscar?telefono=123&direccion=calle)
+ * 3. BUSCAR CLIENTES POR CRITERIOS (Query)
  */
 app.get("/clientes/buscar", (req, res) => {
   const { telefono, direccion } = req.query;
   
-  // Construcción dinámica simple
   let sql = "SELECT * FROM cliente WHERE 1=1";
   const params = [];
 
@@ -456,10 +472,7 @@ app.get("/ordenes/:id/estado", (req, res) => {
 });
 
 /**
- * 5. CONSULTAR PRODUCTOS POR BODEGA (Query: Filtros múltiples)
- * Ideal para cuando necesitas filtrar productos que pertenecen a una bodega 
- * específica pero quieres añadir más datos en la consulta.
- * Ejemplo: /productos/ubicacion?id_bodega=2&marca=Toyota
+ * 5. CONSULTAR PRODUCTOS POR BODEGA (Query)
  */
 app.get("/productos/filtro-ubicacion", (req, res) => {
   const { id_bodega, marca, tipo } = req.query;
@@ -486,6 +499,45 @@ app.get("/productos/filtro-ubicacion", (req, res) => {
   });
 });
 
+/*
+  =========================
+  RUTA DE LOGIN (NUEVA AGREGADA)
+  =========================
+*/
+app.post("/login-local", (req, res) => {
+  const { email, password } = req.body;
+
+  const sql = "SELECT * FROM usuario WHERE correo = ?";
+  
+  db.query(sql, [email], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    
+    if (result.length > 0) {
+      const usuario = result[0];
+
+      if (usuario.password_hash === password) {
+
+        const token = jwt.sign(
+          { id: usuario.id_usuario, rol: usuario.rol, nombre: usuario.usuario },
+          JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+
+        return res.json({
+          success: true,
+          token: token,
+          usuario: {
+            id: usuario.id_usuario,
+            nombre: usuario.usuario,
+            email: usuario.correo,
+            rol: usuario.rol 
+          }
+        });
+      }
+    }
+    res.status(401).json({ success: false, message: "Correo o contraseña incorrectos" });
+  });
+});
 /*
   =========================
   PUERTO

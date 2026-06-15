@@ -150,7 +150,7 @@ function Productos() {
                     input.type = "file";
                     input.accept = "image/*";
                     input.onchange = (e) => {
-                        const file = e.target.files[0];
+                        const file = e.target.files;
                         if (file) {
                             archivoSeleccionado = file;
                             const reader = new FileReader();
@@ -194,7 +194,6 @@ function Productos() {
             });
 
             try {
-                // 1. Manejo de imagen con Cloudinary
                 let urlFinal = p?.imagen_url || null;
                 let publicIdFinal = p?.imagen_public_id || null;
 
@@ -206,7 +205,6 @@ function Productos() {
                     }
                 }
 
-                // 2. Construcción del objeto para el Backend
                 const dataFinal = {
                     tipo: formValues.tipo,
                     nombre: formValues.nombre,
@@ -222,7 +220,6 @@ function Productos() {
                     ultimo_usuario_id: 1
                 };
 
-                // 3. Petición Fetch (POST o PUT)
                 const response = await fetch(p ? `${API_URL}/${p.id}` : API_URL, {
                     method: p ? "PUT" : "POST",
                     headers: { "Content-Type": "application/json" },
@@ -230,6 +227,9 @@ function Productos() {
                 });
 
                 if (!response.ok) throw new Error("Error en la respuesta de la API");
+
+                // >>> LINEA CLAVE: Avisamos a Control de Stock que hubo un cambio <<<
+                window.dispatchEvent(new Event("nuevoProductoStock"));
 
                 await leíLosProductos();
                 Swal.fire("Éxito", p ? "Producto actualizado" : "Producto creado", "success");

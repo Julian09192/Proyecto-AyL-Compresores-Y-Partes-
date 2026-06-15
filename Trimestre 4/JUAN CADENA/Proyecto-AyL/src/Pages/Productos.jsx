@@ -1,335 +1,340 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../../supabaseClient";
 import Navbar from "../components/Home/Navbar";
 import Footer from "../components/Home/Footer";
-import LoginModal from "../components/LoginModal";
-import CartPanel from "../components/CartPanel";
-import Swal from "sweetalert2";
+import LoginModal from "../components/Login/LoginModal";
 
-const CATEGORIAS = ["Todos", "Aceite", "Compresores", "Filtros", "Lubricantes", "Válvulas", "Herramientas", "Accesorios"];
-const API_URL = "http://localhost:3001/productos";
+const TIPOS_PRINCIPALES = ["Todos", "Filtros", "Lubricantes", "Compresores", "Válvulas", "Herramientas", "Accesorios", "Otros"];
 
-// ─── Tarjeta de producto extraída como componente ─────────────────────────────
-function ProductCard({ producto, onAgregar }) {
-  const [hovered, setHovered] = useState(false);
+const SUBTIPOS_POR_TIPO = {
+  Filtros: ["Todos", "Separador", "Aceite", "Aire", "Otros"],
+  Lubricantes: ["Todos", "Cuarto", "Galon", "Garrafa", "Otros"]
+};
 
-  return (
-    <div
-      className="col-sm-6 col-lg-4 mb-4" // Se agregó mb-4 para espaciado
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div
-        className="card h-100 border-0"
-        style={{
-          borderRadius: "16px",
-          overflow: "hidden",
-          boxShadow: hovered
-            ? "0 12px 32px rgba(0,0,0,0.12)"
-            : "0 2px 8px rgba(0,0,0,0.06)",
-          transition: "box-shadow 0.25s ease, transform 0.25s ease",
-          transform: hovered ? "translateY(-4px)" : "none",
-        }}
-      >
-        <div
-          className="position-relative bg-white"
-          style={{ height: "220px", overflow: "hidden" }}
-        >
-          {/* ✅ Ajuste: imagen_url en minúscula */}
-          {producto.imagen_url ? (
-            <img
-              src={producto.imagen_url}
-              alt={producto.nombre}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                padding: "24px",
-                transition: "transform 0.3s ease",
-                transform: hovered ? "scale(1.04)" : "scale(1)",
-              }}
-            />
-          ) : (
-            <div
-              className="d-flex align-items-center justify-content-center h-100 text-muted"
-              style={{ fontSize: "2rem" }}
-            >
-              📦
-            </div>
-          )}
+const obtenerTipoPrincipal = (producto) => {
+  const texto = `${producto.nombre || ""} ${producto.descripcion || ""} ${producto.referencia_interna || ""}`.toLowerCase();
+  if (texto.includes("filtro")) return "Filtros";
+  if (texto.includes("lubricante") || texto.includes("aceite") || texto.includes("galon") || texto.includes("galón") || texto.includes("garrafa")) return "Lubricantes";
+  if (texto.includes("compresor")) return "Compresores";
+  if (texto.includes("válvula") || texto.includes("valvula")) return "Válvulas";
+  if (texto.includes("herramienta")) return "Herramientas";
+  if (texto.includes("accesorio")) return "Accesorios";
+  return "Otros";
+};
 
-          {/* Badge de categoría - ✅ Ajuste: tipo en minúscula */}
-          <span
-            className="position-absolute top-0 start-0 m-2 badge"
-            style={{
-              backgroundColor: "#FFF3CD",
-              color: "#856404",
-              fontWeight: 600,
-              fontSize: "0.7rem",
-              borderRadius: "8px",
-              padding: "4px 10px",
-              textTransform: "capitalize"
-            }}
-          >
-            {producto.tipo}
-          </span>
+const obtenerSubtipo = (producto, tipoPrincipal) => {
+  const texto = `${producto.nombre || ""} ${producto.descripcion || ""} ${producto.referencia_interna || ""}`.toLowerCase();
+  if (tipoPrincipal === "Filtros") {
+    if (texto.includes("separador")) return "Separador";
+    if (texto.includes("aceite")) return "Aceite";
+    if (texto.includes("aire")) return "Aire";
+    return "Otros";
+  }
+  if (tipoPrincipal === "Lubricantes") {
+    if (texto.includes("cuarto")) return "Cuarto";
+    if (texto.includes("galon") || texto.includes("galón")) return "Galon";
+    if (texto.includes("garrafa")) return "Garrafa";
+    return "Otros";
+  }
+  return "Otros";
+};
 
-          <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              padding: "12px",
-              background: "linear-gradient(transparent, rgba(0,0,0,0.65))",
-              opacity: hovered ? 1 : 0,
-              transition: "opacity 0.25s ease",
-              pointerEvents: hovered ? "auto" : "none",
-            }}
-          >
-            <button
-              className="btn w-100 fw-bold"
-              style={{
-                backgroundColor: "#F5A623",
-                color: "#fff",
-                border: "none",
-                borderRadius: "10px",
-                fontSize: "0.85rem",
-                padding: "8px",
-              }}
-              onClick={() => onAgregar(producto)}
-            >
-              + Añadir al carrito
-            </button>
-          </div>
-        </div>
+const optimizarUrlCloudinary = (url, opciones = {}) => {
+  if (!url || !url.includes("cloudinary.com")) return url;
 
-        <div className="card-body p-3" style={{ backgroundColor: "#fff" }}>
-          {/* ✅ Ajuste: nombre en minúscula */}
-          <p
-            className="mb-1 text-truncate"
-            title={producto.nombre}
-            style={{ fontWeight: 600, fontSize: "0.9rem", color: "#1a1a1a" }}
-          >
-            {producto.nombre}
-          </p>
+  const {
+    width = 500,       
+    quality = "auto",  
+    format = "auto",   
+  } = opciones;
 
-          <div className="d-flex align-items-center justify-content-between mt-2">
-            {/* ✅ Ajuste: precio en minúscula */}
-            <span style={{ fontSize: "1.2rem", fontWeight: 700, color: "#1a1a1a" }}>
-              ${Number(producto.precio).toLocaleString("es-CO")}
-            </span>
-            <button
-              className="btn btn-sm d-lg-none"
-              style={{
-                backgroundColor: "#F5A623",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                fontSize: "0.75rem",
-              }}
-              onClick={() => onAgregar(producto)}
-            >
-              Agregar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+  const partes = url.split("/upload/");
+  if (partes.length !== 2) return url;
 
-// ─── Skeleton loader (Igual al anterior) ──────────────────────────────────────
-function SkeletonCard() {
-  return (
-    <div className="col-sm-6 col-lg-4 mb-4">
-      <div
-        className="card border-0"
-        style={{
-          height: "320px",
-          borderRadius: "16px",
-          background: "linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%)",
-          backgroundSize: "200% 100%",
-          animation: "shimmer 1.4s infinite",
-        }}
-      />
-    </div>
-  );
-}
+  const transformaciones = `w_${width},q_${quality},f_${format},c_limit`;
+  return `${partes[0]}/upload/${transformaciones}/${partes[1]}`;
+};
 
-// ─── Componente principal ─────────────────────────────────────────────────────
-function Productos({
-  setVista, usuario, login, logout,
-  carrito, totalItems, cartOpen, setCartOpen,
-  agregarAlCarrito, cambiarCantidad, eliminarDelCarrito,
-}) {
-  const [showModal, setShowModal] = useState(false);
-  const [categoriaActiva, setCategoriaActiva] = useState("Todos");
-  const [busqueda, setBusqueda] = useState("");
-  const [orden, setOrden] = useState("relevancia");
-  const [productosApi, setProductosApi] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+function MiniCarruselCatalog({ imagenes = [], nombreProducto }) {
+  const [indexActual, setIndexActual] = useState(0);
+  const imgUrl = optimizarUrlCloudinary(imagenes[indexActual]?.imagen_url || "https://res.cloudinary.com/ddyrgkdxq/image/upload/v1780240514/IMG_Productos.webp", { width: 500 });
 
-  useEffect(() => {
-    const obtenerProductos = async () => {
-      try {
-        const res = await fetch(API_URL);
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-        const data = await res.json();
-        const baseDatos = Array.isArray(data) ? data : (data.productos || []);
-        // ✅ Ajuste: suspendido en minúscula
-        setProductosApi(baseDatos.filter((p) => Number(p.suspendido) === 0));
-      } catch (err) {
-        console.error("Error al cargar productos:", err);
-        setError("No pudimos cargar los productos.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    obtenerProductos();
-  }, []);
+  const anteriorImagen = (e) => {
+    e.stopPropagation();
+    setIndexActual((prev) => (prev === 0 ? imagenes.length - 1 : prev - 1));
+  };
 
-  const productosFiltrados = useMemo(() => {
-    // ✅ Ajuste: tipo en minúscula para el filtro
-    let lista = categoriaActiva === "Todos"
-      ? productosApi
-      : productosApi.filter((p) => p.tipo?.toLowerCase() === categoriaActiva.toLowerCase());
-
-    if (busqueda.trim()) {
-      const q = busqueda.toLowerCase();
-      // ✅ Ajuste: nombre y tipo en minúscula
-      lista = lista.filter(
-        (p) =>
-          p.nombre?.toLowerCase().includes(q) ||
-          p.tipo?.toLowerCase().includes(q)
-      );
-    }
-
-    // ✅ Ajuste: precio en minúscula
-    if (orden === "menor") lista = [...lista].sort((a, b) => Number(a.precio) - Number(b.precio));
-    if (orden === "mayor") lista = [...lista].sort((a, b) => Number(b.precio) - Number(a.precio));
-
-    return lista;
-  }, [productosApi, categoriaActiva, busqueda, orden]);
-
-  const handleAgregar = (producto) => {
-    if (!usuario) {
-      Swal.fire({
-        icon: "info",
-        title: "Inicia sesión",
-        text: "Regístrate para gestionar tus compras.",
-        confirmButtonColor: "#F5A623",
-      }).then(() => setShowModal(true));
-      return;
-    }
-
-    agregarAlCarrito({
-      ...producto,
-      id: producto.id,
-      nombre: producto.nombre,
-      precio: Number(producto.precio),
-      categoria: producto.tipo,
-    });
+  const gSiguienteImagen = (e) => {
+    e.stopPropagation();
+    setIndexActual((prev) => (prev === imagenes.length - 1 ? 0 : prev + 1));
   };
 
   return (
-    <div style={{ backgroundColor: "#F4F4F4", minHeight: "100vh" }}>
-      <Navbar
-        onOpenLogin={() => setShowModal(true)}
-        vistaActual="productos"
-        {...{ setVista, usuario, logout, totalItems, setCartOpen }}
-      />
+    <div className="position-relative overflow-hidden group-carrusel" style={{ height: "180px", backgroundColor: "#fff" }}>
+      <div className="p-3 text-center bg-white d-flex align-items-center justify-content-center h-100">
+        <img
+          src={imgUrl}
+          className="img-fluid h-100 object-fit-contain"
+          alt={`${nombreProducto} - vista ${indexActual + 1}`}
+          loading="lazy"
+          onMouseEnter={() => {
+            if (imagenes.length > 1) {
+              const nextIdx = (indexActual + 1) % imagenes.length;
+              const img = new Image();
+              img.src = optimizarUrlCloudinary(imagenes[nextIdx]?.imagen_url, { width: 500 });
+            }
+          }}
+        />
+      </div>
 
-      <section
-        className="position-relative d-flex align-items-center justify-content-center"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.68), rgba(0,0,0,0.68)),
-            url(https://res.cloudinary.com/ddyrgkdxq/image/upload/v1777133787/IMG_Productos.png)`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "340px",
-        }}
-      >
+      {imagenes.length > 1 && (
+        <>
+          <button
+            onClick={anteriorImagen}
+            className="btn-carrusel-nav position-absolute start-0 top-50 translate-middle-y ms-2"
+            type="button"
+            aria-label="Imagen anterior"
+          >
+            <i className="bi bi-chevron-left"></i>
+          </button>
+          <button
+            onClick={gSiguienteImagen}
+            className="btn-carrusel-nav position-absolute end-0 top-50 translate-middle-y me-2"
+            type="button"
+            aria-label="Siguiente imagen"
+          >
+            <i className="bi bi-chevron-right"></i>
+          </button>
+
+          <div className="position-absolute bottom-0 start-50 translate-middle-x mb-2 d-flex gap-1 bg-dark bg-opacity-25 rounded-pill px-2 py-1">
+            {imagenes.map((_, idx) => (
+              <span
+                key={idx}
+                onClick={(e) => { e.stopPropagation(); setIndexActual(idx); }}
+                className="rounded-circle cursor-pointer"
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  backgroundColor: idx === indexActual ? "#ffffff" : "rgba(255, 255, 255, 0.5)",
+                  transition: "0.2s"
+                }}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}   
+
+function Productos({ 
+  setVista, 
+  usuario, 
+  logout, 
+  login,
+  setProductoSeleccionadoId 
+}) {
+  const [showModal, setShowModal] = useState(false);
+  const [marcaActiva, setMarcaActiva] = useState("");
+  const [tipoActivo, setTipoActivo] = useState("Todos");
+  const [subtipoActivo, setSubtipoActivo] = useState("Todos");
+  const [busqueda, setBusqueda] = useState("");
+  const [ordenamiento, setOrdenamiento] = useState("Relevancia"); 
+  const [productosApi, setProductosApi] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function cargarProductos() {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("productos")
+          .select(`
+            id, 
+            nombre, 
+            marca, 
+            descripcion, 
+            referencia_interna, 
+            precio, 
+            imagen_url, 
+            suspendido,
+            producto_imagenes (
+              id,
+              imagen_url,
+              es_principal,
+              orden
+            )
+          `)
+          .eq("suspendido", false);
+
+        if (error) throw error;
+
+        const productosProcesados = (data || []).map(p => {
+          const imagenesOrdenadas = p.producto_imagenes?.sort((a, b) => {
+            if (a.es_principal) return -1;
+            if (b.es_principal) return 1;
+            return (a.orden || 0) - (b.orden || 0);
+          }) || [];
+
+          return {
+            ...p,
+            todas_las_imagenes: imagenesOrdenadas
+          };
+        });
+
+        setProductosApi(productosProcesados);
+      } catch (err) {
+        console.error("Error al conectar con Supabase:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    cargarProductos();
+  }, []);
+
+  const marcasDisponibles = Array.from(
+    new Set(productosApi.map((p) => (p.marca || "").trim()).filter(Boolean))
+  ).sort((a, b) => a.localeCompare(b, "es", { sensitivity: "base" }));
+
+  // Proceso unificado de filtrado y ordenamiento con CORRECCIÓN DE REINICIO DE BÚSQUEDA
+  const productosFiltradosYOrdenados = productosApi
+    .filter((p) => {
+      const marcaProducto = (p.marca || "").trim();
+      const tipoProducto = obtenerTipoPrincipal(p);
+      const subtipoProducto = obtenerSubtipo(p, tipoProducto);
+
+      const cumpleMarca = !marcaActiva || marcaActiva === marcaProducto;
+      const cumpleTipo = tipoActivo === "Todos" || tipoProducto === tipoActivo;
+      const cumpleSubtipo = subtipoActivo === "Todos" || subtipoProducto === subtipoActivo;
+
+      // CORRECCIÓN AQUÍ: .trim() limpia espacios fantasmas y evalúa correctamente si está vacío para restablecer todo
+      const busquedaLimpia = busqueda.trim().toLowerCase();
+      const cumpleBusqueda =
+        busquedaLimpia === "" ||
+        (p.nombre && p.nombre.toLowerCase().includes(busquedaLimpia)) ||
+        (p.referencia_interna && p.referencia_interna.toLowerCase().includes(busquedaLimpia));
+
+      return cumpleMarca && cumpleTipo && cumpleSubtipo && cumpleBusqueda;
+    })
+    .sort((a, b) => {
+      if (ordenamiento === "Menor precio") {
+        return Number(a.precio) - Number(b.precio);
+      }
+      if (ordenamiento === "Mayor precio") {
+        return Number(b.precio) - Number(a.precio);
+      }
+      return 0; 
+    });
+
+  const handleVerDetalles = (id) => {
+    setProductoSeleccionadoId(id);
+    setVista("producto-detalle");
+  };
+
+  return (
+    <div style={{ backgroundColor: "#F8F9FA", minHeight: "100vh" }}>
+      <Navbar vistaActual="productos" {...{ setVista, usuario, logout }} onOpenLogin={() => setShowModal(true)} />
+
+      <section className="position-relative d-flex align-items-center justify-content-center" style={{
+        backgroundImage: `linear-gradient(rgba(16, 20, 45, 0.7), rgba(16, 20, 45, 0.7)), url(https://res.cloudinary.com/ddyrgkdxq/image/upload/f_auto,q_auto:eco,w_1920,h_600,c_fill/v1780240514/IMG_Productos.webp)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        height: "500px",
+      }}>
         <div className="text-center px-3">
-            <h1
-              className="text-white fw-bold"
-              style={{
-                fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
-                letterSpacing: "3px",
-              }}
-            >
-            CATÁLOGO <span style={{ color: "#F5A623" }}>INDUSTRIAL</span>
+          <h1 className="text-white display-2 fw-bold" style={{ fontFamily: "Arial, sans-serif", letterSpacing: "3px" }}>
+            CATÁLOGO <span className="text-warning">INDUSTRIAL</span>
           </h1>
-          <p className="text-white-50 lead mx-auto" style={{ maxWidth: "560px" }}>
-            Repuestos originales y lubricantes de alta gama para mantener tu maquinaria al 100%.
+          <p className="text-white-50 lead mx-auto" style={{ maxWidth: "600px" }}>
+            Encuentra repuestos originales y lubricantes de alta gama para mantener tu maquinaria al 100%.
           </p>
+          
         </div>
       </section>
 
       <div className="container-fluid px-lg-5 py-5">
         <div className="row g-4">
+
           <aside className="col-lg-3 d-none d-lg-block">
-            <div
-              className="card border-0 sticky-top p-4"
-              style={{ top: "100px", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}
-            >
-              <h5 className="fw-bold mb-4" style={{ fontSize: "1rem" }}>Filtrar por</h5>
+            <div className="card border-0 shadow-sm p-4 sticky-top" style={{ top: "100px", borderRadius: "15px" }}>
+              <h5 className="fw-bold mb-4">Filtrar por</h5>
 
               <div className="mb-4">
-                <label className="form-label small fw-bold text-muted text-uppercase">Buscador</label>
+                <label htmlFor="busquedaInput" className="form-label small fw-bold text-muted text-uppercase">Buscador</label>
                 <div className="input-group border rounded-pill overflow-hidden">
-                  <span className="input-group-text bg-white border-0">
-                    <i className="bi bi-search" />
-                  </span>
+                  <span className="input-group-text bg-white border-0" aria-hidden="true"><i className="bi bi-search"></i></span>
                   <input
+                    id="busquedaInput"
                     type="text"
                     className="form-control border-0 shadow-none"
                     placeholder="¿Qué buscas?"
                     value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
+                    onChange={(e) => setBusqueda(e.target.value)} // Reacciona de inmediato en tiempo real
+                    aria-label="Buscar productos"
                   />
+                  {/* Botón de limpiar sutil para mejorar la experiencia de usuario si queda atascado */}
                   {busqueda && (
-                    <button
-                      className="btn btn-link border-0 text-muted pe-3"
+                    <button 
+                      className="btn btn-link text-muted border-0 bg-transparent pe-3 y-0 shadow-none text-decoration-none"
                       onClick={() => setBusqueda("")}
+                      style={{ fontSize: "0.85rem" }}
+                      type="button"
                     >
-                      ✕
+                      <i className="bi bi-x-circle-fill"></i>
                     </button>
                   )}
                 </div>
               </div>
 
               <div className="mb-4">
-                <label className="form-label small fw-bold text-muted text-uppercase">Categorías</label>
-                <div className="d-flex flex-column gap-1 mt-2">
-                  {CATEGORIAS.map((cat) => (
-                    <div
-                      key={cat}
-                      onClick={() => setCategoriaActiva(cat)}
-                      style={{
-                        cursor: "pointer",
-                        padding: "8px 12px",
-                        borderRadius: "10px",
-                        fontSize: "0.9rem",
-                        fontWeight: categoriaActiva === cat ? 600 : 400,
-                        backgroundColor: categoriaActiva === cat ? "#FFF3CD" : "transparent",
-                        color: categoriaActiva === cat ? "#856404" : "#555",
-                        transition: "0.15s",
-                        borderLeft: categoriaActiva === cat ? "3px solid #F5A623" : "3px solid transparent",
-                      }}
-                    >
-                      {cat}
-                    </div>
+                <label className="form-label small fw-bold text-muted text-uppercase">Marca</label>
+                <select
+                  className="form-select"
+                  value={marcaActiva}
+                  onChange={(e) => setMarcaActiva(e.target.value)}
+                >
+                  <option value="">Todas las marcas</option>
+                  {marcasDisponibles.map((marca) => (
+                    <option key={marca} value={marca}>{marca}</option>
                   ))}
-                </div>
+                </select>
               </div>
 
-              <div
-                className="p-3 rounded-4 mt-2"
-                style={{ backgroundColor: "#FFF8EC", border: "1px solid #FFE0A3" }}
-              >
-                <p className="small mb-0" style={{ color: "#7A4F00" }}>
-                  <i className="bi bi-truck me-2" style={{ color: "#F5A623" }} />
+              <div className="mb-4">
+                <label className="form-label small fw-bold text-muted text-uppercase">Tipo</label>
+                <select
+                  className="form-select"
+                  value={tipoActivo}
+                  onChange={(e) => {
+                    setTipoActivo(e.target.value);
+                    setSubtipoActivo("Todos");
+                  }}
+                >
+                  {TIPOS_PRINCIPALES.map((tipo) => (
+                    <option key={tipo} value={tipo}>{tipo}</option>
+                  ))}
+                </select>
+              </div>
+
+              {(tipoActivo === "Filtros" || tipoActivo === "Lubricantes") && (
+                <div className="mb-4">
+                  <label className="form-label small fw-bold text-muted text-uppercase">Subtipo</label>
+                  <select
+                    className="form-select"
+                    value={subtipoActivo}
+                    onChange={(e) => setSubtipoActivo(e.target.value)}
+                  >
+                    {SUBTIPOS_POR_TIPO[tipoActivo].map((subtipo) => (
+                      <option key={subtipo} value={subtipo}>{subtipo}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div className="bg-light p-3 rounded-4 mt-4">
+                <p className="small mb-0 text-dark">
+                  <i className="bi bi-truck me-2 text-warning"></i>
                   Envío gratis en Bogotá por compras superiores a $500.000
                 </p>
               </div>
@@ -337,42 +342,80 @@ function Productos({
           </aside>
 
           <main className="col-lg-9">
-            <div className="d-flex justify-content-between align-items-center mb-4 px-1 flex-wrap gap-2">
-              <p className="text-muted mb-0">
-                Mostrando <b>{productosFiltrados.length}</b> productos
-              </p>
-              <select
-                className="form-select w-auto border-0 shadow-sm rounded-pill"
-                style={{ fontSize: "0.875rem" }}
-                value={orden}
-                onChange={(e) => setOrden(e.target.value)}
+            <div className="d-flex justify-content-between align-items-center mb-4 px-2">
+              <p className="text-muted mb-0">Mostrando <b>{productosFiltradosYOrdenados.length}</b> productos</p>
+              <select 
+                className="form-select w-auto border-0 shadow-sm rounded-pill" 
+                style={{ fontSize: "0.9rem" }}
+                value={ordenamiento}
+                onChange={(e) => setOrdenamiento(e.target.value)}
               >
-                <option value="relevancia">Ordenar: Relevancia</option>
-                <option value="menor">Menor precio</option>
-                <option value="mayor">Mayor precio</option>
+                <option value="Relevancia">Ordenar por: Relevancia</option>
+                <option value="Menor precio">Menor precio</option>
+                <option value="Mayor precio">Mayor precio</option>
               </select>
             </div>
 
-            {error && (
-              <div className="alert alert-warning d-flex align-items-center gap-2 rounded-3" role="alert">
-                <i className="bi bi-exclamation-triangle-fill" />
-                {error}
+            {loading ? (
+              <div className="row g-4">
+                {[1, 2, 3, 4, 5, 6].map((n) => (
+                  <div key={n} className="col-6 col-md-4">
+                    <div className="card border-0 placeholder-glow h-100 p-4" style={{ borderRadius: "16px", minHeight: "340px" }}>
+                      <div className="placeholder col-12 mb-3 bg-secondary opacity-10" style={{ height: "160px", borderRadius: "12px" }}></div>
+                      <div className="placeholder col-8 mb-2 bg-secondary opacity-15"></div>
+                      <div className="placeholder col-5 bg-secondary opacity-15"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="row g-3 g-md-4">
+                {productosFiltradosYOrdenados.map((p) => (
+                  <div key={p.id} className="col-6 col-md-4 col-xl-3"> 
+                    <div className="card h-100 border-0 shadow-sm product-card transition-all"
+                      style={{ borderRadius: "16px", overflow: "hidden", background: "#fff" }}>
+
+                      <span className="position-absolute badge rounded-pill bg-dark mt-2 ms-2 z-1 text-uppercase" 
+                            style={{ fontSize: "0.60rem" }}>
+                        {p.marca || "Industrial"}
+                      </span>
+
+                      <MiniCarruselCatalog 
+                        imagenes={p.todas_las_imagenes} 
+                        nombreProducto={p.nombre} 
+                      />
+
+                      <div className="card-body p-2 p-md-3 d-flex flex-column">
+                        <h6 className="fw-bold mb-1 text-truncate-2 text-dark" 
+                            style={{ height: "40px", fontSize: "0.85rem" }}>
+                          {p.nombre}
+                        </h6>
+                        <p className="text-muted small mb-2 text-truncate">Ref: {p.referencia_interna || "N/A"}</p>
+                        
+                        <div className="mt-auto">
+                          <div className="mb-2">
+                            <span className="h6 fw-bold text-dark" style={{ fontSize: "0.9rem" }}>
+                              ${Number(p.precio).toLocaleString('es-CO', { minimumFractionDigits: 0 })} COP
+                            </span>
+                          </div>
+                          <button
+                            className="btn btn-warning w-100 rounded-pill fw-bold btn-details d-flex align-items-center justify-content-center gap-1"
+                            style={{ fontSize: "0.8rem", padding: "8px" }}
+                            onClick={() => handleVerDetalles(p.id)}
+                          >
+                            Ver Detalles <i className="bi bi-arrow-right-short fs-6"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
-            <div className="row g-4">
-              {loading ? (
-                Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-              ) : (
-                productosFiltrados.map((producto) => (
-                  <ProductCard key={producto.id} producto={producto} onAgregar={handleAgregar} />
-                ))
-              )}
-            </div>
-
-            {!loading && !error && productosFiltrados.length === 0 && (
+            {productosFiltradosYOrdenados.length === 0 && !loading && (
               <div className="text-center py-5">
-                <i className="bi bi-search display-1 text-muted" />
+                <i className="bi bi-search display-1 text-muted"></i>
                 <h4 className="mt-3">No encontramos productos</h4>
                 <p className="text-muted">Prueba con otra categoría o palabra clave.</p>
               </div>
@@ -381,20 +424,38 @@ function Productos({
         </div>
       </div>
 
-      <Footer />
-
-      <CartPanel
-        {...{ setVista, carrito, cartOpen, setCartOpen, cambiarCantidad, eliminarDelCarrito }}
-        usuario={usuario}
-        onOpenLogin={() => setShowModal(true)}
-      />
-
+      <Footer setVista={setVista} onAdminLogin={() => setShowModal(true)} />
       {showModal && <LoginModal login={login} onClose={() => setShowModal(false)} />}
 
       <style>{`
-        @keyframes shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
+        .product-card { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 15px 30px rgba(0,0,0,0.06) !important; }
+        .hover-bg-light:hover { background-color: #f1f3f5; }
+        .text-truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .cursor-pointer { cursor: pointer; }
+        .btn-details { transition: 0.2s; border: none; background-color: #ffc107; color: #212529; }
+        .btn-details:hover { background-color: #10142D; color: white; }
+        .btn-carrusel-nav {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            color: #10142D;
+            font-size: 11px;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            opacity: 0;
+            z-index: 3;
+        }
+        .group-carrusel:hover .btn-carrusel-nav { opacity: 1; }
+        .btn-carrusel-nav:hover {
+            background: #ffc107;
+            color: #212529;
+            transform: scale(1.08);
         }
       `}</style>
     </div>

@@ -3,7 +3,7 @@
     {
       "id": "1",
       "nombre": "Administrador",
-      "email": "admin",
+      "email": "admin@ayl.com",
       "password": "admin123",
       "rol": "admin"
     },
@@ -20,8 +20,39 @@
       "email": "j@gmail.com",
       "password": "123456",
       "rol": "cliente",
-      "telefono": "", 
+      "telefono": "",
       "empresa": "A&L Compresores y Partes"
+    },
+    {
+      "nombre": "felipe",
+      "email": "felipe.correal@gmail.com",
+      "rol": "cliente",
+      "empresa": "A&L Compresores y Partes",
+      "id": "wskmAXtj-2A"
+    },
+    {
+      "nombre": "juan",
+      "email": "juan@gmail.com",
+      "rol": "cliente",
+      "password": "juan123",
+      "empresa": "A&L Compresores y Partes",
+      "id": "O63rbTtLeRY"
+    },
+    {
+      "nombre": "juan",
+      "email": "j@gmail.com",
+      "rol": "cliente",
+      "password": "juan123",
+      "empresa": "A&L Compresores y Partes",
+      "id": "AgWck28ZZkY"
+    },
+    {
+      "nombre": "luiz",
+      "email": "luiz@gmail.com",
+      "rol": "cliente",
+      "password": "luiz123",
+      "empresa": "A&L Compresores y Partes",
+      "id": "Rok-6y4KgZ4"
     }
   ],
   "productos": [

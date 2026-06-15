@@ -6,7 +6,7 @@ import Notificaciones from "./AdminDashboard/Notificaciones";
 import Reportes from "./AdminDashboard/Reportes"
 import Usuarios from "./AdminDashboard/Usuarios";
 import ControlStock from "./AdminDashboard/ControlStock";
-import logoMarca from "../../assets/Home/Navbar/logo-ayl.png";
+const logoMarca = "/iconoPage.png";
 
 
 function SeccionVacia({ nombre }) {

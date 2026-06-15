@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 // 2. IMPORTACIÓN DE COMPONENTES EXTERNOS
 import Navbar from "../components/Home/Navbar";
 import Footer from "../components/Home/Footer";
-import LoginModal from "../components/LoginModal";
-import CartPanel from "../components/CartPanel";
+import LoginModal from "../components/Login/LoginModal";
+import CartPanel from "../components/Carrito/CartPanel";
 import CTA from "../components/Home/CTA";
 
 
@@ -253,6 +253,7 @@ export default // ASEGÚRATE DE QUE TENGA LAS LLAVES { } Y EL NOMBRE setVista AD
         setCartOpen={setCartOpen}
         cambiarCantidad={cambiarCantidad}
         eliminarDelCarrito={eliminarDelCarrito}
+        setVista={setVista}
         usuario={usuario}
         onOpenLogin={() => setShowModal(true)}
       />
