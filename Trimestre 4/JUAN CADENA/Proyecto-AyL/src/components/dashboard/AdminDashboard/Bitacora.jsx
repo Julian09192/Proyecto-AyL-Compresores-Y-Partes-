@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import { supabase } from "../../../lib/client";
 
 export default function Bitacora() {
   const [bitacora, setBitacora] = useState([]);
@@ -8,20 +7,16 @@ export default function Bitacora() {
   const [error, setError] = useState(null);
   const [filtroActivo, setFiltroActivo] = useState('TODOS'); // TODOS, INSERT, UPDATE, ESTADOS
 
-  // 1. Consulta principal a la base de datos de Supabase
   const cargarBitacora = async () => {
     setCargando(true);
     setError(null);
     try {
-      const { data, error: supabaseError } = await supabase
-        .from('bitacora')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (supabaseError) throw supabaseError;
-      setBitacora(data || []);
+      const res = await fetch('http://localhost:3001/bitacora');
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data = await res.json();
+      setBitacora(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('Error al obtener la bitácora:', err.message);
+      console.error('Error al obtener la bitácora:', err.message || err);
       setError('No se pudieron obtener los datos de la bitácora. Intenta de nuevo.');
     } finally {
       setCargando(false);

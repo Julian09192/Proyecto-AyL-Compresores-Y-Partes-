@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/client";
 import Navbar from "../components/Home/Navbar";
 import Footer from "../components/Home/Footer";
 import SkeletonLoader from "../components/UI/SkeletonLoader";
@@ -16,17 +15,13 @@ function Catalogoview({ setVista, setProductoSeleccionadoId }) {
     async function cargarProductos() {
       setLoading(true);
       try {
-        // Consulta directa a tu tabla plana de Supabase
-        const { data, error } = await supabase
-          .from("productos")
-          .select("id, nombre, marca, descripcion, referencia_interna, precio, imagen_url, suspendido")
-          .eq("suspendido", false); // Solo traer productos activos
-
-        if (error) throw error;
-        setProductos(data || []);
+        const response = await fetch("http://localhost:3001/productos");
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+        const data = await response.json();
+        setProductos(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Error al cargar el catálogo:", err.message);
-      } {
+        console.error("Error al cargar el catálogo:", err.message || err);
+      } finally {
         setLoading(false);
       }
     }
@@ -113,7 +108,12 @@ function Catalogoview({ setVista, setProductoSeleccionadoId }) {
                     className="bg-white d-flex align-items-center justify-content-center p-3" 
                     style={{ height: "200px" }}
                   >
-
+                    <img
+                      src={producto.producto_imagenes?.[0]?.imagen_url || producto.imagen_url || "https://placehold.co/400x400?text=Sin+Imagen"}
+                      alt={producto.nombre || producto.Nombre || "Producto"}
+                      className="img-fluid"
+                      style={{ maxHeight: '100%', objectFit: 'contain' }}
+                    />
                   </div>
 
                   {/* Cuerpo de la Tarjeta */}
@@ -126,7 +126,7 @@ function Catalogoview({ setVista, setProductoSeleccionadoId }) {
                         {producto.nombre}
                       </h6>
                       <p className="text-muted small mb-2 text-truncate">
-                        Ref: {producto.referencia_interna || "N/A"}
+                        Ref: {producto.referencia_interna || producto.codigo_interno || "N/A"}
                       </p>
                     </div>
 

@@ -1,40 +1,9 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
+import { supabase } from "../lib/client"; // Conexión directa importada
 
-function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
-  const [paso, setPaso] = useState(1); // 1: Datos, 2: Confirmar, 3: Pago, 4: Éxito
-
-  const [nombre, setNombre] = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [ciudad, setCiudad] = useState("");
-  const [telefono, setTelefono] = useState("");
-
-  const formatearPrecio = (str) => parseInt(str.replace(/\D/g, ""), 10);
-  const subtotal = carrito.reduce((acc, item) => acc + (formatearPrecio(item.precio) * item.cantidad), 0);
-  const envio = 15000; 
-  const total = subtotal + envio;
-
-  // Función para cancelar y regresar
-  const manejarCancelar = () => {
-    Swal.fire({
-      title: '¿Deseas cancelar la compra?',
-      text: "Se perderá el progreso de tus datos de envío.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Sí, cancelar',
-      cancelButtonText: 'Continuar con la compra'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setVista("productos");
-      }
-    });
-  };
-
-  // --- COMPONENTES DE PASOS ---
-
-  const PasoDatos = () => (
+function PasoDatos({ nombre, setNombre, direccion, setDireccion, ciudad, setCiudad, telefono, setTelefono, setPaso }) {
+  return (
     <div className="card border-0 shadow-sm p-4 rounded-4">
       <h5 className="fw-bold mb-4">¿A dónde enviamos tu pedido?</h5>
       <form onSubmit={(e) => { e.preventDefault(); setPaso(2); }}>
@@ -64,8 +33,10 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
       </form>
     </div>
   );
+}
 
-  const PasoConfirmar = () => (
+function PasoConfirmar({ carrito, direccion, ciudad, nombre, setPaso }) {
+  return (
     <div className="card border-0 shadow-sm p-4 rounded-4">
       <div className="d-flex align-items-center mb-4">
         <button className="btn btn-sm btn-light rounded-circle me-3" onClick={() => setPaso(1)}>
@@ -85,11 +56,15 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
       <div className="text-start mb-4">
         <h6 className="fw-bold border-bottom pb-2">Productos</h6>
         {carrito.map(item => (
-          <div key={item.id} className="d-flex gap-3 py-2 border-bottom border-light">
-             <div className="bg-white border rounded p-1" style={{fontSize: '1.5rem'}}>{item.emoji}</div>
+          <div key={item.id} className="d-flex gap-3 py-2 border-bottom border-light align-items-center">
+             <div className="bg-light rounded p-2 text-center" style={{ width: '50px' }}>
+                <i className="bi bi-box-seam text-secondary"></i>
+             </div>
              <div className="flex-grow-1">
                 <p className="mb-0 small fw-bold">{item.nombre}</p>
-                <p className="mb-0 small text-muted">{item.cantidad} unidad(es) x {item.precio}</p>
+                <p className="mb-0 small text-muted">
+                  {item.cantidad} ud. x ${Number(item.precio || 0).toLocaleString("es-CO")}
+                </p>
              </div>
           </div>
         ))}
@@ -98,22 +73,23 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
       <button onClick={() => setPaso(3)} className="btn w-100 py-3 text-white fw-bold" style={{background: "#F5A623"}}>Confirmar y pagar</button>
     </div>
   );
+}
 
-  const PasoPago = () => (
+function PasoPago({ onPagoFinalizado }) {
+  return (
     <div className="card border-0 shadow-sm p-4 rounded-4">
       <div className="d-flex align-items-center mb-4">
-        <button className="btn btn-sm btn-light rounded-circle me-3" onClick={() => setPaso(2)}>
+        <button className="btn btn-sm btn-light rounded-circle me-3" onClick={() => onPagoFinalizado(false)}>
             <i className="bi bi-arrow-left"></i>
         </button>
         <h5 className="fw-bold mb-0">Método de pago</h5>
       </div>
       <div className="alert alert-warning small py-2">
-        <i className="bi bi-shield-check me-2"></i> Transacción segura encriptada
+        <i className="bi bi-shield-check me-2"></i> Transacción de prueba encriptada
       </div>
       <form onSubmit={(e) => {
          e.preventDefault();
-         Swal.fire({ title: 'Validando pago...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-         setTimeout(() => { Swal.close(); setPaso(4); }, 2000);
+         onPagoFinalizado(true);
       }}>
         <input type="text" className="form-control mb-3" placeholder="0000 0000 0000 0000" required />
         <div className="row g-2 mb-3">
@@ -124,6 +100,94 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
       </form>
     </div>
   );
+}
+
+function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
+  const [paso, setPaso] = useState(1); // 1: Datos, 2: Confirmar, 3: Pago, 4: Éxito
+
+  const [nombre, setNombre] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [ciudad, setCiudad] = useState("");
+  const [telefono, setTelefono] = useState("");
+
+  // Cálculo limpio utilizando valores numéricos directos desde base de datos
+  const subtotal = carrito.reduce((acc, item) => acc + (Number(item.precio || 0) * item.cantidad), 0);
+  const envio = 15000; 
+  const total = subtotal + envio;
+
+  // Proceso centralizado de guardado asíncrono en Supabase
+  const procesarTransaccionFinal = async () => {
+    Swal.fire({ 
+      title: 'Procesando pedido...', 
+      text: 'Guardando registro seguro en el servidor',
+      allowOutsideClick: false, 
+      didOpen: () => Swal.showLoading() 
+    });
+
+    try {
+      // 1. Inserción del encabezado del pedido
+      const { data: pedidoInsertado, error: errorPedido } = await supabase
+        .from("pedidos")
+        .insert([
+          {
+            cliente_nombre: nombre,
+            direccion_envio: direccion,
+            ciudad: ciudad,
+            telefono: telefono,
+            subtotal: subtotal,
+            costo_envio: envio,
+            total: total,
+            estado: "Pendiente"
+          }
+        ])
+        .select()
+        .single();
+
+      if (errorPedido) throw errorPedido;
+
+      // 2. Preparar el arreglo relacional para los productos asociados al pedido
+      const productosPedidoPayload = carrito.map(item => ({
+        pedido_id: pedidoInsertado.id,
+        producto_id: item.id,
+        cantidad: item.cantidad,
+        precio_unitario: Number(item.precio || 0)
+      }));
+
+      // 3. Inserción masiva de los items del pedido
+      const { error: errorProductos } = await supabase
+        .from("pedido_productos")
+        .insert(productosPedidoPayload);
+
+      if (errorProductos) throw errorProductos;
+
+      Swal.close();
+      setPaso(4); // Avanzar a pantalla de Éxito seguro
+    } catch (err) {
+      console.error("Error crítico guardando pedido en Supabase:", err.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de conexión',
+        text: 'No pudimos registrar tu orden en el servidor. Por favor, intenta de nuevo.'
+      });
+    }
+  };
+
+  const manejarCancelar = () => {
+    Swal.fire({
+      title: '¿Deseas cancelar la compra?',
+      text: "Se perderá el progreso de tus datos de envío.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'Continuar con la compra'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setVista("productos");
+      }
+    });
+  };
 
   if (paso === 4) {
     return (
@@ -150,9 +214,39 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
 
         <div className="row g-4 justify-content-center">
           <div className="col-lg-6">
-            {paso === 1 && <PasoDatos />}
-            {paso === 2 && <PasoConfirmar />}
-            {paso === 3 && <PasoPago />}
+            {paso === 1 && (
+              <PasoDatos
+                nombre={nombre}
+                setNombre={setNombre}
+                direccion={direccion}
+                setDireccion={setDireccion}
+                ciudad={ciudad}
+                setCiudad={setCiudad}
+                telefono={telefono}
+                setTelefono={setTelefono}
+                setPaso={setPaso}
+              />
+            )}
+            {paso === 2 && (
+              <PasoConfirmar
+                carrito={carrito}
+                direccion={direccion}
+                ciudad={ciudad}
+                nombre={nombre}
+                setPaso={setPaso}
+              />
+            )}
+            {paso === 3 && (
+              <PasoPago
+                onPagoFinalizado={(finalizado) => {
+                  if (finalizado) {
+                    procesarTransaccionFinal();
+                  } else {
+                    setPaso(2);
+                  }
+                }}
+              />
+            )}
           </div>
 
           <div className="col-lg-4">
@@ -172,7 +266,6 @@ function CheckoutPage({ carrito, setVista, vaciarCarrito }) {
                  <span>${total.toLocaleString("es-CO")}</span>
               </div>
 
-              {/* BOTONES DE ACCIÓN ADICIONALES */}
               <button 
                 onClick={() => setVista("productos")} 
                 className="btn btn-outline-secondary w-100 border-0 small mb-2"

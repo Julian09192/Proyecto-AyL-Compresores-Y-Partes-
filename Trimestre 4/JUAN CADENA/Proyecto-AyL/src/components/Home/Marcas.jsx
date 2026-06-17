@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 // Marcas simuladas con SVG de texto elegante
 // Cuando tengas imágenes reales, reemplaza cada item por un <img src="..." />
@@ -7,8 +7,8 @@ const TOTAL_IMAGENES = 6;
 const IMAGENES_CARRUSEL = Array.from({ length: TOTAL_IMAGENES }, (_, i) => ({
   id: i + 1,
   // 2. AQUÍ TAMBIÉN: Cambia "nosotros" a "Nosotros"
-  src: `/images/Marcas/marca-${i + 1}.png`,
-  alt: `Marca A&L ${i + 1}`
+  src: `https://res.cloudinary.com/ddyrgkdxq/image/upload/v1777130008/trabajo-${i + 1}.png`,
+  alt: `Trabajo A&L ${i + 1}`
 }));
 
 const Marcas = () => {

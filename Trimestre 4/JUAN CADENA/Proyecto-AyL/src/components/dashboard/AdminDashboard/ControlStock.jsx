@@ -9,6 +9,18 @@ function ControlStock() {
   // URL de tu servidor Node.js (Confirmado puerto 3001)
   const API_URL = "http://localhost:3001/movimientos-stock"; 
 
+  const cargarMovimientos = () => {
+    fetch(API_URL)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Datos recibidos:", data);
+        if (Array.isArray(data)) {
+          setMovimientos(data);
+        }
+      })
+      .catch((error) => console.error("Error al cargar:", error));
+  };
+
   useEffect(() => {
     cargarMovimientos();
 
@@ -25,18 +37,6 @@ function ControlStock() {
       window.removeEventListener("nuevoProductoStock", manejarActualizacion);
     };
   }, []);
-
-  const cargarMovimientos = () => {
-    fetch(API_URL)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Datos recibidos:", data);
-        if (Array.isArray(data)) {
-          setMovimientos(data);
-        }
-      })
-      .catch((error) => console.error("Error al cargar:", error));
-  };
 
   const eliminarMovimiento = (id) => {
     Swal.fire({

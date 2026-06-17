@@ -13,6 +13,8 @@ function Navbar({
   usuario,
   logout,
   onOpenLogin,
+  totalItems = 0,
+  setCartOpen,
   forceSolid = false,
 }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -34,8 +36,8 @@ function Navbar({
 
   const navbarStyle = {
     backgroundColor: navbarSolid
-      ? "#000000"
-      : "rgba(0, 0, 0, 0.88)",
+      ? "rgba(0, 0, 0, 0.95)"
+      : "transparent",
     backdropFilter: navbarSolid ? "blur(10px)" : "none",
     borderBottom: navbarSolid
       ? "1px solid rgba(255,255,255,0.08)"
@@ -82,10 +84,10 @@ function Navbar({
               aria-label="Ir al inicio"
             >
               <img
-                src="https://res.cloudinary.com/ddyrgkdxq/image/upload/f_auto,q_auto,w_250,dpr_auto/v1780288151/LOGO-SIN-FONDO.webp"
-                alt="A&P Lubricantes"
+                src="https://res.cloudinary.com/duvoqozcl/image/upload/v1777394217/logo-ayl.png"
+                alt="A&L Lubricantes"
                 loading="eager"
-                fetchpriority="high"
+                fetchPriority="high"
                 decoding="async"
                 className="navbar-logo"
                 width={180}
@@ -165,6 +167,25 @@ function Navbar({
 
             {/* DERECHA */}
             <div className="d-flex flex-column flex-md-row align-items-center gap-2 mt-3 mt-lg-0">
+              {typeof setCartOpen === "function" && (
+                <button
+                  type="button"
+                  className="btn btn-outline-light position-relative"
+                  onClick={() => setCartOpen(true)}
+                  aria-label="Abrir carrito"
+                >
+                  <i className="bi bi-cart3"></i>
+                  {totalItems > 0 && (
+                    <span
+                      className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                      style={{ fontSize: "0.65rem", transform: "translate(-25%, -25%)" }}
+                    >
+                      {totalItems}
+                    </span>
+                  )}
+                </button>
+              )}
+
               {usuario ? (
                 <>
                   <button

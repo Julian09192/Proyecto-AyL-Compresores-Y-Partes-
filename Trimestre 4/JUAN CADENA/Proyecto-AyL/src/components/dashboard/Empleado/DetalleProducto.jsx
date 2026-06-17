@@ -4,8 +4,7 @@ import React from "react";
 import imgHerramienta from "../assets/imgProductos/herramienta.jpg";
 // ... (importa todas tus imágenes igual que en Productos.jsx)
 
-const obtenerImagen = (nombre) => {
-  // ... (copia aquí la función obtenerImagen que ya tienes en Productos.jsx)
+const obtenerImagen = () => {
   return imgHerramienta; // placeholder simplificado
 };
 

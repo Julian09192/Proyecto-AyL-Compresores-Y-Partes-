@@ -21,7 +21,16 @@ function DashboardHome() {
   };
 
   useEffect(() => {
-    obtenerProductos();
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((data) => {
+        setProductos(Array.isArray(data) ? data : []);
+        setCargando(false);
+      })
+      .catch(() => {
+        setProductos([]);
+        setCargando(false);
+      });
   }, []);
 
   const totalProductos = productos.length;

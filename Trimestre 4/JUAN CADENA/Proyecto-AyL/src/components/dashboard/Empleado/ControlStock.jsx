@@ -6,11 +6,7 @@ function ControlStock() {
   const [filtroTipo, setFiltroTipo] = useState("Todos");
   const [movimientos, setMovimientos] = useState([]);
 
-  const API_URL = "http://localhost:3001/movimientos";
-
-  useEffect(() => {
-    cargarMovimientos();
-  }, []);
+  const API_URL = "http://localhost:3001/movimientos-stock";
 
   const cargarMovimientos = () => {
     fetch(API_URL)
@@ -18,6 +14,10 @@ function ControlStock() {
       .then((data) => setMovimientos(data.reverse()))
       .catch((error) => console.error("Error:", error));
   };
+
+  useEffect(() => {
+    cargarMovimientos();
+  }, []);
 
   // --- ACTUALIZAR REGISTRO ---
   const editarMovimiento = async (movimiento) => {
@@ -66,7 +66,8 @@ function ControlStock() {
     });
 
     if (formValues) {
-      fetch(`${API_URL}/${movimiento.id}`, {
+      const movimientoId = movimiento.id_movimiento || movimiento.id;
+      fetch(`${API_URL}/${movimientoId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formValues)

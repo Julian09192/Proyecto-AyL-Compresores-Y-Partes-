@@ -14,7 +14,7 @@ const SLIDES = [
     subtitulo: "Protección máxima para tu cosecha",
     desc: "Soluciones de filtración diseñadas para resistir largas jornadas en el campo y proteger motores contra el polvo y la humedad.",
     accent: colors.doradoAmbar,
-    img: "https://res.cloudinary.com/ddyrgkdxq/image/upload/v1777130278/IMG_Agricola.jpg",
+    img: "https://res.cloudinary.com/duvoqozcl/image/upload/v1781582558/agricultura.webp",
     alt: "Filtros de aire y combustible instalados en un tractor agrícola de alta tecnología"
   },
   {
@@ -103,13 +103,6 @@ function Hero({ setVista }) {
                   <div className="col-lg-8">
 
                     {/* Badge de Categoría con animación sutil */}
-                    <div className="d-inline-block px-3 py-1 mb-3 rounded-pill"
-                      style={{ backgroundColor: 'rgba(255,193,7,0.15)', border: `1px solid ${slide.accent}` }}>
-                      <span className="fw-bold text-uppercase" style={{ color: slide.accent, fontSize: "0.75rem", letterSpacing: 2 }}>
-                        A&L Calidad Industrial
-                      </span>
-                    </div>
-
                     <h1 className="display-3 mb-2" style={{
                       lineHeight: 1,
                       textShadow: "2px 2px 10px rgba(0,0,0,0.5)"

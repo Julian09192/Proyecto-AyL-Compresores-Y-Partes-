@@ -1,115 +1,76 @@
-// src/components/MiPerfilAdmin.jsx
-import React, { useState, useEffect, useRef } from 'react';
+// src/components/MiPerfilEmpleado.jsx
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { supabase } from '../../../lib/client'; // Ajusta la ruta según tu proyecto
 
-function MiPerfilAdmin() {
+const API_BASE = 'http://localhost:3001';
+
+function MiPerfilEmpleado() {
   const [usuario, setUsuario] = useState(null);
   const [editando, setEditando] = useState(false);
   const [datosEditados, setDatosEditados] = useState({});
   const [guardando, setGuardando] = useState(false);
   const [logsAcceso, setLogsAcceso] = useState([]);
   const [cargandoLogs, setCargandoLogs] = useState(true);
-  
-  // Referencia para evitar fugas de memoria con el canal de tiempo real
-  const canalRef = useRef(null);
 
-  // Consultar logs históricos guardados en la tabla bitácora
-  const obtenerLogsBD = async (email) => {
+  const cargarLogs = async (email) => {
+    if (!email) {
+      setLogsAcceso([]);
+      setCargandoLogs(false);
+      return;
+    }
+
     try {
-      const { data: logs, error: logsError } = await supabase
-        .from('bitacora')
-        .select('*')
-        .eq('usuario_email', email)
-        .in('accion', ['LOGIN_EXITOSO', 'LOGOUT_EXITOSO'])
-        .order('created_at', { ascending: false })
-        .limit(3);
-
-      if (!logsError && logs) {
-        setLogsAcceso(logs);
-      }
+      const res = await fetch(`${API_BASE}/bitacora?usuario_email=${encodeURIComponent(email)}&accion=LOGIN_EXITOSO,LOGOUT_EXITOSO&limit=3`);
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data = await res.json();
+      setLogsAcceso(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Error al traer logs de acceso:", err);
+      console.error('Error al traer logs de acceso:', err);
+      setLogsAcceso([]);
     } finally {
       setCargandoLogs(false);
     }
   };
 
-  // Cargar perfil e inicializar canal Realtime de Supabase
-  const cargarPerfilYConfigurarRealtime = async () => {
-    try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-
-      if (error || !user) {
-        const local = localStorage.getItem("al_usuario");
-        if (local) {
-          const uLocal = JSON.parse(local);
-          setUsuario(uLocal);
-          setDatosEditados(uLocal);
-          await obtenerLogsBD(uLocal.email);
-        }
+  useEffect(() => {
+    const cargarPerfil = async () => {
+      const almacenado = localStorage.getItem('al_usuario');
+      if (!almacenado) {
         setCargandoLogs(false);
-        return null;
+        return;
       }
 
-      const datosUsuario = {
-        id: user.id,
-        email: user.email,
-        nombre: user.user_metadata?.nombre || "Administrador",
-        telefono: user.user_metadata?.telefono || "",
-        empresa: user.user_metadata?.empresa || "AYP Lubricantes y Filtros",
-        rol: user.user_metadata?.rol || "admin"
-      };
-      
-      setUsuario(datosUsuario);
-      setDatosEditados(datosUsuario);
-      await obtenerLogsBD(user.email);
+      let usuarioLocal;
+      try {
+        usuarioLocal = JSON.parse(almacenado);
+      } catch {
+        localStorage.removeItem('al_usuario');
+        setCargandoLogs(false);
+        return;
+      }
 
-      // Evitar duplicar suscripciones si el useEffect se dispara dos veces en StrictMode
-      if (canalRef.current) return canalRef.current;
-
-      // Activar canal en tiempo real para escuchar inserciones
-      const canalBitacora = supabase
-        .channel('cambios-logs-perfil')
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'bitacora' },
-          (payload) => {
-            if (
-              payload.new.usuario_email === user.email &&
-              ['LOGIN_EXITOSO', 'LOGOUT_EXITOSO'].includes(payload.new.accion)
-            ) {
-              obtenerLogsBD(user.email);
-            }
-          }
-        )
-        .subscribe();
-
-      canalRef.current = canalBitacora;
-      return canalBitacora;
-
-    } catch (error) {
-      console.error("Error crítico en perfil:", error);
-      setCargandoLogs(false);
-    }
-  };
-
-  useEffect(() => {
-    let suscripcionCanal;
-
-    const inicializar = setTimeout(() => {
-      cargarPerfilYConfigurarRealtime().then((canal) => {
-        if (canal) suscripcionCanal = canal;
-      });
-    }, 400);
-
-    return () => {
-      clearTimeout(inicializar);
-      if (suscripcionCanal) {
-        supabase.removeChannel(suscripcionCanal);
-        canalRef.current = null;
+      try {
+        const res = await fetch(`${API_BASE}/usuarios/${usuarioLocal.id}`);
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+        const datos = await res.json();
+        const datosUsuario = {
+          id: usuarioLocal.id,
+          email: datos.correo || usuarioLocal.email,
+          nombre: datos.usuario || usuarioLocal.nombre,
+          telefono: datos.num_celular || usuarioLocal.telefono || '',
+          empresa: usuarioLocal.empresa || 'A&L Compresores Y Partes',
+          rol: datos.rol || usuarioLocal.rol || 'empleado'
+        };
+        setUsuario(datosUsuario);
+        setDatosEditados(datosUsuario);
+        await cargarLogs(datosUsuario.email);
+      } catch (error) {
+        console.error('Error cargando perfil:', error);
+        setCargandoLogs(false);
       }
     };
+
+    cargarPerfil();
   }, []);
 
   const guardarCambios = async () => {
@@ -132,44 +93,52 @@ function MiPerfilAdmin() {
 
       setGuardando(true);
 
-      // Re-autenticación de seguridad
-      const { error: errorAuth } = await supabase.auth.signInWithPassword({
-        email: usuario.email,
-        password: passwordConfirmacion,
-      });
+      const actualizar = {
+        usuario: datosEditados.nombre,
+        num_celular: datosEditados.telefono,
+        current_password: passwordConfirmacion
+      };
 
-      if (errorAuth) throw new Error('Contraseña incorrecta. No autorizado.');
+      try {
+        const res = await fetch(`${API_BASE}/usuarios/${usuario.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(actualizar)
+        });
 
-      // Actualización de Metadatos
-      const { data, error: errorMeta } = await supabase.auth.updateUser({
-        data: {
-          nombre: datosEditados.nombre,
-          telefono: datosEditados.telefono,
-          empresa: datosEditados.empresa
-        }
-      });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || data.message || 'Error al actualizar el perfil');
 
-      if (errorMeta) throw errorMeta;
-
-      if (data?.user) {
         const actualizado = {
-          id: data.user.id,
-          email: data.user.email,
-          nombre: data.user.user_metadata?.nombre,
-          telefono: data.user.user_metadata?.telefono,
-          empresa: data.user.user_metadata?.empresa,
-          rol: data.user.user_metadata?.rol || "admin"
+          id: data.id_usuario || usuario.id,
+          email: data.correo || usuario.email,
+          nombre: data.usuario || datosEditados.nombre,
+          telefono: data.num_celular || datosEditados.telefono,
+          empresa: datosEditados.empresa,
+          rol: data.rol || usuario.rol
         };
 
         setUsuario(actualizado);
-        localStorage.setItem("al_usuario", JSON.stringify(actualizado));
+        setDatosEditados({ ...datosEditados, nombre: actualizado.nombre, telefono: actualizado.telefono });
+        localStorage.setItem('al_usuario', JSON.stringify({
+          id: actualizado.id,
+          nombre: actualizado.nombre,
+          email: actualizado.email,
+          rol: actualizado.rol,
+          avatar_url: usuario.avatar_url || null,
+          empresa: actualizado.empresa
+        }));
+
         setEditando(false);
         Swal.fire({ icon: 'success', title: 'Perfil actualizado', timer: 1500, showConfirmButton: false });
-        obtenerLogsBD(usuario.email);
+        await cargarLogs(actualizado.email);
+      } catch (error) {
+        Swal.fire({ icon: 'error', title: 'Error', text: error.message });
+      } finally {
+        setGuardando(false);
       }
     } catch (error) {
       Swal.fire({ icon: 'error', title: 'Error', text: error.message });
-    } finally {
       setGuardando(false);
     }
   };
@@ -186,13 +155,6 @@ function MiPerfilAdmin() {
 
       if (!passwordActual) return;
 
-      const { error: errorAuth } = await supabase.auth.signInWithPassword({
-        email: usuario.email,
-        password: passwordActual,
-      });
-
-      if (errorAuth) throw new Error('La contraseña actual es incorrecta.');
-
       const { value: passwordNueva } = await Swal.fire({
         title: 'Nueva Contraseña',
         input: 'password',
@@ -203,11 +165,16 @@ function MiPerfilAdmin() {
 
       if (!passwordNueva) return;
 
-      const { error: errorUpdate } = await supabase.auth.updateUser({ password: passwordNueva });
-      if (errorUpdate) throw errorUpdate;
+      const res = await fetch(`${API_BASE}/usuarios/${usuario.id}/password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ current_password: passwordActual, new_password: passwordNueva })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || data.message || 'No se pudo cambiar la contraseña');
 
       Swal.fire({ icon: 'success', title: 'Contraseña cambiada con éxito', timer: 1500, showConfirmButton: false });
-
     } catch (error) {
       Swal.fire({ icon: 'error', title: 'Error', text: error.message });
     }
@@ -217,7 +184,7 @@ function MiPerfilAdmin() {
     return (
       <div className="d-flex justify-content-center align-items-center vh-50">
         <div className="spinner-border text-secondary spinner-border-sm me-2" role="status"></div>
-        <span className="text-muted small fw-medium">Cargando perfil de administrador...</span>
+        <span className="text-muted small fw-medium">Cargando perfil de empleado...</span>
       </div>
     );
   }
@@ -226,8 +193,8 @@ function MiPerfilAdmin() {
     <div className="container-fluid px-4 py-4">
       {/* Encabezado Principal */}
       <div className="mb-4 pb-3 border-bottom">
-        <h1 className="fw-bold mb-1" style={{ fontSize: "1.4rem", color: "#1e293b", letterSpacing: "-0.02em" }}>Mi Perfil de Administrador</h1>
-        <p className="text-muted mb-0" style={{ fontSize: "0.85rem" }}>Gestiona tus credenciales y audita los accesos recientes de tu cuenta.</p>
+        <h1 className="fw-bold mb-1" style={{ fontSize: "1.4rem", color: "#1e293b", letterSpacing: "-0.02em" }}>Mi Perfil de Empleado</h1>
+        <p className="text-muted mb-0" style={{ fontSize: "0.85rem" }}>Gestiona tus credenciales y revisa los accesos recientes de tu cuenta.</p>
       </div>
 
       <div className="row g-4">
@@ -313,7 +280,7 @@ function MiPerfilAdmin() {
                   <div className="fw-bold text-dark small d-flex align-items-center gap-1">
                     <i className="bi bi-key-fill text-secondary"></i> Contraseña de Acceso
                   </div>
-                  <div className="text-muted" style={{ fontSize: '0.78rem' }}>Cifrada de extremo a extremo mediante el proveedor Supabase Auth.</div>
+                  <div className="text-muted" style={{ fontSize: '0.78rem' }}>Tu contraseña está protegida y gestionada de forma local por el backend.</div>
                 </div>
                 <button onClick={cambiarPassword} className="btn btn-sm btn-dark px-3 py-2 fw-medium">
                   Actualizar Contraseña
@@ -373,4 +340,4 @@ function MiPerfilAdmin() {
   );
 }
 
-export default MiPerfilAdmin;
+export default MiPerfilEmpleado;

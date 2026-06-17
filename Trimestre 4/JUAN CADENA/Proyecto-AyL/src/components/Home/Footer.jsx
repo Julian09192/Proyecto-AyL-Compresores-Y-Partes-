@@ -1,5 +1,10 @@
-const logoMarca = "/iconoPage.png";
-const navLinks = ["Inicio", "Nosotros", "Productos", "Contactos"];
+const logoMarca = "https://res.cloudinary.com/duvoqozcl/image/upload/v1777394217/logo-ayl.png";
+const navLinks = [
+  { label: "Inicio", vista: "inicio" },
+  { label: "Nosotros", vista: "nosotros" },
+  { label: "Productos", vista: "productos" },
+  { label: "Contactos", vista: "contactos" }
+];
 const productLinks = ["Compresores de Tornillo", "Compresores de Pistón", "Herramientas Neumáticas", "Repuestos", "Aceites y Lubricantes"];
 const contactInfo = [
   { icon: "bi-geo-alt", text: "Bogotá, Colombia" },
@@ -8,7 +13,15 @@ const contactInfo = [
   { icon: "bi-clock", text: "Lun–Vie: 8am – 6pm" },
 ];
 
-function Footer() {
+function Footer({ setVista }) {
+  const navegar = (e, vista) => {
+    e.preventDefault();
+    if (setVista) {
+      setVista(vista);
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+  };
+
   return (
     <footer className="footer">
       <div className="container">
@@ -33,7 +46,11 @@ function Footer() {
           </div>
           <div className="col-6 col-md-2">
             <h6 className="footer__heading">Empresa</h6>
-            <ul className="footer__links">{navLinks.map((l) => <li key={l}><a href="#">{l}</a></li>)}</ul>
+            <ul className="footer__links">{navLinks.map((link) => (
+              <li key={link.label}>
+                <a href="#" onClick={(e) => navegar(e, link.vista)}>{link.label}</a>
+              </li>
+            ))}</ul>
           </div>
           <div className="col-6 col-md-3">
             <h6 className="footer__heading">Productos</h6>

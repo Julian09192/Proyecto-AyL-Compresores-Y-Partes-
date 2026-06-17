@@ -18,7 +18,7 @@ function SeccionVacia({ nombre }) {
 
 const API_URL = "https://69cdf09333a09f831b7caeb6.mockapi.io/productos/productos";
 
-function ClienteDashboard({ setVista, logout }) {
+function ClienteDashboard({ logout }) {
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
 
   // 🔥 PRODUCTOS GLOBALES
@@ -37,7 +37,7 @@ function ClienteDashboard({ setVista, logout }) {
   }, []);
 
 
-  const notificaciones = productos.filter(p => p.Cantidad < 10).length;
+  const notificaciones = productos.filter(p => !p.suspendido && Number(p.stock || 0) < 10).length;
 
 
   const obtenerImagen = (img) => {

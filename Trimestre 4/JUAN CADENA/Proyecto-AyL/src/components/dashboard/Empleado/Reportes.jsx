@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 const Reportes = () => {
   const categorias = ["Todas las categorías", "Compresores", "Filtros", "Lubricantes", "Válvulas", "Accesorios", "Herramientas", "Repuestos"];
   const proveedores = ["Todos los proveedores", "Atlas Copco", "Ingersoll Rand", "Sullair", "Kaeser"];
+  const barrasAltura = [110, 145, 95, 132, 105, 120, 98];
 
   const imprimirReporte = () => {
     window.print();
@@ -188,7 +189,7 @@ const Reportes = () => {
           <div className="bar-container">
             {categorias.slice(1).map((cat, idx) => (
               <div key={idx} className="bar-wrapper">
-                <div className="bar-item" style={{ height: `${Math.random() * 100 + 50}px` }}></div>
+                <div className="bar-item" style={{ height: `${barrasAltura[idx]}px` }}></div>
                 <div className="bar-label">{cat}</div>
               </div>
             ))}

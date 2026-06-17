@@ -1,24 +1,25 @@
-import mysql from "mysql2";
-import dotenv from "dotenv";
+/* global process */
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-});
+// Subimos dos niveles para encontrar el archivo .env
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
-connection.connect((err) => {
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
-  if (err) {
-    console.log("Error de conexión:", err);
-    return;
-  }
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error("❌ Error Crítico: Faltan las variables VITE_SUPABASE_URL o VITE_SUPABASE_ANON_KEY en el .env");
+}
 
-  console.log("MySQL conectado");
-});
+// Creamos el cliente oficial de Supabase
+const db = createClient(supabaseUrl, supabaseAnonKey);
 
-export default connection;
+console.log('🚀 ¡Cliente de Supabase inicializado correctamente en el Backend!');
+
+export default db;

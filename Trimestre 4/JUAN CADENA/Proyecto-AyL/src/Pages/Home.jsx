@@ -8,9 +8,8 @@ import Products from "../components/Home/Products";
 import CTA from "../components/Home/CTA";
 import Footer from "../components/Home/Footer";
 import LoginModal from "../components/Login/LoginModal";
-import CartPanel from "../components/Carrito/CartPanel";
 
-function Home({ setVista, usuario, login, logout, carrito, totalItems, cartOpen, setCartOpen, agregarAlCarrito, cambiarCantidad, eliminarDelCarrito }) {
+function Home({ setVista, usuario, login, logout, totalItems, setCartOpen, setProductoSeleccionadoId }) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -29,20 +28,9 @@ function Home({ setVista, usuario, login, logout, carrito, totalItems, cartOpen,
       <StatsBar />
       <Features />
       <Marcas />
-      <Products />
+      <Products setVista={setVista} setProductoSeleccionadoId={setProductoSeleccionadoId} />
       <CTA setVista={setVista} />
-      <Footer />
-
-      <CartPanel
-        carrito={carrito}
-        cartOpen={cartOpen}
-        setCartOpen={setCartOpen}
-        cambiarCantidad={cambiarCantidad}
-        eliminarDelCarrito={eliminarDelCarrito}
-        setVista={setVista}
-        usuario={usuario}
-        onOpenLogin={() => setShowModal(true)}
-      />
+      <Footer setVista={setVista} />
 
       {showModal && (
         <LoginModal login={login} onClose={() => setShowModal(false)} />

@@ -23,6 +23,8 @@ const Reportes = () => {
     });
   };
 
+  const barrasAltura = [110, 145, 95, 132, 105, 120, 98];
+
   return (
     <div className="p-4 bg-white min-vh-100">
       <style>{`
@@ -188,7 +190,7 @@ const Reportes = () => {
           <div className="bar-container">
             {categorias.slice(1).map((cat, idx) => (
               <div key={idx} className="bar-wrapper">
-                <div className="bar-item" style={{ height: `${Math.random() * 100 + 50}px` }}></div>
+                <div className="bar-item" style={{ height: `${barrasAltura[idx]}px` }}></div>
                 <div className="bar-label">{cat}</div>
               </div>
             ))}

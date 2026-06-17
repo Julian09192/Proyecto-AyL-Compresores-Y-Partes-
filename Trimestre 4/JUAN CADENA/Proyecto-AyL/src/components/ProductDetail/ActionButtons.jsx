@@ -3,7 +3,7 @@ function ActionButtons({ producto }) {
     const telefono = "573197273732";
 
     const lineas = [
-      `Hola AYP Lubricantes y Filtros, deseo cotizar el siguiente producto:\n`,
+      `Hola AYL Compresores Y Partes, deseo cotizar el siguiente producto:\n`,
       `📌 *Producto:* ${producto.nombre}`,
       producto.referencia_interna
         ? `🔢 *Referencia:* ${producto.referencia_interna}`

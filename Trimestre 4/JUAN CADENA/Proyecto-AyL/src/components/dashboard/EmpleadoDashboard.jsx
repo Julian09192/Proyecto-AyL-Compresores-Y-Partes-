@@ -5,7 +5,7 @@ import Productos from "./Empleado/Productos";
 import Notificaciones from "./Empleado/Notificaciones";
 import ControlStock from "./Empleado/ControlStock";
 import Reportes from "./Empleado/Reportes";
-const logoMarca = "/iconoPage.png";
+import Bitacora from "./Empleado/Bitacora";
 
 function SeccionVacia({ nombre }) {
   return (
@@ -18,18 +18,23 @@ function SeccionVacia({ nombre }) {
   );
 }
 
-const API_URL = "https://69cdf09333a09f831b7caeb6.mockapi.io/productos/productos";
+const API_URL = "http://localhost:3001/productos";
 
-function ClienteDashboard({ setVista, logout }) {
+function ClienteDashboard({ logout }) {
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
 
   const [productos, setProductos] = useState([]);
 
-  const obtenerProductos = () => {
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => setProductos(Array.isArray(data) ? data : []))
-      .catch(() => setProductos([]));
+  const obtenerProductos = async () => {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data = await res.json();
+      setProductos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error al cargar productos del dashboard empleado:", error);
+      setProductos([]);
+    }
   };
 
   useEffect(() => {
@@ -37,7 +42,7 @@ function ClienteDashboard({ setVista, logout }) {
   }, []);
 
 
-  const notificaciones = productos.filter(p => p.Cantidad < 10).length;
+  const notificaciones = productos.filter(p => !p.suspendido && Number(p.stock || 0) < 10).length;
 
 
   const obtenerImagen = (img) => {
@@ -51,6 +56,7 @@ function ClienteDashboard({ setVista, logout }) {
     { id: "productos", label: "Productos", icon: "bi-archive", badge: null },
     { id: "stock", label: "Control de Stock", icon: "bi-graph-up-arrow", badge: 3 },
     { id: "proveedores", label: "Proveedores", icon: "bi-truck", badge: null },
+    { id: "bitacora", label: "Bitácora", icon: "bi-journal-text", badge: null },
     { id: "reportes", label: "Reportes", icon: "bi-file-earmark-bar-graph", badge: null },
     { id: "notificaciones", label: "Notificaciones", icon: "bi-bell", badge: notificaciones },
     { id: "perfil", label: "Mi Perfil", icon: "bi-gear", badge: null },
@@ -82,6 +88,7 @@ function ClienteDashboard({ setVista, logout }) {
         );
 
       case "proveedores": return <SeccionVacia nombre="Proveedores" />;
+      case "bitacora": return <Bitacora />;
 
       case "reportes":
         return <Reportes />;
@@ -95,8 +102,8 @@ function ClienteDashboard({ setVista, logout }) {
 
       {/* ── SIDEBAR ── */}
       <aside
-        className="bg-white border-end d-flex flex-column p-3 shadow-sm"
-        style={{ width: 260, minWidth: 260, position: "sticky", top: 0, height: "100vh", zIndex: 1000 }}
+        className="border-end d-flex flex-column p-3 shadow-sm"
+        style={{ width: 260, minWidth: 260, position: "sticky", top: 0, height: "100vh", zIndex: 1000, backgroundColor: "#000000", borderColor: "rgba(255,255,255,0.08)" }}
       >
 
         {/* Logo Corporativo */}
@@ -150,7 +157,7 @@ function ClienteDashboard({ setVista, logout }) {
                 className="d-flex align-items-center gap-3 border-0 rounded-3 px-3 py-2 w-100 text-start fw-semibold"
                 style={{
                   background: isActive ? "#F5A623" : "transparent",
-                  color: isActive ? "#ffffff" : "#555",
+                  color: isActive ? "#10142D" : "#E9ECEF",
                   fontSize: "0.9rem",
                   cursor: "pointer",
                   transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../supabaseClient";
 import Swal from "sweetalert2";
+import { supabase } from "../lib/client"; // Conexión directa importada
 
 import Navbar from "../components/Home/Navbar";
 import Footer from "../components/Home/Footer";
@@ -18,7 +18,6 @@ import SkeletonLoader from "../components/UI/SkeletonLoader";
 // ==========================================
 const optimizarUrlCloudinary = (url) => {
   if (!url || !url.includes("cloudinary.com")) return url;
-
   if (url.includes("f_auto,q_auto")) return url;
 
   const partes = url.split("/upload/");
@@ -27,7 +26,7 @@ const optimizarUrlCloudinary = (url) => {
   return `${partes[0]}/upload/f_auto,q_auto/${partes[1]}`;
 };
 
-function ProductoDetalleview({ productoId, setVista, login }) {
+function ProductoDetalleview({ productoId, setVista, login, agregarAlCarrito }) {
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -37,40 +36,29 @@ function ProductoDetalleview({ productoId, setVista, login }) {
 
     async function obtenerDatosProducto() {
       setLoading(true);
-
       try {
+        // Consulta directa a la base de datos de Supabase filtrando por ID
         const { data, error } = await supabase
           .from("productos")
-          .select(`
-            id,
-            nombre,
-            marca,
-            descripcion,
-            referencia_interna,
-            precio,
-            imagen_url,
-            suspendido,
-            producto_imagenes (
-              id,
-              imagen_url,
-              es_principal,
-              orden
-            )
-          `)
+          .select("*")
           .eq("id", productoId)
-          .eq("suspendido", false)
-          .single();
+          .single(); // Trae un solo objeto directamente
 
         if (error) throw error;
 
+        // Validar si el producto fue suspendido para evitar el acceso por URL directa
+        if (data.suspendido === 1 || data.suspendido === true) {
+          throw new Error("Producto suspendido");
+        }
+
         setProducto(data);
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar el detalle desde Supabase:", err.message);
 
         Swal.fire({
           icon: "error",
-          title: "Producto no encontrado",
-          text: "El artículo solicitado no está disponible."
+          title: "Producto no disponible",
+          text: "El artículo solicitado no existe o ha sido retirado del catálogo."
         });
 
         setVista("productos");
@@ -80,23 +68,19 @@ function ProductoDetalleview({ productoId, setVista, login }) {
     }
 
     obtenerDatosProducto();
-  }, [productoId]);
+  }, [productoId, setVista]);
 
   useEffect(() => {
     if (!producto) return;
 
-    document.title = `${producto.nombre} | A&P Lubricantes y Filtros`;
+    document.title = `${producto.nombre} | A&L Compresores Y Partes`;
 
-    let metaDesc = document.querySelector(
-      'meta[name="description"]'
-    );
-
+    let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
       metaDesc = document.createElement("meta");
       metaDesc.name = "description";
       document.head.appendChild(metaDesc);
     }
-
     metaDesc.content = `Consulta información técnica del producto ${producto.nombre} de la marca ${producto.marca}.`;
   }, [producto]);
 
@@ -110,22 +94,24 @@ function ProductoDetalleview({ productoId, setVista, login }) {
     );
   }
 
+  // Estructura y mapeo de imágenes relacionales desde la base de datos
   const imagenesAdaptadas =
     producto.producto_imagenes?.length > 0
       ? producto.producto_imagenes.map((img) => ({
-        id: img.id,
-        imagen_url: optimizarUrlCloudinary(img.imagen_url),
-        es_principal: img.es_principal
-      }))
+          id: img.id,
+          imagen_url: optimizarUrlCloudinary(img.imagen_url),
+          es_principal: img.es_principal
+        }))
       : [
-        {
-          imagen_url: optimizarUrlCloudinary(
-            producto.imagen_url ||
-            "https://res.cloudinary.com/ddyrgkdxq/image/upload/v1777133787/placeholder-industrial.png"
-          )
-        }
-      ];
+          {
+            imagen_url: optimizarUrlCloudinary(
+              producto.imagen_url ||
+              "https://res.cloudinary.com/ddyrgkdxq/image/upload/v1777133787/placeholder-industrial.png"
+            )
+          }
+        ];
 
+  // Especificaciones técnicas formateadas con stock_total unificado
   const especificacionesAdaptadas = [
     {
       clave: "Marca",
@@ -133,19 +119,20 @@ function ProductoDetalleview({ productoId, setVista, login }) {
     },
     {
       clave: "Referencia",
-      valor: producto.referencia_interna || "N/A"
+      valor: producto.referencia_interna || producto.codigo_interno || "N/A"
+    },
+    {
+      clave: "Stock",
+      valor: producto.stock_total !== undefined ? Number(producto.stock_total).toLocaleString() : "N/A"
+    },
+    {
+      clave: "Precio",
+      valor: producto.precio ? `$${Number(producto.precio).toLocaleString()}` : "N/A"
     }
   ];
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background:
-          "linear-gradient(to bottom, #f8f9fa, #eef2f5)"
-      }}
-    >
-      {/* Navbar */}
+    <>
       <Navbar
         vistaActual="producto-detalle"
         setVista={setVista}
@@ -184,11 +171,9 @@ function ProductoDetalleview({ productoId, setVista, login }) {
                 Catálogo
               </span>
             </li>
-
             <li className="breadcrumb-item">
-              {producto.marca}
+              {producto.marca || "Industrial"}
             </li>
-
             <li
               className="breadcrumb-item active"
               aria-current="page"
@@ -208,7 +193,7 @@ function ProductoDetalleview({ productoId, setVista, login }) {
               fontSize: ".8rem"
             }}
           >
-            {producto.marca}
+            {producto.marca || "Industrial"}
           </span>
 
           <h1
@@ -226,9 +211,7 @@ function ProductoDetalleview({ productoId, setVista, login }) {
               maxWidth: "700px"
             }}
           >
-            Consulta la información técnica,
-            especificaciones y características
-            del producto.
+            Consulta la información técnica, especificaciones y características del producto.
           </p>
         </section>
 
@@ -238,8 +221,7 @@ function ProductoDetalleview({ productoId, setVista, login }) {
           style={{
             borderRadius: "24px",
             border: "1px solid #ECECEC",
-            boxShadow:
-              "0 20px 50px rgba(0,0,0,.05)",
+            boxShadow: "0 20px 50px rgba(0,0,0,.05)",
             padding: "2rem"
           }}
         >
@@ -254,10 +236,20 @@ function ProductoDetalleview({ productoId, setVista, login }) {
             <div className="col-lg-6">
               <ProductInfo producto={producto} />
 
-              <div className="mt-4">
-                <ActionButtons
-                  producto={producto}
-                />
+              <div className="mt-4 d-flex flex-column gap-3">
+                <button
+                  className="btn btn-warning btn-lg rounded-pill fw-bold py-3"
+                  onClick={() => agregarAlCarrito && agregarAlCarrito({
+                    id: producto.id,
+                    nombre: producto.nombre,
+                    precio: Number(producto.precio || 0),
+                    cantidad: 1,
+                  })}
+                >
+                  Agregar al carrito
+                </button>
+
+                <ActionButtons producto={producto} />
               </div>
             </div>
           </div>
@@ -265,11 +257,8 @@ function ProductoDetalleview({ productoId, setVista, login }) {
           {/* Información inferior */}
           <div className="row mt-5 pt-5 border-top">
             <div className="col-lg-7 mb-4">
-              <div
-                className="d-flex align-items-center mb-3"
-              >
+              <div className="d-flex align-items-center mb-3">
                 <i className="bi bi-file-earmark-text fs-5 me-2 text-warning"></i>
-
                 <h5 className="fw-bold mb-0">
                   Descripción del Producto
                 </h5>
@@ -281,25 +270,20 @@ function ProductoDetalleview({ productoId, setVista, login }) {
                   whiteSpace: "pre-line"
                 }}
               >
-                {producto.descripcion}
+                {producto.descripcion || producto.caracteristicas || "No hay una descripción extendida disponible."}
               </p>
             </div>
 
             <div className="col-lg-5">
-              <div
-                className="d-flex align-items-center mb-3"
-              >
+              <div className="d-flex align-items-center mb-3">
                 <i className="bi bi-gear fs-5 me-2 text-warning"></i>
-
                 <h5 className="fw-bold mb-0">
                   Especificaciones Técnicas
                 </h5>
               </div>
 
               <TechnicalSheet
-                especificaciones={
-                  especificacionesAdaptadas
-                }
+                especificaciones={especificacionesAdaptadas}
               />
             </div>
           </div>
@@ -311,15 +295,9 @@ function ProductoDetalleview({ productoId, setVista, login }) {
             <div className="col-md-3">
               <div className="bg-white rounded-4 p-4 h-100 shadow-sm">
                 <i className="bi bi-patch-check fs-3 text-success"></i>
-
-                <h6 className="fw-bold mt-3">
-                  Productos de Calidad
-                </h6>
-
+                <h6 className="fw-bold mt-3">Productos de Calidad</h6>
                 <p className="text-secondary small mb-0">
-                  Trabajamos con marcas
-                  reconocidas del sector
-                  automotriz.
+                  Trabajamos con marcas reconocidas del sector industrial y automotriz.
                 </p>
               </div>
             </div>
@@ -327,14 +305,9 @@ function ProductoDetalleview({ productoId, setVista, login }) {
             <div className="col-md-3">
               <div className="bg-white rounded-4 p-4 h-100 shadow-sm">
                 <i className="bi bi-truck fs-3 text-primary"></i>
-
-                <h6 className="fw-bold mt-3">
-                  Amplio Catálogo
-                </h6>
-
+                <h6 className="fw-bold mt-3">Amplio Catálogo</h6>
                 <p className="text-secondary small mb-0">
-                  Lubricantes, filtros y
-                  productos especializados.
+                  Lubricantes, filtros y productos especializados.
                 </p>
               </div>
             </div>
@@ -342,14 +315,9 @@ function ProductoDetalleview({ productoId, setVista, login }) {
             <div className="col-md-3">
               <div className="bg-white rounded-4 p-4 h-100 shadow-sm">
                 <i className="bi bi-chat-dots fs-3 text-warning"></i>
-
-                <h6 className="fw-bold mt-3">
-                  Asesoría
-                </h6>
-
+                <h6 className="fw-bold mt-3">Asesoría</h6>
                 <p className="text-secondary small mb-0">
-                  Atención personalizada para
-                  resolver tus dudas.
+                  Atención personalizada para resolver tus dudas de inmediato.
                 </p>
               </div>
             </div>
@@ -357,14 +325,9 @@ function ProductoDetalleview({ productoId, setVista, login }) {
             <div className="col-md-3">
               <div className="bg-white rounded-4 p-4 h-100 shadow-sm">
                 <i className="bi bi-shield-check fs-3 text-success"></i>
-
-                <h6 className="fw-bold mt-3">
-                  Confianza
-                </h6>
-
+                <h6 className="fw-bold mt-3">Confianza</h6>
                 <p className="text-secondary small mb-0">
-                  Información clara y soporte
-                  especializado.
+                  Información clara y soporte especializado garantizado.
                 </p>
               </div>
             </div>
@@ -374,20 +337,16 @@ function ProductoDetalleview({ productoId, setVista, login }) {
 
       <Footer
         setVista={setVista}
-        onAdminLogin={() =>
-          setShowModal(true)
-        }
+        onAdminLogin={() => setShowModal(true)}
       />
 
       {showModal && (
         <LoginModal
           login={login}
-          onClose={() =>
-            setShowModal(false)
-          }
+          onClose={() => setShowModal(false)}
         />
       )}
-    </div>
+    </>
   );
 }
 

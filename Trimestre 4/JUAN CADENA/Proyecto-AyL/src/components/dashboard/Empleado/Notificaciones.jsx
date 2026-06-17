@@ -1,45 +1,9 @@
 import React from "react";
 
-// --- IMPORTACIÓN DE IMÁGENES CORREGIDA (../../../ para salir a src) ---
-import imgHerramienta from "../../../assets/imgProductos/herramienta.jpg";
-import imgCompresor from "../../../assets/imgProductos/compresor.jpg";
-import imgAceiteSin from "../../../assets/imgProductos/Aceite sintetico 5W-40.jpg";
-import imgFiltroAceite from "../../../assets/imgProductos/Filtro de Aceite W962.jpg";
-import imgFiltroAire from "../../../assets/imgProductos/Filtro de Aire GA-30.jpg";
-import imgFiltroSep from "../../../assets/imgProductos/Filtro Separador.jpg";
-import imgLlaveTorque from "../../../assets/imgProductos/Llave de Torque Neumática.jpg";
-import imgManguera from "../../../assets/imgProductos/Manguera de Alta Presión 10m.jpg";
-import imgManometro from "../../../assets/imgProductos/Manómetro de Glicerina.jpg";
-import imgPanel from "../../../assets/imgProductos/panel.jpg";
-import imgSepAceite from "../../../assets/imgProductos/separador-de-aceite.jpg";
-import imgSeparador from "../../../assets/imgProductos/Separador.jpg";
-import imgValvulaAdm from "../../../assets/imgProductos/Válvula de Admisión IV-20.jpg";
-import imgValvulaRet from "../../../assets/imgProductos/Válvula de Retención Térmica.jpg";
-
-const obtenerImagenNotif = (nombre) => {
-  if (!nombre) return imgHerramienta;
-  const n = nombre.toLowerCase();
-  if (n.includes("aceite") && n.includes("sintético")) return imgAceiteSin;
-  if (n.includes("filtro") && n.includes("aceite")) return imgFiltroAceite;
-  if (n.includes("filtro") && n.includes("aire")) return imgFiltroAire;
-  if (n.includes("filtro") && n.includes("separador")) return imgFiltroSep;
-  if (n.includes("separador") && n.includes("aceite")) return imgSepAceite;
-  if (n.includes("separador")) return imgSeparador;
-  if (n.includes("válvula") && n.includes("admisión")) return imgValvulaAdm;
-  if (n.includes("válvula") && n.includes("retención")) return imgValvulaRet;
-  if (n.includes("llave") && n.includes("torque")) return imgLlaveTorque;
-  if (n.includes("manguera")) return imgManguera;
-  if (n.includes("manómetro")) return imgManometro;
-  if (n.includes("panel")) return imgPanel;
-  if (n.includes("compresor")) return imgCompresor;
-  if (n.includes("válvula") || n.includes("valvula")) return imgValvulaAdm;
-  if (n.includes("filtro")) return imgFiltroSep;
-  if (n.includes("herramienta") || n.includes("llave") || n.includes("taladro")) return imgHerramienta;
-  return imgHerramienta;
-};
 
 function Notificaciones({ productos }) {
   const stockBajo = productos.filter((p) => p.Cantidad < 10);
+  const obtenerImagenNotif = () => "/src/assets/compresor.jpg";
 
   if (stockBajo.length === 0) {
     return (

@@ -2,49 +2,13 @@ import { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
 import Notificaciones from "./Notificaciones";
 
-// --- IMPORTACIÓN DE IMÁGENES ---
-import imgHerramienta from "../../../assets/imgProductos/herramienta.jpg";
-import imgCompresor from "../../../assets/imgProductos/compresor.jpg";
-import imgAceiteSin from "../../../assets/imgProductos/Aceite sintetico 5W-40.jpg";
-import imgFiltroAceite from "../../../assets/imgProductos/Filtro de Aceite W962.jpg";
-import imgFiltroAire from "../../../assets/imgProductos/Filtro de Aire GA-30.jpg";
-import imgFiltroSep from "../../../assets/imgProductos/Filtro Separador.jpg";
-import imgLlaveTorque from "../../../assets/imgProductos/Llave de Torque Neumática.jpg";
-import imgManguera from "../../../assets/imgProductos/Manguera de Alta Presión 10m.jpg";
-import imgManometro from "../../../assets/imgProductos/Manómetro de Glicerina.jpg";
-import imgPanel from "../../../assets/imgProductos/panel.jpg";
-import imgSepAceite from "../../../assets/imgProductos/separador-de-aceite.jpg";
-import imgSeparador from "../../../assets/imgProductos/Separador.jpg";
-import imgValvulaAdm from "../../../assets/imgProductos/Válvula de Admisión IV-20.jpg";
-import imgValvulaRet from "../../../assets/imgProductos/Válvula de Retención Térmica.jpg";
 
 const API_URL = "https://69cdf09333a09f831b7caeb6.mockapi.io/productos/productos";
 
-const obtenerImagen = (nombre) => {
-  if (!nombre) return imgHerramienta;
-  const n = nombre.toLowerCase();
-  if (n.includes("aceite") && n.includes("sintético")) return imgAceiteSin;
-  if (n.includes("filtro") && n.includes("aceite")) return imgFiltroAceite;
-  if (n.includes("filtro") && n.includes("aire")) return imgFiltroAire;
-  if (n.includes("filtro") && n.includes("separador")) return imgFiltroSep;
-  if (n.includes("separador") && n.includes("aceite")) return imgSepAceite;
-  if (n.includes("separador")) return imgSeparador;
-  if (n.includes("válvula") && n.includes("admisión")) return imgValvulaAdm;
-  if (n.includes("válvula") && n.includes("retención")) return imgValvulaRet;
-  if (n.includes("llave") && n.includes("torque")) return imgLlaveTorque;
-  if (n.includes("manguera")) return imgManguera;
-  if (n.includes("manómetro")) return imgManometro;
-  if (n.includes("panel")) return imgPanel;
-  if (n.includes("compresor")) return imgCompresor;
-  return imgHerramienta;
-};
 
 function Productos() {
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-  const [cargando, setCargando] = useState(true);
-  const [mostrarIA, setMostrarIA] = useState(false);
-  const [archivo, setArchivo] = useState(null);
   const [orden, setOrden] = useState("reciente");
 
   // --- CARRITO CON PERSISTENCIA ---
@@ -62,16 +26,13 @@ function Productos() {
   }, []);
 
   const obtenerProductos = () => {
-    setCargando(true);
     fetch(API_URL)
       .then((res) => res.json())
       .then((data) => {
         setProductos(Array.isArray(data) ? data : []);
-        setCargando(false);
       })
       .catch(() => {
         setProductos([]);
-        setCargando(false);
       });
   };
 
@@ -120,6 +81,9 @@ function Productos() {
         });
     }
   };
+
+  const obtenerImagen = () => "/src/assets/compresor.jpg";
+  const verDetalle = () => {};
 
   const abrirModal = async (p = null) => {
     const { value: v } = await Swal.fire({
@@ -190,9 +154,9 @@ function Productos() {
       `}</style>
 
       {/* HEADER */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <h3 className="fw-bold m-0">Catálogo de Productos</h3>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 flex-wrap">
           <input 
             type="text" 
             className="form-control border-0 bg-light" 
@@ -200,6 +164,16 @@ function Productos() {
             style={{borderRadius: '12px', width: '250px'}}
             onChange={(e) => setBusqueda(e.target.value)}
           />
+          <select
+            className="form-select border-0 bg-light"
+            style={{borderRadius: '12px', width: '180px'}}
+            value={orden}
+            onChange={(e) => setOrden(e.target.value)}
+          >
+            <option value="reciente">Más recientes</option>
+            <option value="precio_asc">Precio ascendente</option>
+            <option value="precio_desc">Precio descendente</option>
+          </select>
           <button className="btn btn-warning fw-bold px-4" style={{borderRadius:'12px'}} onClick={() => abrirModal()}>+ Nuevo</button>
         </div>
       </div>

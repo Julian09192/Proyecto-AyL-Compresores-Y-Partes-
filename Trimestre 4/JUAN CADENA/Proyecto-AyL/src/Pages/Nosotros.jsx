@@ -97,7 +97,7 @@ const InfoSeccion = () => (
           <h2 className="display-4 fw-bold mb-4">NUESTRO COMPROMISO</h2>
           <div className="bg-warning mb-4" style={{ width: "60px", height: "5px" }}></div>
           <p className="fs-5 text-dark mb-4">
-            <strong>A&L Lubricantes y Filtros S.A.S.</strong> es una empresa comprometida con sus clientes, dedicada a la comercialización de repuestos, filtros y lubricantes para maquinaria pesada e industrial, plantas y compresores.
+            <strong>A&L Compresores Y Partes S.A.S.</strong> es una empresa comprometida con sus clientes, dedicada a la comercialización de repuestos, filtros y lubricantes para maquinaria pesada e industrial, plantas y compresores.
           </p>
           <p className="fs-5 text-dark" >
             Brindamos un trato personalizado para cada uno de nuestros clientes con personal altamente calificado, suministrando mantenimientos en equipos neumáticos y plantas eléctricas de alta calidad ajustados a sus requerimientos.
@@ -215,8 +215,7 @@ const Carousel = () => {
 /* ============================================================
    PÁGINA PRINCIPAL (Export)
    ============================================================ */
-export default // ASEGÚRATE DE QUE TENGA LAS LLAVES { } Y EL NOMBRE setVista ADENTRO
-  function Nosotros({ setVista, usuario, login, logout, carrito, totalItems, cartOpen, setCartOpen, agregarAlCarrito, cambiarCantidad, eliminarDelCarrito }) {
+export default function Nosotros({ setVista, usuario, login, logout, carrito, totalItems, cartOpen, setCartOpen, cambiarCantidad, eliminarDelCarrito }) {
   const [showModal, setShowModal] = useState(false);
   // ... resto de tu código
   return (
@@ -245,7 +244,7 @@ export default // ASEGÚRATE DE QUE TENGA LAS LLAVES { } Y EL NOMBRE setVista AD
       </main>
 
 
-      <Footer />
+      <Footer setVista={setVista} />
 
       <CartPanel
         carrito={carrito}

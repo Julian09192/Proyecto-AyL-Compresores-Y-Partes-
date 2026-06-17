@@ -43,8 +43,8 @@ const topicos = [
     color: "#ffae00f5",
     bg: "#E6F1FB",
     titulo: "Correo Corporativo",
-    desc: "comercial@ayplubricantes.com",
-    href: "mailto:comercial@ayplubricantes.com"
+    desc: "comercial@AYLlubricantes.com",
+    href: "mailto:comercial@AYLlubricantes.com"
   },
   {
     icon: "bi bi-pin-map-fill",
@@ -108,7 +108,7 @@ export default function ContactoPage({ setVista, usuario, login, logout }) {
 
   return (
     <div style={{ backgroundColor: "#F0F2F5" }}>
-      <Navbar vistaActual="contacto" {...{ setVista, usuario, logout }} />
+      <Navbar vistaActual="contactos" {...{ setVista, usuario, logout }} onOpenLogin={() => setShowModal(true)} />
 
       <main>
         <Hero />
