@@ -58,7 +58,7 @@ app.post("/auth/check-email", (req, res) => {
 // 2. Sincronizar usuario de Supabase con tu sistema local (CORREGIDO CON TU TABLA REAL)
 app.post("/auth/sync-user", (req, res) => {
   // CORRECCIÓN: mapeamos directamente con el id (uuid) nativo que te entrega Supabase
-  const { email, nombre, id, avatar_url } = req.body;
+  const { email, nombre, id } = req.body;
   
   if (!email || !id) {
     return res.status(400).json({ success: false, error: "Email e ID son requeridos" });

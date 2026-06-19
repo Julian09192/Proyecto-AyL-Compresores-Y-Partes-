@@ -36,7 +36,7 @@ function Productos() {
             const res = await fetch(CLOUDINARY_URL, { method: "POST", body: formData });
             const data = await res.json();
             return data.secure_url ? { url: data.secure_url, publicId: data.public_id } : null;
-        } catch (err) { return null; }
+        } catch { return null; }
     };
 
     const alternarEstadoProducto = async (id, estaSuspendido) => {

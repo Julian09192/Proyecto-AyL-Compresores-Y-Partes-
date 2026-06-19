@@ -22,7 +22,17 @@ function App() {
     return savedVista === "catalogo" ? "productos" : savedVista;
   });
   const [usuario, setUsuario] = useState(null);
-  const [carrito, setCarrito] = useState([]);
+  const [carrito, setCarrito] = useState(() => {
+    const saved = localStorage.getItem("al_carrito");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        localStorage.removeItem("al_carrito");
+      }
+    }
+    return [];
+  });
   const [cartOpen, setCartOpen] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [productoSeleccionadoId, setProductoSeleccionadoId] = useState(null);
@@ -125,14 +135,7 @@ function App() {
     };
   }, [vista]);
 
-  // 2. INICIALIZADOR ÚNICAMENTE PARA EL CARRITO LOCAL
-  useEffect(() => {
-    const carritoGuardado = localStorage.getItem("al_carrito");
-    if (carritoGuardado) {
-      try { setCarrito(JSON.parse(carritoGuardado)); }
-      catch { localStorage.removeItem("al_carrito"); }
-    }
-  }, []);
+  // El carrito ya está inicializado de forma diferida en useState
 
   // Sincronización del carrito con LocalStorage
   useEffect(() => {

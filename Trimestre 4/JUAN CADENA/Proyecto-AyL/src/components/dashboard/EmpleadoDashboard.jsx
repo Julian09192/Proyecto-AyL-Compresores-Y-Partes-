@@ -7,6 +7,8 @@ import ControlStock from "./Empleado/ControlStock";
 import Reportes from "./Empleado/Reportes";
 import Bitacora from "./Empleado/Bitacora";
 
+const logoMarca = "https://res.cloudinary.com/duvoqozcl/image/upload/v1777394217/logo-ayl.png";
+
 function SeccionVacia({ nombre }) {
   return (
     <div className="p-5 text-center">

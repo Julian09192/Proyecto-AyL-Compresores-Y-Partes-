@@ -40,6 +40,7 @@ function MiPerfilAdmin({ usuario: usuarioProp }) {
       setEditando(false);
       Swal.fire({ icon: 'success', title: 'Perfil actualizado', timer: 1500, showConfirmButton: false });
     } catch (error) {
+      console.error("Error al actualizar perfil:", error);
       Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo actualizar la información' });
     } finally {
       setGuardando(false);
