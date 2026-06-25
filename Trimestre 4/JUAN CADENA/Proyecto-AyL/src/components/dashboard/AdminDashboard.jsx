@@ -4,7 +4,7 @@ import MiPerfil from "./AdminDashboard/MiPerfil";
 import Productos from "./AdminDashboard/Productos";
 import Notificaciones from "./AdminDashboard/Notificaciones";
 import Reportes from "./AdminDashboard/Reportes"
-import Usuarios from "./AdminDashboard/Usuarios";
+import usuario from "./AdminDashboard/usuarios";
 import ControlStock from "./AdminDashboard/ControlStock";
 import Bitacora from "./AdminDashboard/Bitacora";
 const logoMarca = "https://res.cloudinary.com/duvoqozcl/image/upload/v1777394217/logo-ayl.png";
@@ -62,7 +62,7 @@ function AdminDashboard({ logout }) {
     { id: "stock", label: "Control de Stock", icon: "bi-graph-up-arrow", badge: 3 },
     { id: "proveedores", label: "Proveedores", icon: "bi-truck", badge: null },
     { id: "bitacora", label: "Bitácora", icon: "bi-journal-text", badge: null },
-    { id: "usuarios", label: "Usuarios", icon: "bi-people", badge: null },
+    { id: "usuario", label: "usuario", icon: "bi-people", badge: null },
     { id: "reportes", label: "Reportes", icon: "bi-file-earmark-bar-graph", badge: null },
     { id: "notificaciones", label: "Notificaciones", icon: "bi-bell", badge: notificaciones },
     { id: "perfil", label: "Mi Perfil", icon: "bi-gear", badge: null },
@@ -96,7 +96,7 @@ function AdminDashboard({ logout }) {
       case "proveedores":
         return <SeccionVacia nombre="Proveedores" />;
 
-      case "usuarios": return <Usuarios />;
+      case "usuario": return <usuario />;
 
 
 

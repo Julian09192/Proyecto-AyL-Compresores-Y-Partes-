@@ -7,8 +7,6 @@ import ControlStock from "./Empleado/ControlStock";
 import Reportes from "./Empleado/Reportes";
 import Bitacora from "./Empleado/Bitacora";
 
-const logoMarca = "https://res.cloudinary.com/duvoqozcl/image/upload/v1777394217/logo-ayl.png";
-
 function SeccionVacia({ nombre }) {
   return (
     <div className="p-5 text-center">
@@ -20,9 +18,10 @@ function SeccionVacia({ nombre }) {
   );
 }
 
+const logoMarca = "https://res.cloudinary.com/duvoqozcl/image/upload/v1777394217/logo-ayl.png";
 const API_URL = "http://localhost:3001/productos";
 
-function ClienteDashboard({ logout }) {
+function EmpleadoDashboard({ logout }) {
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
 
   const [productos, setProductos] = useState([]);
@@ -237,4 +236,4 @@ function ClienteDashboard({ logout }) {
   );
 }
 
-export default ClienteDashboard;
+export default EmpleadoDashboard;

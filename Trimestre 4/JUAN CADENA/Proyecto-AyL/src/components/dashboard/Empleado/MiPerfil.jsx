@@ -50,7 +50,7 @@ function MiPerfilEmpleado() {
       }
 
       try {
-        const res = await fetch(`${API_BASE}/usuarios/${usuarioLocal.id}`);
+        const res = await fetch(`${API_BASE}/usuario/${usuarioLocal.id}`);
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const datos = await res.json();
         const datosUsuario = {
@@ -100,7 +100,7 @@ function MiPerfilEmpleado() {
       };
 
       try {
-        const res = await fetch(`${API_BASE}/usuarios/${usuario.id}`, {
+        const res = await fetch(`${API_BASE}/usuario/${usuario.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(actualizar)
@@ -165,7 +165,7 @@ function MiPerfilEmpleado() {
 
       if (!passwordNueva) return;
 
-      const res = await fetch(`${API_BASE}/usuarios/${usuario.id}/password`, {
+      const res = await fetch(`${API_BASE}/usuario/${usuario.id}/password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ current_password: passwordActual, new_password: passwordNueva })

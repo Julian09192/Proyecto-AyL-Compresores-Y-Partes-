@@ -1,11 +1,8 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { supabase, obtenerPerfilUsuario } from "../../lib/client";
 
 function AuthCallback() {
-  const navigate = useNavigate();
-
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
@@ -15,25 +12,25 @@ function AuthCallback() {
 
         if (session) {
           // Buscamos el perfil en tu tabla 'usuario'
-          const usuario = await obtenerPerfilUsuario(session.user.id);
+          const usuarioDb = await obtenerPerfilUsuario(session.user.id);
           
-          if (usuario) {
+          if (usuarioDb) {
             Swal.fire({
               icon: "success",
               title: "¡Bienvenido!",
-              text: `Hola, ${usuario.nombre || "Usuario"}`,
-              confirmButtonColor: "#F5A623",
+              // CORREGIDO: Ajustado al nuevo esquema usando la propiedad 'usuario'
+              text: `Hola, ${usuarioDb.usuario || "Usuario"}`,
+              confirmButtonColor: "#FFC107",
               timer: 2000,
               showConfirmButton: false,
             });
           }
           
-          // Redirigimos al inicio
-          navigate('/');
-          // Forzamos un recargado breve para que App.jsx detecte la sesión nueva
-          window.location.reload();
+          // Redirigimos al inicio de forma nativa y forzamos el recargue
+          // para que App.jsx detecte la sesión fresca de inmediato
+          window.location.href = window.location.origin;
         } else {
-          navigate('/');
+          window.location.href = window.location.origin;
         }
       } catch (error) {
         console.error("Error en callback:", error);
@@ -43,13 +40,13 @@ function AuthCallback() {
           text: error.message || "No se pudo completar el inicio de sesión",
           confirmButtonColor: "#10142D"
         }).then(() => {
-          navigate('/');
+          window.location.href = window.location.origin;
         });
       }
     };
 
     handleAuthCallback();
-  }, [navigate]);
+  }, []);
 
   return (
     <div style={{

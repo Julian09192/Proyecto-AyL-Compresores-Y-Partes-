@@ -1,12 +1,12 @@
 // src/components/Login/LoginModal.jsx
 import { useState } from "react";
 import Swal from "sweetalert2";
-import { supabase } from "../../lib/client"; 
-import RecoverPasswordModal from "./RecoverPasswordModal"; 
+import { supabase } from "../../lib/client";
+import RecoverPasswordModal from "./RecoverPasswordModal";
 
-function LoginModal({ onClose }) {
+function LoginModal({ onClose, login }) {
   const [isLogin, setIsLogin] = useState(true);
-  const [nombre, setNombre] = useState("");
+  const [usuarioName, setUsuarioName] = useState(""); // Ajustado para reflejar el cambio de esquema
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmar, setConfirmar] = useState("");
@@ -14,6 +14,8 @@ function LoginModal({ onClose }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showRecoverPassword, setShowRecoverPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const API_AUTH_URL = "http://localhost:3001/usuario";
 
   const handleGoogleLogin = async () => {
     try {
@@ -37,53 +39,129 @@ function LoginModal({ onClose }) {
 
     try {
       if (isLogin) {
-        // LOGIN DIRECTO CON SUPABASE
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
           password: password.trim(),
         });
-        if (error) throw error;
         
-        onClose(); // App.jsx reaccionará al cambio de sesión
+        if (error) throw error;
+
+        try {
+          const syncRes = await fetch(`${API_AUTH_URL}/sync-user`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: data.user.id,
+              email: data.user.email,
+              usuario: data.user.user_metadata?.usuario || email.split("@")[0], // Sincroniza con 'usuario'
+            }),
+          });
+
+          if (syncRes.ok) {
+            const syncData = await syncRes.json();
+            if (syncData.success && syncData.usuario) {
+              localStorage.setItem("usuario", JSON.stringify(syncData.usuario));
+              if (login) login(syncData.usuario);
+            } else {
+              const usuarioFallback = {
+                id: data.user.id,
+                email: data.user.email,
+                usuario: data.user.user_metadata?.usuario || email.split("@")[0],
+                rol: "cliente"
+              };
+              localStorage.setItem("usuario", JSON.stringify(usuarioFallback));
+              if (login) login(usuarioFallback);
+            }
+          } else {
+            throw new Error("El servidor no pudo procesar el perfil.");
+          }
+        } catch (syncErr) {
+          console.warn("No se pudo sincronizar el perfil con Express, aplicando perfil local...", syncErr);
+          const usuarioFallback = {
+            id: data.user.id,
+            email: data.user.email,
+            usuario: data.user.user_metadata?.usuario || email.split("@")[0],
+            rol: "cliente"
+          };
+          localStorage.setItem("usuario", JSON.stringify(usuarioFallback));
+          if (login) login(usuarioFallback);
+        }
+
+        onClose();
       } else {
-        // REGISTRO CON SUPABASE
         if (password !== confirmar) {
-          Swal.fire({ icon: "error", title: "Las contraseñas no coinciden" });
+          Swal.fire({ icon: "error", title: "Las contraseñas no coinciden", confirmButtonColor: "#FFC107" });
+          setLoading(false);
           return;
         }
 
-        const { error } = await supabase.auth.signUp({
+        const { data: authData, error: authError } = await supabase.auth.signUp({
           email: email.trim(),
           password: password.trim(),
           options: {
-            data: { nombre: nombre.trim() || email.split("@")[0] }
+            data: {
+              usuario: usuarioName.trim() // Cambiado de 'nombre' a 'usuario'
+            }
           }
         });
 
-        if (error) throw error;
+        if (authError) throw authError;
+
+        const usuarioIdReal = authData.user?.id;
+        if (!usuarioIdReal) {
+          throw new Error("No se pudo obtener el ID de autenticación de Supabase.");
+        }
+
+        const registroRes = await fetch(`${API_AUTH_URL}/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: usuarioIdReal,
+            email: email.trim(),
+            usuario: usuarioName.trim() // Enviamos 'usuario' de acuerdo al cambio de la tabla pública
+          })
+        });
+
+        const contentType = registroRes.headers.get("content-type");
+        let registroData = {};
+        if (contentType && contentType.includes("application/json")) {
+          registroData = await registroRes.json();
+        } else {
+          const textError = await registroRes.text();
+          throw new Error(`Error del servidor (${registroRes.status}): ${textError || "Respuesta inválida."}`);
+        }
+
+        if (!registroRes.ok || !registroData.success) {
+          throw new Error(registroData.error || "No se pudo completar el registro en el servidor.");
+        }
 
         Swal.fire({
           icon: "success",
           title: "Cuenta creada",
           text: "Registro completado con éxito. Ya puedes iniciar sesión.",
-          confirmButtonColor: "#F5A623"
+          confirmButtonColor: "#FFC107"
         }).then(() => {
           setIsLogin(true);
           setPassword("");
           setConfirmar("");
-          setNombre("");
+          setUsuarioName("");
         });
       }
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error de operación",
-        text: error.message,
-        confirmButtonColor: "#10142D"
-      });
+      console.error("Error completo atrapado:", error);
+      const mensajeError = error.message || error.error_description || "Error inesperado en el servidor.";
+      Swal.fire({ icon: "error", title: "Error de operación", text: mensajeError, confirmButtonColor: "#FFC107" });
     } finally {
-      setLoading(false);
+      loading && setLoading(false);
     }
+  };
+
+  const alternarPestana = (modoLogin) => {
+    setIsLogin(modoLogin);
+    // Limpieza saludable de campos al cambiar de pestaña
+    setPassword("");
+    setConfirmar("");
+    setUsuarioName("");
   };
 
   const EyeIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
@@ -91,9 +169,9 @@ function LoginModal({ onClose }) {
 
   return (
     <>
-      <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(16, 20, 45, 0.7)", backdropFilter: "blur(8px)", zIndex: 9998, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={onClose}>
-        <div className="bg-white shadow-lg border-0" style={{ width: "92%", maxWidth: 420, borderRadius: 28, overflow: "hidden" }} onClick={(e) => e.stopPropagation()}>
-          <div style={{ height: "6px", background: "linear-gradient(90deg, #F5A623 0%, #10142D 100%)" }} />
+      <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(16, 20, 45, 0.7)", backdropFilter: "blur(8px)", zIndex: 9998, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="bg-white shadow-lg border-0" style={{ width: "92%", maxWidth: 420, borderRadius: 28, overflow: "hidden" }}>
+          <div style={{ height: "6px", background: "linear-gradient(90deg, #FFC107 0%, #10142D 100%)" }} />
           <div className="p-4 p-md-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div>
@@ -109,15 +187,15 @@ function LoginModal({ onClose }) {
             </button>
 
             <div className="bg-light rounded-pill p-1 d-flex mb-4" style={{ border: "1px solid #eee" }}>
-              <button className={`flex-fill border-0 rounded-pill py-2 fw-bold ${isLogin ? "bg-white shadow-sm text-warning" : "bg-transparent text-secondary"}`} style={{ fontSize: "0.8rem" }} onClick={() => setIsLogin(true)}>INGRESAR</button>
-              <button className={`flex-fill border-0 rounded-pill py-2 fw-bold ${!isLogin ? "bg-white shadow-sm text-warning" : "bg-transparent text-secondary"}`} style={{ fontSize: "0.8rem" }} onClick={() => setIsLogin(false)}>REGISTRARSE</button>
+              <button type="button" className={`flex-fill border-0 rounded-pill py-2 fw-bold ${isLogin ? "bg-white shadow-sm text-warning" : "bg-transparent text-secondary"}`} style={{ fontSize: "0.8rem" }} onClick={() => alternarPestana(true)}>INGRESAR</button>
+              <button type="button" className={`flex-fill border-0 rounded-pill py-2 fw-bold ${!isLogin ? "bg-white shadow-sm text-warning" : "bg-transparent text-secondary"}`} style={{ fontSize: "0.8rem" }} onClick={() => alternarPestana(false)}>REGISTRARSE</button>
             </div>
 
             <form onSubmit={manejarEnvio}>
               {!isLogin && (
                 <div className="form-floating mb-3">
-                  <input type="text" className="form-control border-0 bg-light shadow-none" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
-                  <label className="text-muted small">Nombre Completo</label>
+                  <input type="text" className="form-control border-0 bg-light shadow-none" placeholder="Usuario" value={usuarioName} onChange={(e) => setUsuarioName(e.target.value)} required />
+                  <label className="text-muted small">Nombre de Usuario</label>
                 </div>
               )}
               <div className="form-floating mb-3">
@@ -125,14 +203,14 @@ function LoginModal({ onClose }) {
                 <label className="text-muted small">Correo Electrónico</label>
               </div>
               <div className="form-floating mb-3 position-relative">
-                <input type={showPassword ? "text" : "password"} className="form-control border-0 bg-light shadow-none" style={{ paddingRight: "45px" }} placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <input type={showPassword ? "text" : "password"} minLength="6" className="form-control border-0 bg-light shadow-none" style={{ paddingRight: "45px" }} placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 <label className="text-muted small">Contraseña</label>
                 <button type="button" className="position-absolute end-0 top-50 translate-middle-y btn btn-link text-muted text-decoration-none" onClick={() => setShowPassword(!showPassword)} style={{ zIndex: 10, background: 'transparent', border: 'none', padding: '8px', marginRight: '8px' }}>{showPassword ? <EyeOffIcon /> : <EyeIcon />}</button>
               </div>
-              {isLogin && <div className="text-end mb-3"><button type="button" className="btn btn-link text-decoration-none p-0 small" style={{ color: "#F5A623" }} onClick={() => setShowRecoverPassword(true)}>¿Olvidaste tu contraseña?</button></div>}
+              {isLogin && <div className="text-end mb-3"><button type="button" className="btn btn-link text-decoration-none p-0 small" style={{ color: "#FFC107" }} onClick={() => setShowRecoverPassword(true)}>¿Olvidaste tu contraseña?</button></div>}
               {!isLogin && (
                 <div className="form-floating mb-3 position-relative">
-                  <input type={showConfirmPassword ? "text" : "password"} className="form-control border-0 bg-light shadow-none" style={{ paddingRight: "45px" }} placeholder="Repetir" value={confirmar} onChange={(e) => setConfirmar(e.target.value)} required />
+                  <input type={showConfirmPassword ? "text" : "password"} minLength="6" className="form-control border-0 bg-light shadow-none" style={{ paddingRight: "45px" }} placeholder="Repetir" value={confirmar} onChange={(e) => setConfirmar(e.target.value)} required />
                   <label className="text-muted small">Confirmar Contraseña</label>
                   <button type="button" className="position-absolute end-0 top-50 translate-middle-y btn btn-link text-muted text-decoration-none" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{ zIndex: 10, background: 'transparent', border: 'none', padding: '8px', marginRight: '8px' }}>{showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}</button>
                 </div>

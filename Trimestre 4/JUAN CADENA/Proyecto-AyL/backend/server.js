@@ -1,67 +1,50 @@
-import express from "express";
-import cors from "cors";
-import 'dotenv/config';
-import usuariosRoutes from "./config/usuarios.js";
-import productosRoutes from "./config/productos.js";
-import pedidosRoutes from "./config/pedidos.js";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import routes from './routes/index.js';
 
+// Configuración
+dotenv.config();
 const app = express();
+const PORT = process.env.PORT || 3001;
 
-/*
-  =========================
-  MIDDLEWARES
-  =========================
-*/
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-/*
-  =========================
-  RUTA PRINCIPAL
-  =========================
-*/
-app.get("/", (req, res) => {
-  res.json({ 
-    status: "ok", 
-    message: "🚀 Servidor A&L Compresores operativo",
-    endpoints: ["/usuarios", "/auth", "/productos", "/api/pedidos"]
-  });
+// Ruta de prueba
+app.get('/', (req, res) => {
+  res.send('Servidor funcionando con Supabase');
 });
 
-/*
-  =========================
-  REGISTRO DE RUTAS
-  =========================
-*/
+// Usar todas las rutas
+app.use('/api', routes);
 
-// Rutas de autenticación (check-email, sync-user, reset-password, update-password)
-app.use("/auth", usuariosRoutes);
+// Manejo de errores 404
+app.use((req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
+});
 
-// CRUD de usuarios (listar, obtener, actualizar)
-app.use("/usuarios", usuariosRoutes);
+// Manejo de errores global
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ error: 'Error interno del servidor' });
+});
 
-// CRUD de productos
-app.use("/productos", productosRoutes);
-
-// CRUD de pedidos
-app.use("/api/pedidos", pedidosRoutes);
-
-/*
-  =========================
-  PUERTO Y ARRANQUE
-  =========================
-*/
-const PORT = process.env.PORT || 3001;
+// Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`\n🚀 Servidor corriendo en http://localhost:${PORT}`);
-  console.log(`📦 Rutas activas:`);
-  console.log(`   GET/POST  /auth/check-email`);
-  console.log(`   GET/POST  /auth/sync-user`);
-  console.log(`   POST      /auth/reset-password`);
-  console.log(`   GET       /usuarios`);
-  console.log(`   GET/PUT   /usuarios/:id`);
-  console.log(`   GET/POST  /productos`);
-  console.log(`   GET/PUT/DELETE /productos/:id`);
-  console.log(`   GET/POST  /api/pedidos`);
-  console.log(`   GET/PUT   /api/pedidos/:id`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log('📋 Endpoints disponibles:');
+  console.log('  /api/auth/login - Login');
+  console.log('  /api/usuarios - Usuarios');
+  console.log('  /api/productos - Productos');
+  console.log('  /api/bodegas - Bodegas');
+  console.log('  /api/movimientos-stock - Movimientos de stock');
+  console.log('  /api/ordenes - Órdenes');
+  console.log('  /api/clientes - Clientes');
+  console.log('  /api/proveedores - Proveedores');
+  console.log('  /api/resenas - Reseñas');
+  console.log('  /api/carrito - Carrito de compras');
+  console.log('  /api/compras - Compras');
+  console.log('  /api/queries - Reportes y análisis');
 });

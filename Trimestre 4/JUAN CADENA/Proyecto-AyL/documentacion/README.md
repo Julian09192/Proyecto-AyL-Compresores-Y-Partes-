@@ -7,7 +7,7 @@ Este proyecto es una tienda industrial y de repuestos desarrollada con React, Vi
 - Catálogo público con productos y detalles.
 - Navegación por Inicio, Nosotros, Productos, Contacto y Perfil.
 - Carrito con visualización, edición de cantidades y checkout.
-- Inicio de sesión y cierre de sesión para usuarios registrados.
+- Inicio de sesión y cierre de sesión para usuario registrados.
 - SEO básico con títulos y metaetiquetas por vista.
 
 ## Estructura de vistas

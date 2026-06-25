@@ -1,4 +1,3 @@
-// src/components/Login/RecoverPasswordModal.jsx
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { supabase } from "../../lib/client";
@@ -42,7 +41,7 @@ function RecoverPasswordModal({ onClose, email: initialEmail = "" }) {
         icon: "success",
         title: "Correo enviado",
         html: `Hemos enviado un enlace de recuperación a:<br/><strong>${email}</strong><br/><br/>Revisa tu bandeja de entrada y sigue las instrucciones.`,
-        confirmButtonColor: "#F5A623"
+        confirmButtonColor: "#FFC107" // Unificado con la paleta de colores de la app
       }).then(() => {
         onClose();
       });
@@ -60,13 +59,6 @@ function RecoverPasswordModal({ onClose, email: initialEmail = "" }) {
     }
   };
 
-  const EyeIcon = () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-      <circle cx="12" cy="12" r="3"></circle>
-    </svg>
-  );
-
   return (
     <div
       style={{
@@ -83,7 +75,7 @@ function RecoverPasswordModal({ onClose, email: initialEmail = "" }) {
         style={{ width: "92%", maxWidth: 420, borderRadius: 28, overflow: "hidden" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ height: "6px", background: "linear-gradient(90deg, #F5A623 0%, #10142D 100%)" }} />
+        <div style={{ height: "6px", background: "linear-gradient(90deg, #FFC107 0%, #10142D 100%)" }} />
 
         <div className="p-4 p-md-5">
           <div className="d-flex justify-content-between align-items-center mb-4">
