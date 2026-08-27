@@ -1,101 +1,77 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 
+// Usuarios pre-cargados para pruebas
+// Cuando tengas backend esto vendrá de una API
+const USUARIOS_INICIALES = [
+  { nombre: "Administrador", email: "admin",           password: "admin123",  rol: "admin"    },
+  { nombre: "Empleado", email: "empleado@al.com", password: "emp123",    rol: "empleado" },
+];
+
+// Lee usuarios del localStorage, o usa los iniciales si no hay ninguno
+function getUsuarios() {
+  try {
+    const guardados = localStorage.getItem("al_usuarios_registrados");
+    return guardados ? JSON.parse(guardados) : USUARIOS_INICIALES;
+  } catch { return USUARIOS_INICIALES; }
+}
+
 function LoginModal({ onClose, login }) {
   const [isLogin, setIsLogin] = useState(true);
-  const [nombre, setNombre] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmar, setConfirmar] = useState("");
+  const [nombre, setNombre]   = useState("");
+  const [email, setEmail]     = useState("");
+  const [password, setPassword]       = useState("");
+  const [confirmar, setConfirmar]     = useState("");
 
-  const API_URL = "http://localhost:3001/usuarios";
-
-  const manejarEnvio = async (e) => {
+  const manejarEnvio = (e) => {
     e.preventDefault();
+    const usuarios = getUsuarios();
 
-    try {
-      const response = await fetch(API_URL);
-      const usuarios = await response.json();
-
-      if (isLogin) {
-        const usuarioEncontrado = usuarios.find(
-          (u) => 
-            u.email.trim().toLowerCase() === email.trim().toLowerCase() && 
-            u.password.trim() === password.trim()
-        );
-
-        if (usuarioEncontrado) {
-          localStorage.setItem("usuario", JSON.stringify(usuarioEncontrado));
-          const token = `jwt-${usuarioEncontrado.rol}--${Date.now()}`;
-          localStorage.setItem("token", token);
-
-          onClose();
-
-          Swal.fire({
-            icon: "success",
-            title: "Inicio exitoso",
-            confirmButtonColor: "#F5A623",
-            timer: 1500,
-            showConfirmButton: false,
-          }).then(() => login(usuarioEncontrado));
-
-        } else {
-          Swal.fire({ 
-            icon: "error", 
-            title: "Error", 
-            text: "Correo o contraseña incorrectos",
-            confirmButtonColor: "#F5A623"
-          });
-        }
-
+    if (isLogin) {
+      // ── LOGIN ──
+      const encontrado = usuarios.find(
+        (u) => u.email === email && u.password === password
+      );
+      if (encontrado) {
+        onClose();
+        Swal.fire({
+          icon: "success",
+          title: `¡Bienvenido, ${encontrado.nombre}!`,
+          timer: 1500,
+          showConfirmButton: false,
+        }).then(() => login(encontrado)); // sube el usuario a App.jsx
       } else {
-        if (password !== confirmar) {
-          Swal.fire({ icon: "error", title: "Las contraseñas no coinciden" });
-          return;
-        }
-
-        const yaExiste = usuarios.find((u) => u.email === email);
-        if (yaExiste) {
-          Swal.fire({ icon: "error", title: "El correo ya está registrado" });
-          return;
-        }
-
-        const nuevoUsuario = {
-          nombre,
-          email: email.trim(),
-          password: password.trim(),
-          rol: "cliente",
-          telefono: "",
-          empresa: "A&L Compresores y Partes"
-        };
-
-        const postRes = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(nuevoUsuario)
-        });
-
-        if (postRes.ok) {
-          Swal.fire({
-            icon: "success",
-            title: "¡Cuenta creada!",
-            text: "Ya puedes iniciar sesión.",
-            confirmButtonColor: "#F5A623",
-          }).then(() => setIsLogin(true));
-        }
+        Swal.fire({ icon: "error", title: "Credenciales incorrectas" });
       }
-    } catch (error) {
-      console.error("Error:", error);
-      Swal.fire({ 
-        icon: "error", 
-        title: "Error de conexión", 
-        text: "No es posible conectarse al servidor",
-        confirmButtonColor: "#F5A623"
-      });
+
+    } else {
+      // ── REGISTRO ──
+      if (password !== confirmar) {
+        Swal.fire({ icon: "error", title: "Las contraseñas no coinciden" });
+        return;
+      }
+      const yaExiste = usuarios.find((u) => u.email === email);
+      if (yaExiste) {
+        Swal.fire({ icon: "error", title: "Ese email ya está registrado" });
+        return;
+      }
+
+      // Crear nuevo usuario con rol "cliente"
+      const nuevoUsuario = { nombre, email, password, rol: "cliente" };
+      const actualizados = [...usuarios, nuevoUsuario];
+
+      // Guardar en localStorage
+      localStorage.setItem("al_usuarios_registrados", JSON.stringify(actualizados));
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Cuenta creada!",
+        text: "Ya puedes iniciar sesión",
+        confirmButtonColor: "#F5A623",
+      }).then(() => setIsLogin(true));
     }
   };
 
-  
   return (
     <div
       style={{
@@ -108,6 +84,7 @@ function LoginModal({ onClose, login }) {
     >
       <div className="bg-light shadow-lg p-3" style={{ width: "92%", maxWidth: 390, borderRadius: 24 }}>
 
+        {/* Encabezado */}
         <div className="d-flex justify-content-between align-items-start mb-3">
           <div>
             <h2 className="fw-bold fs-5 mb-1">Acceder a tu cuenta</h2>
@@ -118,6 +95,7 @@ function LoginModal({ onClose, login }) {
           <button className="btn-close" onClick={onClose} />
         </div>
 
+        {/* Pestañas */}
         <div className="bg-secondary bg-opacity-10 rounded-3 p-1 d-flex mb-3">
           {["Iniciar Sesión", "Registrarse"].map((tab, i) => {
             const activo = i === 0 ? isLogin : !isLogin;
@@ -134,6 +112,7 @@ function LoginModal({ onClose, login }) {
           })}
         </div>
 
+        {/* Formulario */}
         <div className="bg-white rounded-4 p-3 border">
           <h3 className="fw-bold mb-1" style={{ fontSize: "1rem" }}>
             {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
@@ -186,6 +165,19 @@ function LoginModal({ onClose, login }) {
             </button>
           </form>
 
+          {/* Credenciales de prueba */}
+          {isLogin && (
+            <div className="bg-light border rounded-3 p-2 mt-3" style={{ fontSize: "0.75rem" }}>
+              <p className="mb-1 fw-semibold">
+                <i className="bi bi-info-circle"></i> Credenciales de prueba:</p>
+              <p className="mb-0"> 
+                <i className="bi bi-person-circle"></i><strong> Admin:</strong> admin / admin123</p>
+              <p className="mb-0"> 
+                <i className="bi bi-person-badge"> </i><strong> Empleado:</strong>  empleado@al.com / emp123</p>
+              <p className="mb-0">
+                <i className="bi bi-cart"> </i><strong> Cliente:</strong>  regístrate arriba</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

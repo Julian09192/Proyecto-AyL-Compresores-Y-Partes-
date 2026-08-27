@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import Home from "./Pages/Home";
 import Nosotros from "./Pages/Nosotros";
 import Productos from "./Pages/Productos";
-import CheckoutPage from "./Pages/CheckoutPage";
-import ContactoPage from "./Pages/ContactoPage";
-import ProfilePage from "./Pages/ProfilePage";
+import Contactos from "./Pages/Contactos";
+import CheckoutPage from "./Pages/CheckoutPage"; // <--- NUEVO: Importamos la página de pago
 import AdminDashboard from "./components/dashboard/AdminDashboard";
-import EmpleadoDashboard from "./components/dashboard/EmpleadoDashboard";
+import ClienteDashboard from "./components/dashboard/ClienteDashboard";
 import "./styles.css";
+import "./customViews.css";
 
 function App() {
   const [vista, setVista] = useState(localStorage.getItem("al_vista") || "inicio");
@@ -15,20 +15,21 @@ function App() {
   const [carrito, setCarrito] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
     const usuarioGuardado = localStorage.getItem("al_usuario");
     const carritoGuardado = localStorage.getItem("al_carrito");
 
     if (usuarioGuardado) {
-      try {
+      try { 
         const user = JSON.parse(usuarioGuardado);
         setUsuario(user);
+        // Si el usuario ya está logueado y la vista es inicio, lo redirigimos a su panel
         if (vista === "inicio") {
           if (user.rol === "admin") setVista("admin");
           if (user.rol === "empleado") setVista("cliente");
         }
-      } catch {
-        localStorage.removeItem("al_usuario");
+      } catch { 
+        localStorage.removeItem("al_usuario"); 
       }
     }
     if (carritoGuardado) {
@@ -45,14 +46,15 @@ function App() {
     localStorage.setItem("al_vista", vista);
   }, [vista]);
 
-  const login = (datosUsuario) => {
+const login = (datosUsuario) => {
     setUsuario(datosUsuario);
     localStorage.setItem("al_usuario", JSON.stringify(datosUsuario));
-
+    
+    // Redirección inteligente según el rol
     if (datosUsuario.rol === "admin") {
       setVista("admin");
     } else if (datosUsuario.rol === "empleado") {
-      setVista("cliente");
+      setVista("cliente"); // <--- Esto enviará al usuario al ClienteDashboard
     }
   };
 
@@ -65,9 +67,10 @@ function App() {
     window.location.href = "/";
   };
 
+  // --- FUNCIONES DEL CARRITO ---
 
   const agregarAlCarrito = (producto) => {
-    if (!usuario) return;
+    if (!usuario) return; 
     setCarrito((prev) => {
       const existe = prev.find((item) => item.id === producto.id);
       if (existe) {
@@ -93,6 +96,7 @@ function App() {
     setCarrito((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // NUEVO: Función para limpiar el carrito tras la compra
   const vaciarCarrito = () => {
     setCarrito([]);
     localStorage.removeItem("al_carrito");
@@ -100,7 +104,7 @@ function App() {
 
   const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
-
+  // --- EFECTO BOOTSTRAP (Se mantiene igual) ---
   useEffect(() => {
     const links = [
       { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" },
@@ -137,45 +141,28 @@ function App() {
     switch (vista) {
       case "inicio":
         return <Home {...propsComunes} />;
-
       case "nosotros":
         return <Nosotros {...propsComunes} />;
-
       case "productos":
         return <Productos {...propsComunes} />;
-
+      case "contactos":
+        return <Contactos {...propsComunes} />;
+      
+      // NUEVO: Caso para mostrar la pantalla de pago
       case "checkout":
         return (
-          <CheckoutPage
-            carrito={carrito}
-            setVista={setVista}
-            vaciarCarrito={vaciarCarrito}
+          <CheckoutPage 
+            carrito={carrito} 
+            setVista={setVista} 
+            vaciarCarrito={vaciarCarrito} 
           />
         );
-
-      case "perfil":
-        return (
-          <ProfilePage
-            usuario={usuario}
-            setVista={setVista}
-            volverA={usuario?.rol === "empleado" ? "cliente" : "inicio"}
-          />
-        );
-
-
-
-      case "contactos":
-        return <ContactoPage {...propsComunes} />;
-
-      case "perfil":
-        return <ProfilePage usuario={usuario} setVista={setVista} />;
 
       case "admin":
         return <AdminDashboard setVista={setVista} logout={logout} />;
 
       case "cliente":
-        return <EmpleadoDashboard setVista={setVista} logout={logout} />;
-
+        return <ClienteDashboard setVista={setVista} logout={logout} />;
       default:
         return <Home {...propsComunes} />;
     }

@@ -1,141 +1,374 @@
-import { useState, useEffect } from "react";
-import Swal from "sweetalert2";
+import { useEffect, useState } from "react";
+import { usuarios } from "../../../data/appData";
+import { createItem, patchItem, readCollection, removeItem, updateItem } from "../../../data/jsonApi";
+
+function getInitials(nombre) {
+  return nombre
+    .split(" ")
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
+}
+
+function getToday() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function formatDate(value) {
+  if (!value || value === "Sin acceso") {
+    return value || "Sin fecha";
+  }
+
+  const date = new Date(`${value}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("es-CO", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function buildPayload(formData, currentItem = {}) {
+  return {
+    ...currentItem,
+    nombre: formData.nombre?.trim() || currentItem.nombre || "Nuevo usuario",
+    email: formData.email?.trim() || currentItem.email || "usuario@empresa.com",
+    rol: formData.rol || currentItem.rol || "Auxiliar",
+    estado: formData.estado || currentItem.estado || "Activo",
+    fechaCreacion: currentItem.fechaCreacion || getToday(),
+    ultimoAcceso: currentItem.ultimoAcceso || "Sin acceso",
+    creadoPor: currentItem.creadoPor || "Administrador",
+  };
+}
+
+function getStatus(tone) {
+  if (tone === "api") {
+    return { className: "admin-module__status is-success", label: "Guardando en db.json" };
+  }
+
+  if (tone === "local") {
+    return { className: "admin-module__status is-warning", label: "Modo local" };
+  }
+
+  return { className: "admin-module__status is-info", label: "Cargando datos..." };
+}
+
+function StatCard({ title, value, subtitle }) {
+  return (
+    <div className="col-xl-4">
+      <div className="module-card h-100">
+        <p className="fw-semibold mb-3">{title}</p>
+        <div className="admin-summary-number">{value}</div>
+        <p className="text-secondary mb-0">{subtitle}</p>
+      </div>
+    </div>
+  );
+}
+
+function UsuarioModal({ title, submitLabel, formData, onChange, onClose, onSubmit }) {
+  return (
+    <div className="module-modal-backdrop">
+      <div className="module-modal-dialog">
+        <div className="module-modal-card is-small">
+          <div className="d-flex align-items-start justify-content-between gap-3">
+            <div>
+              <h2 className="h3 mb-1">{title}</h2>
+              <p className="text-secondary mb-0">Completa la información del usuario</p>
+            </div>
+            <button type="button" onClick={onClose} className="btn btn-light rounded-3">
+              x
+            </button>
+          </div>
+
+          <form className="mt-4" onSubmit={onSubmit}>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Nombre *</label>
+                <input type="text" name="nombre" required value={formData.nombre} onChange={onChange} placeholder="Nombre completo" className="form-control admin-soft-input" />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Correo *</label>
+                <input type="email" name="email" required value={formData.email} onChange={onChange} placeholder="correo@empresa.com" className="form-control admin-soft-input" />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Rol</label>
+                <select name="rol" value={formData.rol} onChange={onChange} className="form-select admin-soft-input">
+                  <option>Administrador</option>
+                  <option>Auxiliar</option>
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Estado</label>
+                <select name="estado" value={formData.estado} onChange={onChange} className="form-select admin-soft-input">
+                  <option>Activo</option>
+                  <option>Inactivo</option>
+                </select>
+              </div>
+              <div className="col-12 d-flex justify-content-end gap-2 mt-2">
+                <button type="button" onClick={onClose} className="btn btn-outline-secondary rounded-3 px-4">Cancelar</button>
+                <button type="submit" className="btn contact-btn-brand rounded-3 px-4">{submitLabel}</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function Usuarios() {
-  const [listaUsuarios, setListaUsuarios] = useState([]);
-  const API_URL = "http://localhost:3001/usuarios";
-
-  const obtenerUsuarios = async () => {
-    try {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      setListaUsuarios(data);
-    } catch (error) {
-      console.error("Error al obtener usuarios:", error);
-      Swal.fire("Error", "No se pudo conectar con la base de datos", "error");
-    }
-  };
+  const [items, setItems] = useState(() => usuarios.map((item) => ({ ...item })));
+  const [sourceType, setSourceType] = useState("loading");
+  const [busqueda, setBusqueda] = useState("");
+  const [rolFiltro, setRolFiltro] = useState("Todos los roles");
+  const [estadoFiltro, setEstadoFiltro] = useState("Todos los estados");
+  const [editingItem, setEditingItem] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [formData, setFormData] = useState(null);
 
   useEffect(() => {
-    obtenerUsuarios();
+    let active = true;
+
+    async function loadItems() {
+      try {
+        const data = await readCollection("usuarios");
+        if (!active) return;
+        setItems(data);
+        setSourceType("api");
+      } catch {
+        if (active) setSourceType("local");
+      }
+    }
+
+    loadItems();
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const actualizarRol = async (id, nuevoRol) => {
-    try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rol: nuevoRol }),
-      });
+  const texto = busqueda.trim().toLowerCase();
+  const resultados = items.filter((item) => {
+    const values = [item.nombre, item.email, item.rol, item.estado, item.creadoPor].join(" ").toLowerCase();
+    const coincideTexto = values.includes(texto);
+    const coincideRol = rolFiltro === "Todos los roles" ? true : item.rol === rolFiltro;
+    const coincideEstado = estadoFiltro === "Todos los estados" ? true : item.estado === estadoFiltro;
+    return coincideTexto && coincideRol && coincideEstado;
+  });
 
-      if (res.ok) {
-        setListaUsuarios(listaUsuarios.map(u => u.id === id ? { ...u, rol: nuevoRol } : u));
-        Swal.fire({
-          icon: "success",
-          title: "Rol actualizado",
-          timer: 1000,
-          showConfirmButton: false,
-          toast: true,
-          position: 'top-end'
-        });
-      }
-    } catch (error) {
-      Swal.fire("Error", "No se pudo cambiar el rol", "error");
-    }
+  const usuariosActivos = items.filter((item) => item.estado === "Activo").length;
+  const administradores = items.filter((item) => item.rol === "Administrador").length;
+  const auxiliares = items.filter((item) => item.rol === "Auxiliar").length;
+  const status = getStatus(sourceType);
+
+  const openCreateModal = () => {
+    setEditingItem(null);
+    setIsCreating(true);
+    setFormData({ nombre: "", email: "", rol: "Auxiliar", estado: "Activo" });
   };
 
-  const eliminarUsuario = (id, nombre) => {
-    Swal.fire({
-      title: `¿Estás seguro?`,
-      text: `Vas a eliminar permanentemente a ${nombre}`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#F5A623",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar"
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-          if (res.ok) {
-            setListaUsuarios(listaUsuarios.filter((u) => u.id !== id));
-            Swal.fire("Eliminado", "Usuario borrado correctamente", "success");
-          }
-        } catch (error) {
-          Swal.fire("Error", "Hubo un problema al eliminar", "error");
-        }
-      }
+  const openEditModal = (item) => {
+    setEditingItem(item);
+    setIsCreating(false);
+    setFormData({
+      nombre: item.nombre,
+      email: item.email,
+      rol: item.rol,
+      estado: item.estado,
     });
   };
 
+  const closeModal = () => {
+    setEditingItem(null);
+    setIsCreating(false);
+    setFormData(null);
+  };
+
+  const handleFormChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((current) => ({ ...current, [name]: value }));
+  };
+
+  const saveItem = async (event) => {
+    event.preventDefault();
+    const payload = buildPayload(formData, editingItem ?? {});
+
+    if (isCreating) {
+      if (sourceType === "api") {
+        try {
+          const created = await createItem("usuarios", payload);
+          setItems((current) => [created, ...current]);
+          closeModal();
+          return;
+        } catch {
+          setSourceType("local");
+        }
+      }
+
+      const newId = items.length ? Math.max(...items.map((item) => Number(item.id) || 0)) + 1 : 1;
+      setItems((current) => [{ ...payload, id: newId }, ...current]);
+      closeModal();
+      return;
+    }
+
+    if (sourceType === "api") {
+      try {
+        const updated = await updateItem("usuarios", editingItem.id, { ...payload, id: editingItem.id });
+        setItems((current) => current.map((item) => (item.id === editingItem.id ? updated : item)));
+        closeModal();
+        return;
+      } catch {
+        setSourceType("local");
+      }
+    }
+
+    setItems((current) => current.map((item) => (item.id === editingItem.id ? { ...payload, id: editingItem.id } : item)));
+    closeModal();
+  };
+
+  const deleteItem = async (id) => {
+    const item = items.find((current) => current.id === id);
+    if (!item || !window.confirm(`Eliminar a ${item.nombre}?`)) return;
+
+    if (sourceType === "api") {
+      try {
+        await removeItem("usuarios", id);
+      } catch {
+        setSourceType("local");
+      }
+    }
+
+    setItems((current) => current.filter((currentItem) => currentItem.id !== id));
+  };
+
+  const toggleEstado = async (id) => {
+    const item = items.find((current) => current.id === id);
+    if (!item) return;
+
+    const nextEstado = item.estado === "Activo" ? "Inactivo" : "Activo";
+
+    if (sourceType === "api") {
+      try {
+        const updated = await patchItem("usuarios", id, { estado: nextEstado });
+        setItems((current) => current.map((currentItem) => (currentItem.id === id ? updated : currentItem)));
+        return;
+      } catch {
+        setSourceType("local");
+      }
+    }
+
+    setItems((current) => current.map((currentItem) => (currentItem.id === id ? { ...currentItem, estado: nextEstado } : currentItem)));
+  };
+
   return (
-    <div className="p-4" style={{ backgroundColor: "#f8f9fa", minHeight: "100vh" }}>
-      <div className="container bg-white shadow-sm rounded-4 p-4">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h2 className="fw-bold mb-0">Gestión de Usuarios</h2>
-            <p className="text-secondary small">Administra los roles y accesos de la plataforma</p>
+    <section className="admin-module p-4 p-lg-5">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
+        <div>
+          <h1 className="h4 mb-1">Gestión de usuarios</h1>
+          <p className="text-secondary mb-0">Administra usuarios y sus roles en el sistema.</p>
+          <div className="mt-3"><span className={status.className}>{status.label}</span></div>
+        </div>
+        <button type="button" onClick={openCreateModal} className="btn contact-btn-brand rounded-3 px-4 py-3">+ Agregar usuario</button>
+      </div>
+
+      <div className="row g-4 mb-4">
+        <StatCard title="Usuarios activos" value={usuariosActivos} subtitle={`De ${items.length} usuarios`} />
+        <StatCard title="Administradores" value={administradores} subtitle="Con permisos completos" />
+        <StatCard title="Auxiliares" value={auxiliares} subtitle="Con permisos limitados" />
+      </div>
+
+      <div className="module-card mb-4">
+        <div className="row g-3">
+          <div className="col-lg-6">
+            <input type="text" value={busqueda} onChange={(event) => setBusqueda(event.target.value)} placeholder="Buscar por nombre o correo..." className="form-control admin-soft-input" />
           </div>
-          <div className="text-end">
-            <span className="badge rounded-pill p-2 px-3" style={{ background: "#F5A623" }}>
-              {listaUsuarios.length} Registrados
-            </span>
+          <div className="col-lg-3">
+            <select value={rolFiltro} onChange={(event) => setRolFiltro(event.target.value)} className="form-select admin-soft-input">
+              <option>Todos los roles</option>
+              <option>Administrador</option>
+              <option>Auxiliar</option>
+            </select>
+          </div>
+          <div className="col-lg-3">
+            <select value={estadoFiltro} onChange={(event) => setEstadoFiltro(event.target.value)} className="form-select admin-soft-input">
+              <option>Todos los estados</option>
+              <option>Activo</option>
+              <option>Inactivo</option>
+            </select>
           </div>
         </div>
+      </div>
 
-        <div className="table-responsive">
-          <table className="table table-hover border-top">
+      <div className="module-card">
+        <h2 className="h5 mb-4">Usuarios ({resultados.length})</h2>
+
+        <div className="admin-table-wrap">
+          <table className="table align-middle">
             <thead>
-              <tr className="text-secondary small text-uppercase">
+              <tr>
                 <th>Usuario</th>
-                <th>Correo Electrónico</th>
-                <th>Rol / Permisos</th>
-                <th className="text-center">Acciones</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Fecha de creación</th>
+                <th>Último acceso</th>
+                <th>Creado por</th>
+                <th>Acciones</th>
               </tr>
             </thead>
-            <tbody className="align-middle">
-              {listaUsuarios.map((u) => (
-                <tr key={u.id}>
+            <tbody>
+              {resultados.map((item) => (
+                <tr key={item.id}>
                   <td>
-                    <div className="d-flex align-items-center">
-                      <div 
-                        className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-2"
-                        style={{ width: 35, height: 35, background: "#6c757d", fontSize: "0.8rem" }}
-                      >
-                        {u.nombre.charAt(0).toUpperCase()}
+                    <div className="d-flex align-items-start gap-3">
+                      <div className="module-avatar">{getInitials(item.nombre)}</div>
+                      <div>
+                        <div className="fw-semibold">{item.nombre}</div>
+                        <div className="text-secondary">{item.email}</div>
                       </div>
-                      <span className="fw-semibold">{u.nombre}</span>
                     </div>
                   </td>
-                  <td>{u.email}</td>
+                  <td><span className={`admin-role-chip ${item.rol === "Administrador" ? "is-admin" : ""}`}>{item.rol}</span></td>
                   <td>
-                    <select 
-                      className="form-select form-select-sm border-0 bg-light fw-bold"
-                      style={{ width: "160px", color: u.rol === 'admin' ? '#F5A623' : '#495057' }}
-                      value={u.rol}
-                      onChange={(e) => actualizarRol(u.id, e.target.value)}
-                    >
-                      <option value="admin">Administrador</option>
-                      <option value="empleado">Empleado</option>
-                      <option value="cliente">Cliente</option>
-                    </select>
+                    <div className="d-flex align-items-center gap-2">
+                      <span className={`admin-status-chip ${item.estado === "Activo" ? "is-active" : "is-inactive"}`}>{item.estado}</span>
+                      <button type="button" onClick={() => toggleEstado(item.id)} className={`admin-switch ${item.estado === "Activo" ? "is-active" : ""}`}>
+                        <span className="admin-switch__thumb" />
+                      </button>
+                    </div>
                   </td>
-                  <td className="text-center">
-                    <button 
-                      className="btn btn-sm btn-light text-danger border-0"
-                      onClick={() => eliminarUsuario(u.id, u.nombre)}
-                    >
-                      <i className="bi bi-trash3-fill"></i> Eliminar
-                    </button>
+                  <td>{formatDate(item.fechaCreacion)}</td>
+                  <td>{formatDate(item.ultimoAcceso)}</td>
+                  <td>{item.creadoPor}</td>
+                  <td>
+                    <div className="d-flex gap-2">
+                      <button type="button" onClick={() => openEditModal(item)} className="admin-action">✏️ Editar</button>
+                      <button type="button" onClick={() => deleteItem(item.id)} className="admin-action is-delete">🗑️ Eliminar</button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
+        {resultados.length === 0 ? <div className="alert alert-light mt-4 mb-0 rounded-4">No se encontraron usuarios.</div> : null}
       </div>
-    </div>
+
+      {formData ? (
+        <UsuarioModal
+          title={isCreating ? "Agregar usuario" : "Editar usuario"}
+          submitLabel={isCreating ? "Agregar usuario" : "Guardar cambios"}
+          formData={formData}
+          onChange={handleFormChange}
+          onClose={closeModal}
+          onSubmit={saveItem}
+        />
+      ) : null}
+    </section>
   );
 }
 

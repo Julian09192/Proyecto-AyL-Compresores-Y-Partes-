@@ -1,171 +1,184 @@
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
+const PERFIL = {
+  nombre:   "Administrador",
+  email:    "admin@alcompresores.com",
+  rol:      "Administrador",
+  telefono: "+57 300 000 0000",
+  empresa:  "A&L Compresores y Partes",
+  desde:    "2024-01-01T00:00:00.000Z",
+};
 
-function MiPerfilAdmin({ onLogout }) {
-  const [usuario, setUsuario] = useState(null);
-  const [editando, setEditando] = useState(false);
-  const [datosEditados, setDatosEditados] = useState({});
+const ACTIVIDAD = [
+  { accion: "Inicio de sesión",                              fecha: "2024-12-20 10:30:00", ip: "192.168.1.100" },
+  { accion: "Producto agregado: Compresor Atlas Copco GA30", fecha: "2024-12-20 09:15:00", ip: "192.168.1.100" },
+  { accion: "Movimiento de stock registrado",                fecha: "2024-12-19 16:45:00", ip: "192.168.1.100" },
+  { accion: "Reporte generado: Stock por categorías",        fecha: "2024-12-19 14:20:00", ip: "192.168.1.100" },
+  { accion: "Inicio de sesión",                              fecha: "2024-12-19 08:00:00", ip: "192.168.1.100" },
+];
 
-  useEffect(() => {
-    const usuarioGuardado = localStorage.getItem("usuario");
-    if (usuarioGuardado) {
-      const datos = JSON.parse(usuarioGuardado);
-      setUsuario(datos);
-      setDatosEditados(datos);
-    }
-  }, []);
-
-  const guardarCambios = async () => {
-    try {
-      const response = await fetch(`http://localhost:3001/usuarios/${usuario.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datosEditados)
-      });
-
-      if (response.ok) {
-        const actualizado = await response.json();
-        setUsuario(actualizado);
-        localStorage.setItem("usuario", JSON.stringify(actualizado));
-        setEditando(false);
-        Swal.fire({ icon: 'success', title: 'Perfil de Admin actualizado', timer: 1500, showConfirmButton: false });
-      }
-    } catch (error) {
-      Swal.fire({ icon: 'error', title: 'Error al actualizar el servidor' });
-    }
-  };
-
-  const manejarCerrarSesion = () => {
-    Swal.fire({
-      title: '¿Cerrar sesión administrativa?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#F5A623',
-      confirmButtonText: 'Cerrar Sesión'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem("usuario");
-        localStorage.removeItem("token");
-        if (onLogout) onLogout();
-      }
-    });
-  };
-
-  if (!usuario) return <div className="p-4 text-center">Cargando perfil de administrador...</div>;
-
+function MiPerfil() {
   return (
     <div className="p-4">
+
+      {/* Encabezado */}
       <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
-          <h1 className="fw-bold mb-1" style={{ fontSize: "1.3rem" }}>Perfil de Administrador</h1>
+          <h1 className="fw-bold mb-1" style={{ fontSize: "1.3rem" }}>Mi Perfil</h1>
           <p className="text-secondary mb-0" style={{ fontSize: "0.88rem" }}>
-            Control total de tu cuenta y registros del sistema
+            Gestiona tu información personal y configuración de cuenta
           </p>
         </div>
-        <button onClick={manejarCerrarSesion} className="btn btn-outline-dark btn-sm d-flex align-items-center gap-2">
+        <button
+          className="btn btn-outline-dark btn-sm d-flex align-items-center gap-2"
+        >
           <i className="bi bi-door-open"></i> Cerrar Sesión
         </button>
       </div>
 
       <div className="row g-4">
+
+        {/* Columna izquierda */}
         <div className="col-lg-8 d-flex flex-column gap-4">
-          <div className="bg-white rounded-3 border p-4 shadow-sm">
+
+          {/* Tarjeta: Información Personal */}
+          <div className="bg-white rounded-3 border p-4">
+
             <div className="d-flex justify-content-between align-items-start mb-3">
               <div>
                 <h2 className="fw-bold mb-1" style={{ fontSize: "1rem" }}>
-                  <i className="bi bi-shield-check text-warning me-2"></i>Información Personal
+                  <i className="bi bi-person"></i> Información Personal
                 </h2>
                 <p className="text-secondary mb-0" style={{ fontSize: "0.82rem" }}>
-                  Datos de identidad del administrador
+                  Actualiza tu información de perfil
                 </p>
               </div>
-              {!editando ? (
-                <button onClick={() => setEditando(true)} className="btn btn-outline-secondary btn-sm">
-                  <i className="bi bi-pencil me-1"></i> Editar
-                </button>
-              ) : (
-                <div className="d-flex gap-2">
-                  <button onClick={guardarCambios} className="btn btn-warning btn-sm text-white fw-bold">Guardar</button>
-                  <button onClick={() => setEditando(false)} className="btn btn-light btn-sm border">Cancelar</button>
-                </div>
-              )}
+              <button className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                <i className="bi bi-pencil"></i> Editar
+              </button>
             </div>
 
+            {/* Avatar + nombre */}
             <div className="d-flex align-items-center gap-3 mb-4">
               <div
-                className="d-flex align-items-center justify-content-center rounded-circle text-white fw-bold shadow-sm"
-                style={{ width: 60, height: 60, background: "#F5A623", fontSize: "1.5rem" }}
+                className="d-flex align-items-center justify-content-center rounded-circle text-white fw-bold"
+                style={{ width: 56, height: 56, background: "#F5A623", fontSize: "1.4rem", flexShrink: 0 }}
               >
-                {usuario.nombre.charAt(0).toUpperCase()}
+                A
               </div>
               <div>
-                <div className="fw-bold" style={{ fontSize: "1.1rem" }}>{usuario.nombre}</div>
-                <div className="text-secondary small">{usuario.email}</div>
-                <span className="badge mt-1" style={{ background: "#F5A623" }}>{usuario.rol.toUpperCase()}</span>
+                <div className="fw-bold" style={{ fontSize: "1rem" }}>{PERFIL.nombre}</div>
+                <div className="text-secondary" style={{ fontSize: "0.82rem" }}>{PERFIL.email}</div>
+                <span
+                  className="text-white rounded-pill px-2 mt-1 d-inline-block"
+                  style={{ background: "#F5A623", fontSize: "0.72rem", fontWeight: 700 }}
+                >
+                  {PERFIL.rol}
+                </span>
               </div>
             </div>
 
+            {/* Campos en grid */}
             <div className="row g-3">
               {[
-                { key: "nombre", label: "Nombre Completo" },
-                { key: "email", label: "Correo de Administración" },
-                { key: "telefono", label: "Teléfono Principal" },
-                { key: "empresa", label: "Organización" },
+                { label: "Nombre Completo",   valor: PERFIL.nombre   },
+                { label: "Correo Electrónico",valor: PERFIL.email    },
+                { label: "Rol del Usuario",   valor: PERFIL.rol      },
+                { label: "Fecha de Creación", valor: PERFIL.desde    },
               ].map((campo) => (
-                <div key={campo.key} className="col-md-6">
-                  <label className="form-label text-secondary fw-bold small">{campo.label}</label>
+                <div key={campo.label} className="col-md-6">
+                  <label className="form-label text-secondary fw-medium" style={{ fontSize: "0.82rem" }}>
+                    {campo.label}
+                  </label>
                   <input
                     type="text"
-                    className={`form-control form-control-sm ${editando ? 'bg-white' : 'bg-light border-0'}`}
-                    value={datosEditados[campo.key] || ""}
-                    readOnly={!editando}
-                    onChange={(e) => setDatosEditados({...datosEditados, [campo.key]: e.target.value})}
+                    className="form-control form-control-sm bg-light border"
+                    value={campo.valor}
+                    readOnly
+                    style={{ fontSize: "0.88rem" }}
                   />
                 </div>
               ))}
             </div>
+
           </div>
 
-          <div className="bg-white rounded-3 border p-4 shadow-sm">
-            <h2 className="fw-bold mb-3" style={{ fontSize: "1rem" }}>
-              <i className="bi bi-lock me-2"></i>Seguridad
+          {/* Tarjeta: Configuración de Seguridad */}
+          <div className="bg-white rounded-3 border p-4">
+            <h2 className="fw-bold mb-1" style={{ fontSize: "1rem" }}>
+              <i className="bi bi-shield-lock"></i> Configuración de Seguridad
             </h2>
-            <div className="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center">
+            <p className="text-secondary mb-4" style={{ fontSize: "0.82rem" }}>
+              Gestiona la seguridad de tu cuenta
+            </p>
+
+            {/* Contraseña */}
+            <div className="d-flex justify-content-between align-items-center pb-3 border-bottom mb-3">
               <div>
-                <div className="fw-bold small">Contraseña Maestra</div>
-                <div className="text-muted" style={{ fontSize: '0.75rem' }}>Protegida por encriptación local</div>
+                <div className="fw-semibold" style={{ fontSize: "0.92rem" }}>Contraseña</div>
+                <div className="text-secondary" style={{ fontSize: "0.8rem" }}>
+                  Última actualización: Hace 30 días
+                </div>
               </div>
-              <button className="btn btn-sm btn-dark">Actualizar</button>
+              <button className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                <i className="bi bi-key"></i> Cambiar Contraseña
+              </button>
             </div>
+
+            {/* Info de sesión */}
+            <div>
+              <div className="fw-semibold mb-3" style={{ fontSize: "0.92rem" }}>Información de Sesión</div>
+              <div className="row g-2">
+                {[
+                  { label: "Último acceso:",  valor: "2024-12-20 10:30:00" },
+                  { label: "IP Address:",     valor: "192.168.1.100"       },
+                  { label: "Navegador:",      valor: "Chrome 120.0.0.0"    },
+                  { label: "Sistema:",        valor: "Windows 11"          },
+                ].map((info) => (
+                  <div key={info.label} className="col-md-6">
+                    <div className="text-secondary" style={{ fontSize: "0.8rem" }}>{info.label}</div>
+                    <div className="fw-semibold" style={{ fontSize: "0.88rem" }}>{info.valor}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
         </div>
 
-
+        {/* Columna derecha: Actividad Reciente */}
         <div className="col-lg-4">
-          <div className="bg-white rounded-3 border p-4 h-100 shadow-sm">
-            <h2 className="fw-bold mb-3" style={{ fontSize: "1rem" }}>
-              <i className="bi bi-activity me-2"></i>Logs del Sistema
+          <div className="bg-white rounded-3 border p-4 h-100">
+            <h2 className="fw-bold mb-1" style={{ fontSize: "1rem" }}>
+              <i className="bi bi-clock-history"></i> Actividad Reciente
             </h2>
+            <p className="text-secondary mb-4" style={{ fontSize: "0.82rem" }}>
+              Registro de actividades en el sistema
+            </p>
+
             <div className="d-flex flex-column gap-3">
-              <div className="border-start border-warning border-3 ps-3 py-1">
-                <div className="fw-bold small" style={{ fontSize: '0.85rem' }}>Acceso al Panel</div>
-                <div className="text-muted small">Hoy, hace un momento</div>
-                <div className="badge bg-light text-dark border mt-1" style={{ fontSize: '0.65rem' }}>IP: 192.168.1.1</div>
-              </div>
-              <div className="border-start border-secondary border-3 ps-3 py-1 opacity-75">
-                <div className="fw-bold small" style={{ fontSize: '0.85rem' }}>Consulta de Inventario</div>
-                <div className="text-muted small">Ayer, 18:45</div>
-              </div>
-              <p className="text-muted small text-center mt-4">
-                <i className="bi bi-info-circle me-1"></i>
-                Los logs se limpian automáticamente cada 30 días.
-              </p>
+              {ACTIVIDAD.map((act, i) => (
+                <div key={i} className="d-flex gap-3">
+                  {/* Punto naranja */}
+                  <div className="flex-shrink-0 mt-1">
+                    <div
+                      className="rounded-circle"
+                      style={{ width: 10, height: 10, background: "#F5A623", marginTop: 4 }}
+                    />
+                  </div>
+                  <div>
+                    <div className="fw-semibold" style={{ fontSize: "0.85rem" }}>{act.accion}</div>
+                    <div className="text-secondary" style={{ fontSize: "0.75rem" }}>{act.fecha}</div>
+                    <div className="text-secondary" style={{ fontSize: "0.75rem" }}>IP: {act.ip}</div>
+                  </div>
+                </div>
+              ))}
             </div>
+
           </div>
         </div>
+
       </div>
     </div>
   );
 }
 
-export default MiPerfilAdmin;
+export default MiPerfil;

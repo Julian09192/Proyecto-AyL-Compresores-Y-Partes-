@@ -1,4 +1,4 @@
-
+// Carrusel usando Bootstrap (ya lo tienes instalado, no necesitas nada más)
 import compresor1 from "../../assets/Home/Hero/compresor-1.jpg";
 import compresor2 from "../../assets/Home/Hero/compresor-2.jpg";
 import compresor3 from "../../assets/Home/Hero/compresor-3.jpg";
@@ -30,6 +30,7 @@ const SLIDES = [
   },
 ];
 
+// Ícono SVG de compresor industrial
 function IconoCompresor({ color = "#F5A623", size = 80 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none">
@@ -53,6 +54,7 @@ function Hero({ setVista }) {
       data-bs-ride="carousel"
       data-bs-interval="5000"
     >
+      {/* Indicadores */}
       <div className="carousel-indicators">
         {SLIDES.map((_, i) => (
           <button
@@ -66,6 +68,7 @@ function Hero({ setVista }) {
         ))}
       </div>
 
+      {/* Slides */}
       <div className="carousel-inner">
         {SLIDES.map((slide, i) => (
           <div
@@ -76,6 +79,7 @@ function Hero({ setVista }) {
             <div className="container h-100">
               <div className="row align-items-center" style={{ minHeight: 480 }}>
 
+                {/* Columna de Texto (Izquierda) */}
                 <div className="col-lg-7 py-5">
                   <p className="fw-bold mb-2 text-uppercase" style={{ color: slide.accent, fontSize: "0.8rem", letterSpacing: 3 }}>
                     A&L Compresores y Partes
@@ -99,9 +103,11 @@ function Hero({ setVista }) {
                   </div>
                 </div>
 
+                {/* Columna de Imagen/Icono (Derecha) */}
                 <div className="col-lg-5 d-none d-lg-flex justify-content-center align-items-center py-5">
                   <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
-
+                    
+                    {/* Si el slide tiene imagen, la mostramos con estilo Bootstrap */}
                     {slide.img ? (
                       <img 
                         src={slide.img} 
@@ -110,6 +116,7 @@ function Hero({ setVista }) {
                         style={{ maxHeight: "350px", objectFit: "cover", border: `2px solid ${slide.accent}` }}
                       />
                     ) : (
+                      /* Si no hay imagen, mostramos el Icono decorativo que ya tenías */
                       <>
                         <div style={{
                           width: 280, height: 280, borderRadius: "50%",
@@ -129,6 +136,7 @@ function Hero({ setVista }) {
         ))}
       </div>
 
+      {/* Controles (Anterior/Siguiente) */}
       <button className="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
         <span className="carousel-control-prev-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
       </button>
