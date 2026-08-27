@@ -1,0 +1,5 @@
+node_modules/
+dist/
+reference/
+docx_extract/
+pptx_extract/

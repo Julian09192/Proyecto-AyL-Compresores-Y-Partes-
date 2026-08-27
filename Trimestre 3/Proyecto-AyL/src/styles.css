@@ -1,0 +1,510 @@
+/* ============================================================
+   IMPORTS
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap');
+
+/* ============================================================
+   RESET GLOBAL
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Barlow', sans-serif;
+  color: #1a1a1a;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar-wrapper {
+  background: #ffffff;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  padding: 0.75rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand-logo {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  background: #F5A623;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar-link {
+  font-family: 'Barlow', sans-serif;
+  color: #1a1a1a;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navbar-link:hover {
+  color: #F5A623;
+}
+
+.navbar-link--active {
+  color: #F5A623;
+  font-weight: 600;
+}
+
+.navbar-btn-register {
+  background: #F5A623;
+  border: none;
+  color: #ffffff;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.5rem 1.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.navbar-btn-register:hover {
+  background: #E8941A;
+  transform: translateY(-1px);
+}
+
+.navbar-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.navbar-hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #1a1a1a;
+  border-radius: 2px;
+}
+
+
+
+
+
+/* ============================================================
+   PRODUCTS
+   ============================================================ */
+.products-section {
+  padding: 5rem 0;
+  background: #ffffff;
+}
+
+.products-eyebrow {
+  color: #F5A623;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.products-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: #1a1a1a;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.products-btn-all {
+  background: transparent;
+  border: 2px solid #F5A623;
+  color: #F5A623;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.55rem 1.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.products-btn-all:hover {
+  background: #F5A623;
+  color: #ffffff;
+}
+
+.product-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eeeeee;
+  height: 100%;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+}
+
+.product-card__img {
+  height: 180px;
+  background: #f8f8f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card__img::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #F5A623;
+}
+
+.product-card__emoji {
+  font-size: 3.5rem;
+}
+
+.product-card__badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #F5A623;
+  color: #ffffff;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.product-card__body {
+  padding: 1.25rem;
+}
+
+.product-card__name {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a1a;
+  margin-bottom: 0.4rem;
+}
+
+.product-card__desc {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  color: #777777;
+  margin-bottom: 1rem;
+  line-height: 1.55;
+}
+
+.product-card__btn {
+  background: #1a1a1a;
+  color: #ffffff;
+  border: none;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.product-card__btn:hover {
+  background: #F5A623;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: #1a1a1a;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 3.5rem 0 2rem;
+}
+
+.footer__brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: #F5A623;
+  margin-bottom: 0.5rem;
+}
+
+.footer__desc {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 1.25rem;
+}
+
+.footer__socials {
+  display: flex;
+  gap: 6px;
+}
+
+.footer__social-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.footer__social-btn:hover {
+  background: #F5A623;
+  color: #ffffff;
+  border-color: #F5A623;
+}
+
+.footer__heading {
+  font-family: 'Barlow', sans-serif;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.footer__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer__links li {
+  margin-bottom: 0.5rem;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer__links a {
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: color 0.2s;
+}
+
+.footer__links a:hover {
+  color: #F5A623;
+}
+
+.footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  text-align: center;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ============================================================
+   SWEETALERT2
+     Agregar al final de styles.css para asegurar que los estilos personalizados tengan prioridad sobre los estilos por defecto de SweetAlert2. Esto es especialmente importante para el z-index, ya que SweetAlert2 utiliza un valor alto para asegurarse de que sus modales estén por encima de otros elementos. Al agregar este bloque al final, garantizamos que nuestro z-index personalizado tenga efecto y evite conflictos con otros componentes de la página.
+   ============================================================ */
+
+/* SweetAlert siempre al frente */
+.swal2-container {
+  z-index: 20000 !important;
+}
+
+/* ============================================================
+   NOSOTROS — agregar al final de styles.css
+   ============================================================ */
+
+/* Hero de la página Nosotros */
+.nosotros-hero {
+  background: #F5A623;
+  padding: 5rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.nosotros-eyebrow {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.nosotros-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: #ffffff;
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
+}
+
+.nosotros-subtitle {
+  font-family: 'Barlow', sans-serif;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 1.05rem;
+  font-weight: 300;
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* Sección Historia */
+.nosotros-historia {
+  padding: 5rem 0;
+  background: #ffffff;
+}
+
+.nosotros-historia__texto {
+  font-family: 'Barlow', sans-serif;
+  color: #555555;
+  font-size: 0.97rem;
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+/* Caja de estadísticas en Historia */
+.nosotros-stats-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #eeeeee;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #eeeeee;
+}
+
+.nosotros-stat {
+  background: #ffffff;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.nosotros-stat__num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: #F5A623;
+  line-height: 1;
+}
+
+.nosotros-stat__label {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.8rem;
+  color: #777777;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Sección Valores — reutiliza .feature-card del CSS principal */
+.nosotros-valores {
+  padding: 5rem 0;
+  background: #f8f8f8;
+}
+
+/* Sección Equipo */
+.nosotros-equipo {
+  padding: 5rem 0;
+  background: #ffffff;
+}
+
+.nosotros-team-card {
+  background: #f8f8f8;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+
+.nosotros-team-card:hover {
+  transform: translateY(-4px);
+  border-color: #F5A623;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.nosotros-team-card__avatar {
+  width: 64px;
+  height: 64px;
+  background: #fff8ed;
+  border: 2px solid #F5A623;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 1rem;
+}
+
+.nosotros-team-card__nombre {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.nosotros-team-card__cargo {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.82rem;
+  color: #868e96;
+  margin: 0;
+}
