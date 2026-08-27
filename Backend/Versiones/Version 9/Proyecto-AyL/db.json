@@ -1,0 +1,148 @@
+{
+  "usuarios": [
+    {
+      "id": "1",
+      "nombre": "Administrador",
+      "email": "admin",
+      "password": "admin123",
+      "rol": "admin"
+    },
+    {
+      "id": "2",
+      "nombre": "Juan Pérez",
+      "email": "juan.perez@alcompresores.com",
+      "password": "emp123",
+      "rol": "empleado"
+    },
+    {
+      "id": "rQTnY8gm4ig",
+      "nombre": "j",
+      "email": "j@gmail.com",
+      "password": "123456",
+      "rol": "cliente",
+      "telefono": "", 
+      "empresa": "A&L Compresores y Partes"
+    }
+  ],
+  "productos": [
+    {
+      "id": "1",
+      "Tipo": "separador",
+      "Nombre": "Filtro Separador XYZ",
+      "Caracteristicas": "Alta eficiencia de filtrado",
+      "CodigoInterno": "FS-001",
+      "Stock": 1,
+      "Precio": 25000,
+      "suspendido": false,
+      "Marca": "",
+      "CategoriaVehiculo": "",
+      "ImagenUrl": "https://res.cloudinary.com/duvoqozcl/image/upload/v1777935576/qcpewqgkgv9wu6lne5qy.png",
+      "ImagenPublicId": "qcpewqgkgv9wu6lne5qy",
+      "ultimaModificacion": 1777946922969
+    },
+    {
+      "id": "2",
+      "Tipo": "aceite",
+      "Nombre": "Filtro de Aceite ABC",
+      "Caracteristicas": "Resistente a altas temperaturas",
+      "CodigoInterno": "FA-002",
+      "Precio": 18000,
+      "suspendido": false,
+      "Marca": "",
+      "CategoriaVehiculo": "",
+      "Stock": 21,
+      "ultimaModificacion": 1777945969969,
+      "ImagenUrl": "https://res.cloudinary.com/duvoqozcl/image/upload/v1777936656/zcic3c7ftb0wurha9n6z.jpg",
+      "ImagenPublicId": "zcic3c7ftb0wurha9n6z"
+    },
+    {
+      "id": "3",
+      "Tipo": "aire",
+      "Nombre": "Filtro de Aire Pro",
+      "Caracteristicas": "Filtración de partículas finas",
+      "CodigoInterno": "",
+      "Stock": 31,
+      "Precio": 22000,
+      "ImagenPublicId": "",
+      "suspendido": false,
+      "Marca": "",
+      "CategoriaVehiculo": "",
+      "ultimaModificacion": 1777934405084,
+      "ImagenUrl": ""
+    },
+    {
+      "id": "4",
+      "Tipo": "aceite_motor",
+      "Nombre": "Aceite 20W50",
+      "Marca": "Castrol",
+      "CategoriaVehiculo": "Moto",
+      "Caracteristicas": "Mejora el rendimiento del motor",
+      "Precio": 45000,
+      "ImagenUrl": "",
+      "ImagenPublicId": "",
+      "suspendido": false
+    },
+    {
+      "id": "5",
+      "Tipo": "valvulina",
+      "Nombre": "Valvulina 80W90",
+      "Marca": "Shell",
+      "CategoriaVehiculo": "Carro",
+      "Caracteristicas": "Protección de engranajes",
+      "Precio": 38000,
+      "Stock": 2,
+      "ImagenUrl": "",
+      "ImagenPublicId": "",
+      "suspendido": false,
+      "CodigoInterno": "",
+      "ultimaModificacion": 1777945971828
+    },
+    {
+      "Tipo": "separador",
+      "Nombre": "Sajari",
+      "Caracteristicas": "Hola es un producto muy buenp",
+      "Precio": 4544444,
+      "Marca": "",
+      "CategoriaVehiculo": "",
+      "CodigoInterno": "fddfs",
+      "Stock": 34,
+      "ImagenUrl": "",
+      "ImagenPublicId": "",
+      "ultimaModificacion": 1777947183628,
+      "id": "Vn_IwaltbYI",
+      "suspendido": false
+    },
+    {
+      "Tipo": "separador",
+      "Nombre": "dd",
+      "Caracteristicas": "qwrtyygrew",
+      "Precio": 4544444,
+      "Marca": "",
+      "CategoriaVehiculo": "",
+      "CodigoInterno": "fddfs",
+      "Stock": 1,
+      "ImagenUrl": "https://res.cloudinary.com/duvoqozcl/image/upload/v1777945074/k44raolpvr9tclxfhepj.jpg",
+      "ImagenPublicId": "k44raolpvr9tclxfhepj",
+      "ultimaModificacion": 1777945075034,
+      "id": "lKwGtRG8i0o",
+      "suspendido": false
+    }
+  ],
+  "movimientos": [
+    {
+      "id": "1",
+      "fecha": "2024-12-20",
+      "producto": "Compresor Ingersoll Rand SSR",
+      "sku": "IR-SSR-004",
+      "tipo": "Entrada",
+      "cantidad": "+2",
+      "motivo": "Compra",
+      "detalleMotivo": "Proveedor: Ingersoll Rand",
+      "stockAnterior": 13,
+      "stockNuevo": 15,
+      "usuario": "Liliana Vesga"
+    }
+  ],
+  "actividad": [],
+  "$schema": "./node_modules/json-server/schema.json"
+}
