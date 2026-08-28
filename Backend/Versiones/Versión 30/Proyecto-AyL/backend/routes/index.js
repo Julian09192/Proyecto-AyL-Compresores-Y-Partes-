@@ -1,0 +1,26 @@
+import express from 'express';
+import authRoutes from './authRoutes.js';
+import userRoutes from './userRoutes.js';
+import productoRoutes from './productoRoutes.js';
+import bodegaRoutes from './bodegaRoutes.js';
+import ordenRoutes from './ordenRoutes.js';
+import resenaRoutes from './resenaRoutes.js';
+import carritoRoutes from './carritoRoutes.js';
+import reporteRoutes from './reporteRoutes.js';
+import bitacoraRoutes from './bitacoraRoutes.js';
+import notificacionRoutes from './notificacionRoutes.js';
+const router = express.Router();
+
+// Todas las rutas con prefijo /api
+router.use('/auth', authRoutes);
+router.use('/usuarios', userRoutes);
+router.use('/productos', productoRoutes);
+router.use('/bodegas', bodegaRoutes);
+router.use('/ordenes', ordenRoutes);
+router.use('/resenas', resenaRoutes);
+router.use('/carrito', carritoRoutes);
+router.use('/queries', reporteRoutes);  
+router.use('/bitacora', bitacoraRoutes);
+router.use('/notificaciones', notificacionRoutes);
+
+export default router;
