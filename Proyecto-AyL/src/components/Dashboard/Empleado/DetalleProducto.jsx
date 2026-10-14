@@ -1,11 +1,9 @@
 import React from "react";
 
-// Reutilizamos la lógica de imágenes (puedes mover obtenerImagen a un archivo utils si prefieres)
-import imgHerramienta from "../assets/imgProductos/herramienta.jpg";
-// ... (importa todas tus imágenes igual que en Productos.jsx)
+const IMAGEN_FALLBACK = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&auto=format&fit=crop&q=60";
 
-const obtenerImagen = () => {
-  return imgHerramienta; // placeholder simplificado
+const obtenerImagen = (nombre, p) => {
+  return p?.imagen_url || p?.imagen || IMAGEN_FALLBACK;
 };
 
 const DetalleProducto = ({ producto: p, setVista, agregarAlCarrito }) => {
@@ -39,7 +37,7 @@ const DetalleProducto = ({ producto: p, setVista, agregarAlCarrito }) => {
         <div className="col-md-6">
           <div className="img-detalle-box shadow-sm">
             <img 
-              src={obtenerImagen(p.Nombre)} 
+              src={obtenerImagen(p.Nombre, p)} 
               alt={p.Nombre} 
               className="img-fluid" 
               style={{ maxHeight: '500px', objectFit: 'contain' }}

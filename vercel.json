@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd Proyecto-AyL && npm run build",
+  "outputDirectory": "Proyecto-AyL/dist",
+  "installCommand": "cd Proyecto-AyL && npm install",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

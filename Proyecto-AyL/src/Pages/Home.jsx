@@ -14,10 +14,6 @@ function Home({ setVista, usuario, login, logout, totalItems, setCartOpen, setPr
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    setError(null);
-  }, []);
-
   return (
     <>
       {error && (
