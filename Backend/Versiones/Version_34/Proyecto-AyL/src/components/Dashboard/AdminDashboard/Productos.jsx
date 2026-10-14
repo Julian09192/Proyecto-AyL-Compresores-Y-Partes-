@@ -130,7 +130,7 @@ function Productos() {
                         <option value="aceite_motor" ${p?.tipo === "aceite_motor" ? "selected" : ""}>Aceites</option>
                         <option value="valvulina" ${p?.tipo === "valvulina" ? "selected" : ""}>Valvulinas</option>
                     </select>
-                </div>
+                </div>  
                 <div class="swal-form-group">
                     <label>Ubicación (Bodega)</label>
                     <select id="id_bodega" class="swal-minimal-select">
